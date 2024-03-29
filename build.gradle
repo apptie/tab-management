@@ -47,6 +47,9 @@ dependencies {
 
 	implementation 'org.yaml:snakeyaml:2.0'
 
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
@@ -79,7 +82,7 @@ sourceSets {
 }
 
 jacoco {
-	toolVersion = '0.8.8'
+	toolVersion = '0.8.11'
 }
 
 jacocoTestReport {
@@ -104,10 +107,9 @@ jacocoTestReport {
 							'**/*Response*',
 							'**/*Request*',
 							'**/*Dto*',
-							'**/*PrivateClaims*',
-							'**/configuration/**',
-							'**/*Appender*',
-							'**/*Helper*'
+							'**/config/**',
+							'**/embed/**',
+							'**/*Builder*'
 					] + Qdomains)
 		}))
 	}
@@ -142,7 +144,9 @@ jacocoTestCoverageVerification {
 					'*.*Request*',
 					'*.*Application*',
 					'*.*Dto*',
-					'*.config.*'
+					'*.config.*',
+					'*.embed.*',
+					'*.*Builder*'
 			] + Qdomains
 		}
 	}
