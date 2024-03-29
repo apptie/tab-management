@@ -2,6 +2,7 @@ package com.management.tab.tab.domain.embed;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.management.tab.tab.domain.exception.InvalidTabElementDepthException;
@@ -58,8 +59,10 @@ class TabElementHierarchyTest {
         TabElementHierarchy actual = tabElementHierarchy.changeHierarchy(expectedOrder, expectedDepth);
 
         // then
-        assertThat(actual.getOrder()).isEqualTo(expectedOrder);
-        assertThat(actual.getDepth()).isEqualTo(expectedDepth);
+        assertAll(
+                () -> assertThat(actual.getOrder()).isEqualTo(expectedOrder),
+                () -> assertThat(actual.getDepth()).isEqualTo(expectedDepth)
+        );
     }
 
     @Test

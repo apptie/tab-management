@@ -2,6 +2,7 @@ package com.management.tab.tab.domain.embed;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.management.tab.tab.domain.exception.InvalidTabElementUrlException;
@@ -85,10 +86,12 @@ class TabElementContentTest {
         );
 
         // then
-        assertThat(actual.getTitle()).isEqualTo(expectedTitle);
-        assertThat(actual.getUrl()).isEqualTo(expectedUrl);
-        assertThat(actual.getDescription()).isEqualTo(expectedDescription);
-        assertThat(actual.isPublic()).isEqualTo(expectedIsPublic);
+        assertAll(
+                () -> assertThat(actual.getTitle()).isEqualTo(expectedTitle),
+                () -> assertThat(actual.getUrl()).isEqualTo(expectedUrl),
+                () -> assertThat(actual.getDescription()).isEqualTo(expectedDescription),
+                () -> assertThat(actual.isPublic()).isEqualTo(expectedIsPublic)
+        );
     }
 
     @Test

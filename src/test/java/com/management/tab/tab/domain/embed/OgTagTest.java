@@ -2,6 +2,7 @@ package com.management.tab.tab.domain.embed;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.management.tab.tab.domain.exception.InvalidOgTagContentException;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -27,9 +28,11 @@ class OgTagTest {
         OgTag actual = ogTag.changeContent(expectedImageUrl, expectedTitle, expectedDescription);
 
         // then
-        assertThat(actual.getImageUrl()).isEqualTo(expectedImageUrl);
-        assertThat(actual.getTitle()).isEqualTo(expectedTitle);
-        assertThat(actual.getDescription()).isEqualTo(expectedDescription);
+        assertAll(
+                () -> assertThat(actual.getImageUrl()).isEqualTo(expectedImageUrl),
+                () -> assertThat(actual.getTitle()).isEqualTo(expectedTitle),
+                () -> assertThat(actual.getDescription()).isEqualTo(expectedDescription)
+        );
     }
 
     @ParameterizedTest(name = "imageUrl이 {0}일 때 예외가 발생한다")
