@@ -1,4 +1,4 @@
-package com.management.tab.config.domain;
+package com.management.tab.common.domain;
 
 public interface DomainBuilder<T> {
 

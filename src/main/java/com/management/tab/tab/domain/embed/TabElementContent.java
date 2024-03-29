@@ -1,6 +1,6 @@
 package com.management.tab.tab.domain.embed;
 
-import com.management.tab.config.domain.DomainBuilder;
+import com.management.tab.common.domain.DomainBuilder;
 import com.management.tab.tab.domain.exception.InvalidTabElementUrlException;
 import lombok.Getter;
 
