@@ -10,6 +10,7 @@ import com.management.tab.tab.domain.embed.OgTag;
 import com.management.tab.tab.domain.embed.TabElementContent;
 import com.management.tab.tab.domain.embed.TabElementHierarchy;
 import com.management.tab.tab.domain.exception.AbsentTabElementException;
+import com.management.tab.tab.domain.exception.AbsentTagException;
 import com.management.tab.tab.domain.exception.InvalidHierarchySizeException;
 import com.management.tab.tab.domain.exception.InvalidOgTagContentException;
 import com.management.tab.tab.domain.exception.InvalidTabElementHierarchyException;
@@ -460,7 +461,55 @@ class TabGroupTest {
 
         // when & then
         Long invalidId = -1L;
+
         assertThatThrownBy(() -> tabGroup.deleteTabElement(invalidId))
                 .isInstanceOf(AbsentTabElementException.class);
+    }
+
+    @Test
+    void addTags_메서드는_전달한_태그_id를_tabGroup에_추가한다() {
+        // given
+        TabGroup tabGroup = new TabGroup();
+
+        // when
+        Long expectedTagId = 1L;
+
+        tabGroup.addTags(List.of(expectedTagId));
+
+        // then
+        List<Long> actual = tabGroup.getTagIds();
+
+        assertAll(
+                () -> assertThat(actual.size()).isEqualTo(1),
+                () -> assertThat(actual.get(0)).isEqualTo(expectedTagId)
+        );
+    }
+
+    @Test
+    void deleteTag_메서드는_파라미터로_전달한_태그를_tabGroup에서_삭제한다() {
+        // given
+        Long tagId = 1L;
+        TabGroup tabGroup = new TabGroup();
+
+        tabGroup.addTags(List.of(tagId));
+
+        // when
+        tabGroup.deleteTag(tagId);
+
+        // then
+        List<Long> actual = tabGroup.getTagIds();
+
+        assertThat(actual.size()).isZero();
+    }
+
+    @Test
+    void deleteTag_메서드는_tabGroup에_등록되지_않은_tabElement_id를_전달하면_예외가_발생한다() {
+        // given
+        TabGroup tabGroup = new TabGroup();
+
+        // when & then
+        Long invalidTagId = -1L;
+
+        assertThatThrownBy(() -> tabGroup.deleteTag(invalidTagId)).isInstanceOf(AbsentTagException.class);
     }
 }

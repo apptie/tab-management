@@ -2,10 +2,12 @@ package com.management.tab.tab.domain;
 
 import com.management.tab.tab.domain.dto.HierarchyDto;
 import com.management.tab.tab.domain.exception.AbsentTabElementException;
+import com.management.tab.tab.domain.exception.AbsentTagException;
 import com.management.tab.tab.domain.exception.InvalidHierarchySizeException;
 import com.management.tab.tab.domain.exception.InvalidTabElementHierarchyException;
 import com.management.tab.tab.domain.exception.UnInitializedTabElementException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import lombok.EqualsAndHashCode;
@@ -21,6 +23,7 @@ public class TabGroup {
 
     private Long id;
     private final Map<Long, TabElement> tabElements = new HashMap<>();
+    private final List<Long> tagIds = new LinkedList<>();
 
     public void addTabElement(TabElement tabElement) {
         if (tabElement.getId() == null) {
@@ -81,5 +84,17 @@ public class TabGroup {
         TabElement removeTabElement = tabElements.remove(id);
 
         validateTabElement(removeTabElement);
+    }
+
+    public void addTags(List<Long> tagIds) {
+        this.tagIds.addAll(tagIds);
+    }
+
+    public void deleteTag(Long tagId) {
+        boolean result = tagIds.remove(tagId);
+
+        if (!result) {
+            throw new AbsentTagException();
+        }
     }
 }
