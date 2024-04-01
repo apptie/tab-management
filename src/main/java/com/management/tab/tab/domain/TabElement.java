@@ -3,15 +3,20 @@ package com.management.tab.tab.domain;
 import com.management.tab.tab.domain.embed.OgTag;
 import com.management.tab.tab.domain.embed.TabElementContent;
 import com.management.tab.tab.domain.embed.TabElementHierarchy;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode(of = "id")
 public class TabElement {
 
     private Long id;
     private TabElementContent tabElementContent;
     private TabElementHierarchy tabElementHierarchy;
     private OgTag ogTag;
+
+    protected TabElement() {
+    }
 
     private TabElement(
             TabElementContent tabElementContent,
@@ -24,12 +29,7 @@ public class TabElement {
     }
 
     public static TabElement of(String title, String url, String description, boolean isPublic, int order, int depth) {
-        TabElementContent tabElementContent = TabElementContent.builder()
-                                                               .title(title)
-                                                               .url(url)
-                                                               .description(description)
-                                                               .isPublic(isPublic)
-                                                               .build();
+        TabElementContent tabElementContent = TabElementContent.of(title, url, description, isPublic);
         TabElementHierarchy tabElementHierarchy = new TabElementHierarchy(order, depth);
 
         return new TabElement(tabElementContent, tabElementHierarchy, OgTag.DEFAULT);
