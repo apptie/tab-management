@@ -1,23 +1,25 @@
 package com.management.tab.tab.domain;
 
 import com.management.tab.tab.domain.dto.HierarchyDto;
+import com.management.tab.tab.domain.exception.AbsentTabElementException;
 import com.management.tab.tab.domain.exception.InvalidHierarchySizeException;
 import com.management.tab.tab.domain.exception.InvalidTabElementHierarchyException;
-import com.management.tab.tab.domain.exception.AbsentTabElementException;
 import com.management.tab.tab.domain.exception.UnInitializedTabElementException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode(of = "id")
 public class TabGroup {
 
     private static final int VALIDATE_HIERARCHY_START_INDEX = 1;
     private static final int VALID_DEPTH_VALUE = 1;
     private static final int VALID_ORDER_VALUE = 1;
 
+    private Long id;
     private final Map<Long, TabElement> tabElements = new HashMap<>();
 
     public void addTabElement(TabElement tabElement) {
@@ -79,23 +81,5 @@ public class TabGroup {
         TabElement removeTabElement = tabElements.remove(id);
 
         validateTabElement(removeTabElement);
-    }
-
-    @Override
-    public boolean equals(Object target) {
-        if (this == target) {
-            return true;
-        }
-        if (target == null || getClass() != target.getClass()) {
-            return false;
-        }
-
-        TabGroup targetTabGroup = (TabGroup) target;
-        return Objects.equals(getTabElements(), targetTabGroup.getTabElements());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getTabElements());
     }
 }
