@@ -14,6 +14,9 @@ public class TabElement {
     private TabElementHierarchy tabElementHierarchy;
     private OgTag ogTag;
 
+    protected TabElement() {
+    }
+
     private TabElement(
             TabElementContent tabElementContent,
             TabElementHierarchy tabElementHierarchy,
