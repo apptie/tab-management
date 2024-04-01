@@ -25,12 +25,7 @@ public class TabElement {
     }
 
     public static TabElement of(String title, String url, String description, boolean isPublic, int order, int depth) {
-        TabElementContent tabElementContent = TabElementContent.builder()
-                                                               .title(title)
-                                                               .url(url)
-                                                               .description(description)
-                                                               .isPublic(isPublic)
-                                                               .build();
+        TabElementContent tabElementContent = TabElementContent.of(title, url, description, isPublic);
         TabElementHierarchy tabElementHierarchy = new TabElementHierarchy(order, depth);
 
         return new TabElement(tabElementContent, tabElementHierarchy, OgTag.DEFAULT);
