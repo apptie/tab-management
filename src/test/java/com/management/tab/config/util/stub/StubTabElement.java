@@ -1,4 +1,4 @@
-package com.management.tab.config.stub;
+package com.management.tab.config.util.stub;
 
 import com.management.tab.tab.domain.TabElement;
 import com.management.tab.tab.domain.embed.OgTag;

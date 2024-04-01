@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.management.tab.config.stub.StubTabElement;
+import com.management.tab.config.util.stub.StubTabElement;
 import com.management.tab.tab.domain.dto.HierarchyDto;
 import com.management.tab.tab.domain.embed.OgTag;
 import com.management.tab.tab.domain.embed.TabElementContent;
