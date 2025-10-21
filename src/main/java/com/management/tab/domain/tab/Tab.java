@@ -1,7 +1,7 @@
 package com.management.tab.domain.tab;
 
 import com.management.tab.domain.common.AuditTimestamps;
-import com.management.tab.domain.tab.vo.GroupId;
+import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.domain.tab.vo.TabPosition;
 import com.management.tab.domain.tab.vo.TabTitle;
@@ -17,7 +17,7 @@ public class Tab {
 
     private final TabId id;
     private final TabId parentId;
-    private final GroupId groupId;
+    private final TabGroupId tabGroupId;
     private final TabTitle title;
     private final TabUrl url;
     private final TabPosition position;
@@ -26,7 +26,7 @@ public class Tab {
     Tab(
             TabId id,
             TabId parentId,
-            GroupId groupId,
+            TabGroupId tabGroupId,
             TabTitle title,
             TabUrl url,
             TabPosition position,
@@ -34,7 +34,7 @@ public class Tab {
     ) {
         this.id = id;
         this.parentId = parentId;
-        this.groupId = groupId;
+        this.tabGroupId = tabGroupId;
         this.title = title;
         this.url = url;
         this.position = position;
@@ -45,7 +45,7 @@ public class Tab {
         return new Tab(
                 this.id,
                 this.parentId,
-                this.groupId,
+                this.tabGroupId,
                 TabTitle.create(newTitle),
                 TabUrl.create(newUrl),
                 this.position,
@@ -57,7 +57,7 @@ public class Tab {
         return new Tab(
                 this.id,
                 this.parentId,
-                this.groupId,
+                this.tabGroupId,
                 this.title,
                 this.url,
                 TabPosition.create(newPosition),
@@ -69,7 +69,7 @@ public class Tab {
         return new Tab(
                 this.id,
                 newParentId,
-                this.groupId,
+                this.tabGroupId,
                 this.title,
                 this.url,
                 TabPosition.create(newPosition),
