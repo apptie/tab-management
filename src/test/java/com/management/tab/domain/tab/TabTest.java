@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class TabTest {
 
     @Test
-    void Tab을_생성할_수_있다() {
+    void Tab을_초기화할_수_있다() {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
@@ -47,7 +47,7 @@ class TabTest {
     }
 
     @Test
-    void updateInfo로_제목과_URL을_업데이트할_수_있다() {
+    void 제목과_URL을_업데이트할_수_있다() {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
@@ -78,7 +78,7 @@ class TabTest {
     }
 
     @Test
-    void updatePosition으로_위치를_업데이트할_수_있다() {
+    void Tab의_위치를_업데이트할_수_있다() {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
@@ -108,7 +108,7 @@ class TabTest {
     }
 
     @Test
-    void moveTo로_위치를_변경할_수_있다() {
+    void Tab의_위치를_변경할_수_있다() {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
@@ -139,7 +139,7 @@ class TabTest {
     }
 
     @Test
-    void parentId가_null이면_루트_탭이다() {
+    void 부모가_없다면_루트_Tab이다() {
         // given
         TabId tabId = TabId.create(1L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
@@ -157,7 +157,7 @@ class TabTest {
     }
 
     @Test
-    void parentId가_있으면_루트_탭이_아니다() {
+    void 부모가_있으면_루트_Tab이_아니다() {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
@@ -176,7 +176,30 @@ class TabTest {
     }
 
     @Test
-    void getCreatedAt으로_생성_시간을_조회할_수_있다() {
+    void 같은_id를_가진_Tab인지_확인한다() {
+        // given
+        TabId tabId = TabId.create(1L);
+        TabId parentId = TabId.create(10L);
+        TabGroupId tabGroupId = TabGroupId.create(100L);
+        TabTitle title = TabTitle.create("테스트 탭");
+        TabUrl url = TabUrl.create("https://example.com");
+        TabPosition position = TabPosition.create(0);
+        AuditTimestamps timestamps = AuditTimestamps.now();
+
+        Tab tab1 = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab2 = new Tab(tabId, TabId.create(999L), TabGroupId.create(999L),
+                TabTitle.create("다른 제목"), TabUrl.create("https://different.com"),
+                TabPosition.create(999), AuditTimestamps.now());
+
+        // when
+        boolean isEqualId = tab1.isEqualId(tab2);
+
+        // then
+        assertThat(isEqualId).isTrue();
+    }
+
+    @Test
+    void 생성_시간을_조회할_수_있다() {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
@@ -198,7 +221,7 @@ class TabTest {
     }
 
     @Test
-    void getUpdatedAt으로_수정_시간을_조회할_수_있다() {
+    void 수정_시간을_조회할_수_있다() {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);

@@ -81,6 +81,10 @@ public class Tab {
         return parentId == null;
     }
 
+    public boolean isEqualId(Tab other) {
+        return this.id.equals(other.id);
+    }
+
     public LocalDateTime getCreatedAt() {
         return timestamps.getCreatedAt();
     }
