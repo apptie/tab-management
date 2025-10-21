@@ -1,4 +1,4 @@
-package com.management.tab.domain.tab.vo;
+package com.management.tab.domain.group.vo;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -12,18 +12,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class GroupIdTest {
+class TabGroupIdTest {
 
     @ParameterizedTest(name = "{0}로 GroupId를 초기화할 수 있다")
     @ValueSource(longs = {1L, 10L, 100L, 1000L, Long.MAX_VALUE})
     void 유효한_양수로_GroupId를_초기화할_수_있다(Long value) {
         // when
-        GroupId groupId = GroupId.create(value);
+        TabGroupId tabGroupId = TabGroupId.create(value);
 
         // then
         assertAll(
-                () -> assertThat(groupId).isNotNull(),
-                () -> assertThat(groupId.getValue()).isEqualTo(value)
+                () -> assertThat(tabGroupId).isNotNull(),
+                () -> assertThat(tabGroupId.getValue()).isEqualTo(value)
         );
     }
 
@@ -33,7 +33,7 @@ class GroupIdTest {
         Long value = null;
 
         // when & then
-        assertThatThrownBy(() -> GroupId.create(value))
+        assertThatThrownBy(() -> TabGroupId.create(value))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("GroupId는 양수여야 합니다");
     }
@@ -42,7 +42,7 @@ class GroupIdTest {
     @ValueSource(longs = {-1, 0})
     void 음수나_0으로는_GroupId를_초기화할_수_없다(Long value) {
         // when & then
-        assertThatThrownBy(() -> GroupId.create(value))
+        assertThatThrownBy(() -> TabGroupId.create(value))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("GroupId는 양수여야 합니다");
     }
@@ -50,26 +50,26 @@ class GroupIdTest {
     @Test
     void 같은_값을_가진_GroupId는_동등하다() {
         // given
-        GroupId groupId1 = GroupId.create(1L);
-        GroupId groupId2 = GroupId.create(1L);
+        TabGroupId tabGroupId1 = TabGroupId.create(1L);
+        TabGroupId tabGroupId2 = TabGroupId.create(1L);
 
         // when & then
         assertAll(
-                () -> assertThat(groupId1).isEqualTo(groupId2),
-                () -> assertThat(groupId1).hasSameHashCodeAs(groupId2)
+                () -> assertThat(tabGroupId1).isEqualTo(tabGroupId2),
+                () -> assertThat(tabGroupId1).hasSameHashCodeAs(tabGroupId2)
         );
     }
 
     @Test
     void 다른_값을_가진_GroupId는_동등하지_않다() {
         // given
-        GroupId groupId1 = GroupId.create(1L);
-        GroupId groupId2 = GroupId.create(2L);
+        TabGroupId tabGroupId1 = TabGroupId.create(1L);
+        TabGroupId tabGroupId2 = TabGroupId.create(2L);
 
         // when & then
         assertAll(
-                () -> assertThat(groupId1).isNotEqualTo(groupId2),
-                () -> assertThat(groupId1).doesNotHaveSameHashCodeAs(groupId2)
+                () -> assertThat(tabGroupId1).isNotEqualTo(tabGroupId2),
+                () -> assertThat(tabGroupId1).doesNotHaveSameHashCodeAs(tabGroupId2)
         );
     }
 }

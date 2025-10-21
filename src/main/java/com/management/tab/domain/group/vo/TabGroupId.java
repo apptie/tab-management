@@ -1,18 +1,18 @@
-package com.management.tab.domain.tab.vo;
+package com.management.tab.domain.group.vo;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode
-public class GroupId {
+public class TabGroupId {
 
     private final Long value;
 
-    public static GroupId create(Long value) {
+    public static TabGroupId create(Long value) {
         validateValue(value);
 
-        return new GroupId(value);
+        return new TabGroupId(value);
     }
 
     private static void validateValue(Long value) {
@@ -21,7 +21,7 @@ public class GroupId {
         }
     }
 
-    private GroupId(Long value) {
+    private TabGroupId(Long value) {
         this.value = value;
     }
 }

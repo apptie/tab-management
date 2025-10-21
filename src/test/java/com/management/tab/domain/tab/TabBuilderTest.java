@@ -1,7 +1,7 @@
 package com.management.tab.domain.tab;
 
 import com.management.tab.domain.common.AuditTimestamps;
-import com.management.tab.domain.tab.vo.GroupId;
+import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.domain.tab.vo.TabPosition;
 import com.management.tab.domain.tab.vo.TabTitle;
@@ -56,7 +56,7 @@ class TabBuilderTest {
         // then
         assertAll(
                 () -> assertThat(tab).isNotNull(),
-                () -> assertThat(tab.getGroupId().getValue()).isEqualTo(groupId),
+                () -> assertThat(tab.getTabGroupId().getValue()).isEqualTo(groupId),
                 () -> assertThat(tab.getTitle().getValue()).isEqualTo(title),
                 () -> assertThat(tab.getUrl().getValue()).isEqualTo(url),
                 () -> assertThat(tab.getParentId()).isNull(),
@@ -67,13 +67,13 @@ class TabBuilderTest {
     @Test
     void createChild로_자식_탭_빌더를_생성할_수_있다() {
         // given
-        GroupId groupId = GroupId.create(1L);
+        TabGroupId tabGroupId = TabGroupId.create(1L);
         TabId parentId = TabId.create(10L);
         String title = "자식 탭";
         String url = "https://child.com";
 
         // when
-        TabBuilder builder = TabBuilder.createChild(groupId, parentId, title, url);
+        TabBuilder builder = TabBuilder.createChild(tabGroupId, parentId, title, url);
 
         // then
         assertThat(builder).isNotNull();
@@ -82,20 +82,20 @@ class TabBuilderTest {
     @Test
     void createChild로_생성한_빌더로_자식_탭을_build할_수_있다() {
         // given
-        GroupId groupId = GroupId.create(1L);
+        TabGroupId tabGroupId = TabGroupId.create(1L);
         TabId parentId = TabId.create(10L);
         String title = "자식 탭";
         String url = "https://child.com";
 
         // when
-        Tab tab = TabBuilder.createChild(groupId, parentId, title, url)
+        Tab tab = TabBuilder.createChild(tabGroupId, parentId, title, url)
                             .position(0)
                             .build();
 
         // then
         assertAll(
                 () -> assertThat(tab).isNotNull(),
-                () -> assertThat(tab.getGroupId()).isEqualTo(groupId),
+                () -> assertThat(tab.getTabGroupId()).isEqualTo(tabGroupId),
                 () -> assertThat(tab.getParentId()).isEqualTo(parentId),
                 () -> assertThat(tab.getTitle().getValue()).isEqualTo(title),
                 () -> assertThat(tab.getUrl().getValue()).isEqualTo(url),
@@ -106,13 +106,13 @@ class TabBuilderTest {
     @Test
     void createChild에서_parentId가_null이면_예외가_발생한다() {
         // given
-        GroupId groupId = GroupId.create(1L);
+        TabGroupId tabGroupId = TabGroupId.create(1L);
         TabId parentId = null;
         String title = "자식 탭";
         String url = "https://child.com";
 
         // when & then
-        assertThatThrownBy(() -> TabBuilder.createChild(groupId, parentId, title, url))
+        assertThatThrownBy(() -> TabBuilder.createChild(tabGroupId, parentId, title, url))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("부모 ID는 필수입니다.");
     }
@@ -122,12 +122,12 @@ class TabBuilderTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
-        GroupId groupId = GroupId.create(100L);
+        TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("기존 탭");
         TabUrl url = TabUrl.create("https://existing.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab existingTab = new Tab(tabId, parentId, groupId, title, url, position, timestamps);
+        Tab existingTab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
 
         Long newTabId = 999L;
 
@@ -139,7 +139,7 @@ class TabBuilderTest {
                 () -> assertThat(newTab).isNotNull(),
                 () -> assertThat(newTab.getId().getValue()).isEqualTo(newTabId),
                 () -> assertThat(newTab.getParentId()).isEqualTo(existingTab.getParentId()),
-                () -> assertThat(newTab.getGroupId()).isEqualTo(existingTab.getGroupId()),
+                () -> assertThat(newTab.getTabGroupId()).isEqualTo(existingTab.getTabGroupId()),
                 () -> assertThat(newTab.getTitle()).isEqualTo(existingTab.getTitle()),
                 () -> assertThat(newTab.getUrl()).isEqualTo(existingTab.getUrl()),
                 () -> assertThat(newTab.getPosition()).isEqualTo(existingTab.getPosition()),
@@ -179,7 +179,7 @@ class TabBuilderTest {
                             .build();
 
         // then
-        assertThat(tab.getGroupId().getValue()).isEqualTo(groupIdValue);
+        assertThat(tab.getTabGroupId().getValue()).isEqualTo(groupIdValue);
     }
 
     @Test
@@ -321,7 +321,7 @@ class TabBuilderTest {
         assertAll(
                 () -> assertThat(tab).isNotNull(),
                 () -> assertThat(tab.getParentId().getValue()).isEqualTo(parentIdValue),
-                () -> assertThat(tab.getGroupId().getValue()).isEqualTo(groupIdValue),
+                () -> assertThat(tab.getTabGroupId().getValue()).isEqualTo(groupIdValue),
                 () -> assertThat(tab.getTitle().getValue()).isEqualTo(titleValue),
                 () -> assertThat(tab.getUrl().getValue()).isEqualTo(urlValue),
                 () -> assertThat(tab.getPosition().getValue()).isEqualTo(positionValue)
