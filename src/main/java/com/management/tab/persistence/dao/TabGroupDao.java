@@ -62,8 +62,7 @@ public class TabGroupDao {
 
         jdbcTemplate.update(sql, params, keyHolder);
 
-        return keyHolder.getKey()
-                        .longValue();
+        return keyHolder.getKeyAs(Long.class);
     }
 
     public void update(Long id, String name) {

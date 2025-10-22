@@ -80,8 +80,7 @@ public class InsertTabDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(sql, parameters, keyHolder, new String[]{"id"});
-        return keyHolder.getKey()
-                        .longValue();
+        return keyHolder.getKeyAs(Long.class);
     }
 
     public Long saveChildTab(
