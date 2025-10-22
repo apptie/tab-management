@@ -11,9 +11,9 @@ public interface TabGroupRepository {
 
     TabGroup save(TabGroup tabGroup);
 
-    void update(Long id, String name);
+    void updateRenamed(TabGroup renamedTabGroup);
 
     void delete(Long id);
 
-    int countTabs(Long groupId);
+    int countTabs(Long id);
 }

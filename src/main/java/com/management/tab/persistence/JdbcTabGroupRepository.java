@@ -41,8 +41,8 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     }
 
     @Override
-    public void update(Long id, String name) {
-        tabGroupDao.update(id, name);
+    public void updateRenamed(TabGroup renamedTabGroup) {
+        tabGroupDao.update(renamedTabGroup.getId().getValue(), renamedTabGroup.getName().getValue());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     }
 
     @Override
-    public int countTabs(Long groupId) {
-        return tabGroupDao.countTabs(groupId);
+    public int countTabs(Long id) {
+        return tabGroupDao.countTabs(id);
     }
 }
