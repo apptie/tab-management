@@ -22,30 +22,25 @@ public class TabBuilder {
         return new TabBuilder();
     }
 
-    public static TabBuilder createRoot(Long groupId, String title, String url) {
+    public static TabBuilder createRoot(Long groupId, String title, String url, TabPosition position) {
         TabBuilder builder = new TabBuilder();
 
-        builder.tabGroupId = TabGroupId.create(groupId);
-        builder.title = TabTitle.create(title);
-        builder.url = TabUrl.create(url);
+        builder.position = position;
 
-        return builder;
-    }
-
-    public static TabBuilder createChild(TabGroupId tabGroupId, TabId parentId, String title, String url) {
-        validateParentId(parentId);
-
-        TabBuilder builder = new TabBuilder();
-
-        builder.tabGroupId = tabGroupId;
-        builder.parentId = parentId;
-
-        return builder.title(title)
+        return builder.groupId(groupId)
+                      .title(title)
                       .url(url);
     }
 
-    private static void validateParentId(TabId parentId) {
-        Objects.requireNonNull(parentId, "부모 ID는 필수입니다.");
+    public static TabBuilder createChild(Tab parentTab, String title, String url, TabPosition position) {
+        TabBuilder builder = new TabBuilder();
+
+        builder.tabGroupId = parentTab.getTabGroupId();
+        builder.parentId = parentTab.getId();
+        builder.position = position;
+
+        return builder.title(title)
+                      .url(url);
     }
 
     public static TabBuilder createWithAssignedId(Long tabId, Tab tab) {
@@ -63,6 +58,12 @@ public class TabBuilder {
     }
 
     private TabBuilder() {
+    }
+
+    public TabBuilder id(Long id) {
+        this.id = TabId.create(id);
+
+        return this;
     }
 
     public TabBuilder parentId(Long parentId) {
