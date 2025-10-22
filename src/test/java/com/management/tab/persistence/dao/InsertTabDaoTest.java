@@ -156,7 +156,7 @@ class InsertTabDaoTest {
         // then
         List<TabDto> actual = selectTabDao.findSiblings(null);
         assertAll(
-                () -> assertThat(actual).hasSize(4), // 기존 부모(100) + 새로 생성한 3개
+                () -> assertThat(actual).hasSize(4),
                 () -> assertThat(actual.stream().filter(t -> t.position() == 0).count()).isEqualTo(2),
                 () -> assertThat(actual.stream().anyMatch(t -> t.position() == 1)).isTrue(),
                 () -> assertThat(actual.stream().anyMatch(t -> t.position() == 2)).isTrue()
