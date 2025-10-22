@@ -65,14 +65,26 @@ public class Tab {
         );
     }
 
-    public Tab moveTo(TabId newParentId, int newPosition) {
+    public Tab moveTo(TabId newParentId, TabPosition newPosition) {
         return new Tab(
                 this.id,
                 newParentId,
                 this.tabGroupId,
                 this.title,
                 this.url,
-                TabPosition.create(newPosition),
+                newPosition,
+                this.timestamps.updateTimestamp()
+        );
+    }
+
+    public Tab moveToRoot(TabPosition newPosition) {
+        return new Tab(
+                this.id,
+                null,
+                this.tabGroupId,
+                this.title,
+                this.url,
+                newPosition,
                 this.timestamps.updateTimestamp()
         );
     }
