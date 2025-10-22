@@ -12,6 +12,10 @@ public class AuditTimestamps {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
+    public static AuditTimestamps create(LocalDateTime createdAt, LocalDateTime updatedAt) {
+        return new AuditTimestamps(createdAt, updatedAt);
+    }
+
     public static AuditTimestamps now() {
         LocalDateTime now = LocalDateTime.now();
 
