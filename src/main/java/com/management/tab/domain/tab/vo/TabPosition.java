@@ -7,7 +7,7 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class TabPosition {
 
-    private final Integer value;
+    private final int value;
 
     public static TabPosition defaultPosition() {
         return new TabPosition(0);
@@ -29,7 +29,7 @@ public class TabPosition {
         }
     }
 
-    private TabPosition(Integer value) {
+    private TabPosition(int value) {
         this.value = value;
     }
 

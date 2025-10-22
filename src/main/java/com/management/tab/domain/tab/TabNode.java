@@ -55,6 +55,10 @@ public class TabNode {
         return tab.getId();
     }
 
+    public int getPosition() {
+        return tab.getPosition().getValue();
+    }
+
     private void validateChildAddition(TabNode child) {
         if (child == null) {
             throw new IllegalArgumentException("자식 노드는 null일 수 없습니다.");

@@ -17,13 +17,16 @@ class TabGroupTest {
         String name = "테스트 그룹";
 
         // when
-        TabGroup tabGroup = TabGroup.create(name);
+        TabGroup actual = TabGroup.create(name);
 
         // then
         assertAll(
-                () -> assertThat(tabGroup).isNotNull(),
-                () -> assertThat(tabGroup.getId()).isNull(),
-                () -> assertThat(tabGroup.getName().getValue()).isEqualTo(name)
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isNull(),
+                () -> assertThat(actual.getName().getValue()).isEqualTo(name),
+                () -> assertThat(actual.getTimestamps()).isNotNull(),
+                () -> assertThat(actual.getTimestamps().getCreatedAt()).isNotNull(),
+                () -> assertThat(actual.getTimestamps().getUpdatedAt()).isNotNull()
         );
     }
 
@@ -33,10 +36,10 @@ class TabGroupTest {
         String name = "테스트 그룹";
 
         // when
-        TabGroup tabGroup = TabGroup.create(name);
+        TabGroup actual = TabGroup.create(name);
 
         // then
-        assertThat(tabGroup.getId()).isNull();
+        assertThat(actual.getId()).isNull();
     }
 
     @Test
@@ -46,14 +49,15 @@ class TabGroupTest {
         Long assignedId = 100L;
 
         // when
-        TabGroup tabGroupWithId = TabGroup.createWithAssignedId(assignedId, existingTabGroup);
+        TabGroup actual = TabGroup.createWithAssignedId(assignedId, existingTabGroup);
 
         // then
         assertAll(
-                () -> assertThat(tabGroupWithId).isNotNull(),
-                () -> assertThat(tabGroupWithId.getId()).isNotNull(),
-                () -> assertThat(tabGroupWithId.getId().getValue()).isEqualTo(assignedId),
-                () -> assertThat(tabGroupWithId.getName()).isEqualTo(existingTabGroup.getName())
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getId().getValue()).isEqualTo(assignedId),
+                () -> assertThat(actual.getName()).isEqualTo(existingTabGroup.getName()),
+                () -> assertThat(actual.getTimestamps()).isEqualTo(existingTabGroup.getTimestamps())
         );
     }
 
@@ -64,12 +68,13 @@ class TabGroupTest {
         String newName = "변경된 이름";
 
         // when
-        TabGroup renamedTabGroup = tabGroup.rename(newName);
+        TabGroup actual = tabGroup.rename(newName);
 
         // then
         assertAll(
-                () -> assertThat(renamedTabGroup).isNotNull(),
-                () -> assertThat(renamedTabGroup.getName().getValue()).isEqualTo(newName)
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getName().getValue()).isEqualTo(newName),
+                () -> assertThat(actual.getTimestamps()).isEqualTo(tabGroup.getTimestamps())
         );
     }
 }

@@ -29,14 +29,14 @@ class TabTreeTest {
         Long groupId = 1L;
 
         // when
-        TabTree tabTree = TabTree.create(groupId);
+        TabTree actual = TabTree.create(groupId);
 
         // then
         assertAll(
-                () -> assertThat(tabTree).isNotNull(),
-                () -> assertThat(tabTree.getTabGroupId().getValue()).isEqualTo(groupId),
-                () -> assertThat(tabTree.getRootTabNodes()).isEmpty(),
-                () -> assertThat(tabTree.getTotalCount()).isZero()
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getTabGroupId().getValue()).isEqualTo(groupId),
+                () -> assertThat(actual.getRootTabNodes()).isEmpty(),
+                () -> assertThat(actual.getTotalCount()).isZero()
         );
     }
 
@@ -67,12 +67,12 @@ class TabTreeTest {
         List<TabNode> rootNodes = List.of(rootNode1, rootNode2);
 
         // when
-        TabTree tabTree = TabTree.create(groupId, new ArrayList<>(rootNodes));
+        TabTree actual = TabTree.create(groupId, new ArrayList<>(rootNodes));
 
         // then
         assertAll(
-                () -> assertThat(tabTree.getRootTabNodes()).hasSize(2),
-                () -> assertThat(tabTree.getTotalCount()).isEqualTo(2)
+                () -> assertThat(actual.getRootTabNodes()).hasSize(2),
+                () -> assertThat(actual.getTotalCount()).isEqualTo(2)
         );
     }
 
@@ -129,10 +129,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when
-        boolean isDescendant = tabTree.isDescendant(TabId.create(1L), TabId.create(2L));
+        boolean actual = tabTree.isDescendant(TabId.create(1L), TabId.create(2L));
 
         // then
-        assertThat(isDescendant).isTrue();
+        assertThat(actual).isTrue();
     }
 
     @Test
@@ -178,10 +178,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when
-        boolean isDescendant = tabTree.isDescendant(TabId.create(1L), TabId.create(3L));
+        boolean actual = tabTree.isDescendant(TabId.create(1L), TabId.create(3L));
 
         // then
-        assertThat(isDescendant).isTrue();
+        assertThat(actual).isTrue();
     }
 
     @Test
@@ -201,7 +201,7 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when & then
-        assertDoesNotThrow(() -> tabTree.validateAddChild(TabId.create(1L)));
+        assertDoesNotThrow(() -> tabTree.validateAddChildDepth(TabId.create(1L)));
     }
 
     @Test
@@ -221,7 +221,7 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(deepNode)));
 
         // when & then
-        assertThatThrownBy(() -> tabTree.validateAddChild(TabId.create(1L)))
+        assertThatThrownBy(() -> tabTree.validateAddChildDepth(TabId.create(1L)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("탭의 계층은 10를 초과할 수 없습니다.");
     }
@@ -233,7 +233,7 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId);
 
         // when & then
-        assertThatThrownBy(() -> tabTree.validateAddChild(TabId.create(999L)))
+        assertThatThrownBy(() -> tabTree.validateAddChildDepth(TabId.create(999L)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("부모 탭을 찾을 수 없습니다.");
     }
@@ -367,7 +367,6 @@ class TabTreeTest {
         // given
         Long groupId = 1L;
 
-        // depth 8의 부모 노드 생성
         Tab deepParentTab = new Tab(
                 TabId.create(1L),
                 TabId.create(99L),
@@ -379,7 +378,6 @@ class TabTreeTest {
         );
         TabNode deepParentNode = TabNode.create(deepParentTab, 8, TabId.create(99L));
 
-        // depth 0의 이동할 노드 생성 (서브트리 depth 1 포함)
         Tab movingTab = new Tab(
                 TabId.create(2L),
                 null,
@@ -406,7 +404,6 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(deepParentNode, movingNode)));
 
         // when & then
-        // 계산: 8(새부모) + 1(이동노드) + 1(서브트리깊이) = 10 (MAX_DEPTH와 같음, 초과)
         assertThatThrownBy(() -> tabTree.validateMoveDepthWithSubtree(TabId.create(2L), TabId.create(1L)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("탭의 계층은 10를 초과할 수 없습니다.");
@@ -429,12 +426,12 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when
-        Optional<TabNode> foundNode = tabTree.findNode(TabId.create(1L));
+        Optional<TabNode> actual = tabTree.findNode(TabId.create(1L));
 
         // then
         assertAll(
-                () -> assertThat(foundNode).isPresent(),
-                () -> assertThat(foundNode.get().getId()).isEqualTo(TabId.create(1L))
+                () -> assertThat(actual).isPresent(),
+                () -> assertThat(actual.get().getId()).isEqualTo(TabId.create(1L))
         );
     }
 
@@ -445,10 +442,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId);
 
         // when
-        Optional<TabNode> foundNode = tabTree.findNode(TabId.create(999L));
+        Optional<TabNode> actual = tabTree.findNode(TabId.create(999L));
 
         // then
-        assertThat(foundNode).isEmpty();
+        assertThat(actual).isEmpty();
     }
 
     @Test
@@ -479,10 +476,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode1, rootNode2)));
 
         // when
-        List<TabNode> siblings = tabTree.findSiblings(TabId.create(1L));
+        List<TabNode> actual = tabTree.findSiblings(TabId.create(1L));
 
         // then
-        assertThat(siblings).hasSize(2);
+        assertThat(actual).hasSize(2);
     }
 
     @Test
@@ -526,10 +523,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when
-        List<TabNode> siblings = tabTree.findSiblings(TabId.create(2L));
+        List<TabNode> actual = tabTree.findSiblings(TabId.create(2L));
 
         // then
-        assertThat(siblings).hasSize(2);
+        assertThat(actual).hasSize(2);
     }
 
     @Test
@@ -539,10 +536,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId);
 
         // when
-        List<TabNode> siblings = tabTree.findSiblings(TabId.create(999L));
+        List<TabNode> actual = tabTree.findSiblings(TabId.create(999L));
 
         // then
-        assertThat(siblings).isEmpty();
+        assertThat(actual).isEmpty();
     }
 
     @Test
@@ -575,10 +572,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when
-        List<Tab> allTabs = tabTree.getAllTabs();
+        List<Tab> actual = tabTree.getAllTabs();
 
         // then
-        assertThat(allTabs).hasSize(2);
+        assertThat(actual).hasSize(2);
     }
 
     @Test
@@ -611,10 +608,10 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when
-        int totalCount = tabTree.getTotalCount();
+        int actual = tabTree.getTotalCount();
 
         // then
-        assertThat(totalCount).isEqualTo(2);
+        assertThat(actual).isEqualTo(2);
     }
 
     @Test
@@ -647,9 +644,138 @@ class TabTreeTest {
         TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
 
         // when
-        int maxDepth = tabTree.getMaxDepth();
+        int actual = tabTree.getMaxDepth();
 
         // then
-        assertThat(maxDepth).isEqualTo(1);
+        assertThat(actual).isEqualTo(1);
+    }
+
+    @Test
+    void 빈_트리에서_다음_루트_위치는_기본값이다() {
+        // given
+        Long groupId = 1L;
+        TabTree tabTree = TabTree.create(groupId);
+
+        // when
+        TabPosition actual = tabTree.getNextRootPosition();
+
+        // then
+        assertThat(actual).isEqualTo(TabPosition.defaultPosition());
+    }
+
+    @Test
+    void 루트_노드가_있을_때_다음_루트_위치를_조회할_수_있다() {
+        // given
+        Long groupId = 1L;
+        Tab rootTab1 = new Tab(
+                TabId.create(1L),
+                null,
+                TabGroupId.create(groupId),
+                TabTitle.create("루트 탭 1"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        Tab rootTab2 = new Tab(
+                TabId.create(2L),
+                null,
+                TabGroupId.create(groupId),
+                TabTitle.create("루트 탭 2"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(1),
+                AuditTimestamps.now()
+        );
+        TabNode rootNode1 = TabNode.createRoot(rootTab1);
+        TabNode rootNode2 = TabNode.createRoot(rootTab2);
+
+        TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode1, rootNode2)));
+
+        // when
+        TabPosition actual = tabTree.getNextRootPosition();
+
+        // then
+        assertThat(actual.getValue()).isEqualTo(2);
+    }
+
+    @Test
+    void 자식_노드가_없을_때_다음_자식_위치는_기본값이다() {
+        // given
+        Long groupId = 1L;
+        Tab rootTab = new Tab(
+                TabId.create(1L),
+                null,
+                TabGroupId.create(groupId),
+                TabTitle.create("루트 탭"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        TabNode rootNode = TabNode.createRoot(rootTab);
+        TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
+
+        // when
+        TabPosition actual = tabTree.getNextChildPosition(TabId.create(1L));
+
+        // then
+        assertThat(actual).isEqualTo(TabPosition.defaultPosition());
+    }
+
+    @Test
+    void 자식_노드가_있을_때_다음_자식_위치를_조회할_수_있다() {
+        // given
+        Long groupId = 1L;
+        Tab rootTab = new Tab(
+                TabId.create(1L),
+                null,
+                TabGroupId.create(groupId),
+                TabTitle.create("루트 탭"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        TabNode rootNode = TabNode.createRoot(rootTab);
+
+        Tab childTab1 = new Tab(
+                TabId.create(2L),
+                TabId.create(1L),
+                TabGroupId.create(groupId),
+                TabTitle.create("자식 탭 1"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        Tab childTab2 = new Tab(
+                TabId.create(3L),
+                TabId.create(1L),
+                TabGroupId.create(groupId),
+                TabTitle.create("자식 탭 2"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(1),
+                AuditTimestamps.now()
+        );
+        TabNode childNode1 = TabNode.create(childTab1, 1, TabId.create(1L));
+        TabNode childNode2 = TabNode.create(childTab2, 1, TabId.create(1L));
+        rootNode.addChild(childNode1);
+        rootNode.addChild(childNode2);
+
+        TabTree tabTree = TabTree.create(groupId, new ArrayList<>(List.of(rootNode)));
+
+        // when
+        TabPosition actual = tabTree.getNextChildPosition(TabId.create(1L));
+
+        // then
+        assertThat(actual.getValue()).isEqualTo(2);
+    }
+
+    @Test
+    void 존재하지_않는_부모의_다음_자식_위치를_조회하면_예외가_발생한다() {
+        // given
+        Long groupId = 1L;
+        TabTree tabTree = TabTree.create(groupId);
+
+        // when & then
+        assertThatThrownBy(() -> tabTree.getNextChildPosition(TabId.create(999L)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("부모 탭을 찾을 수 없습니다.");
     }
 }

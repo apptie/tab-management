@@ -2,6 +2,7 @@ package com.management.tab.domain.tab;
 
 import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.domain.tab.vo.TabId;
+import com.management.tab.domain.tab.vo.TabPosition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -77,7 +78,7 @@ public class TabTree {
                    );
     }
 
-    public void validateAddChild(TabId parentId) {
+    public void validateAddChildDepth(TabId parentId) {
         TabNode parentNode = findNode(parentId)
                 .orElseThrow(() -> new IllegalArgumentException("부모 탭을 찾을 수 없습니다."));
 
@@ -172,6 +173,36 @@ public class TabTree {
                          .mapToInt(TabNode::getDepth)
                          .max()
                          .orElse(0);
+    }
+
+    public TabPosition getNextRootPosition() {
+        if (rootTabNodes.isEmpty()) {
+            return TabPosition.defaultPosition();
+        }
+
+        int position = rootTabNodes.stream()
+                            .mapToInt(TabNode::getPosition)
+                            .max()
+                            .orElse(-1) + 1;
+
+        return TabPosition.create(position);
+    }
+
+    public TabPosition getNextChildPosition(TabId parentId) {
+        TabNode parentNode = findNode(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("부모 탭을 찾을 수 없습니다."));
+
+        List<TabNode> children = parentNode.getChildren();
+        if (children.isEmpty()) {
+            return TabPosition.defaultPosition();
+        }
+
+        int position = children.stream()
+                        .mapToInt(TabNode::getPosition)
+                        .max()
+                        .orElse(-1) + 1;
+
+        return TabPosition.create(position);
     }
 }
 
