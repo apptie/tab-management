@@ -125,14 +125,15 @@ class JdbcTabRepositoryTest {
     }
 
     @Test
-    void 루트_탭의_부모_ID를_조회하면_예외가_발생한다() {
+    void 루트_탭의_부모_ID를_조회하면_null을_반환한다() {
         // given
         Long rootTabId = 100L;
 
-        // when & then
-        assertThatThrownBy(() -> jdbcTabRepository.findParentId(rootTabId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("부모 ID가 없습니다.");
+        // when
+        TabId actual = jdbcTabRepository.findParentId(rootTabId);
+
+        // then
+        assertThat(actual).isNull();
     }
 
     @Test

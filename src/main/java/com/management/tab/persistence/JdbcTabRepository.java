@@ -100,7 +100,11 @@ public class JdbcTabRepository implements TabRepository {
     @Override
     public TabId findParentId(Long tabId) {
         Long parentId = selectTabDao.findParentId(tabId)
-                                    .orElseThrow(() -> new IllegalArgumentException("부모 ID가 없습니다."));
+                                    .orElse(null);
+
+        if (parentId == null) {
+            return null;
+        }
 
         return TabId.create(parentId);
     }
