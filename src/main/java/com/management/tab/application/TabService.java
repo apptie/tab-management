@@ -163,6 +163,7 @@ public class TabService {
                         .orElseThrow(() -> new IllegalArgumentException("대상 탭을 찾을 수 없습니다."));
     }
 
+    @Transactional
     public void updateTab(Long tabId, String title, String url) {
         Tab tab = tabRepository.findTab(tabId);
         Tab updatedTab = tab.updateInfo(title, url);
