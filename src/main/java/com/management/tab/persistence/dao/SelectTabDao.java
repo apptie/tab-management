@@ -18,7 +18,7 @@ public class SelectTabDao {
     private static final RowMapper<TabDto> tabRowMapper = (rs, rowNum) -> new TabDto(
             rs.getLong("id"),
             rs.getLong("group_id"),
-            rs.getLong("parent_id"),
+            rs.getObject("parent_id", Long.class),
             rs.getString("title"),
             rs.getString("url"),
             rs.getInt("position"),
@@ -93,17 +93,16 @@ public class SelectTabDao {
 
     public List<TabDto> findSiblings(Long parentId) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-
-        if (parentId == null) {
-            String sql = "SELECT * FROM tabs WHERE parent_id IS NULL ORDER BY position";
-
-            return jdbcTemplate.query(sql, parameters, tabRowMapper);
-        }
-
         String sql = "SELECT * FROM tabs WHERE parent_id = :parentId ORDER BY position";
 
         parameters.addValue("parentId", parentId);
         return jdbcTemplate.query(sql, parameters, tabRowMapper);
+    }
+
+    public List<TabDto> findRootSiblings() {
+        String sql = "SELECT * FROM tabs WHERE parent_id IS NULL ORDER BY position";
+
+        return jdbcTemplate.query(sql, new MapSqlParameterSource(), tabRowMapper);
     }
 
     public int findTabLastPosition(Long groupId, Long parentId) {
