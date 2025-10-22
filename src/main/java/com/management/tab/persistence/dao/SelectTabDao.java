@@ -51,6 +51,7 @@ public class SelectTabDao {
 
         try {
             TabDto result = jdbcTemplate.queryForObject(sql, params, tabRowMapper);
+
             return Optional.ofNullable(result);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -82,7 +83,9 @@ public class SelectTabDao {
                 .addValue("tabId", tabId);
 
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, parameters, Long.class));
+            Long result = jdbcTemplate.queryForObject(sql, parameters, Long.class);
+
+            return Optional.ofNullable(result);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
