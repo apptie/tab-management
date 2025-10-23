@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Groups</title>
+  <link rel="stylesheet" href="groups.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📁 Tab Groups</h1>
+    <button id="addGroupBtn" class="btn-primary">+ 새 그룹 추가</button>
+  </header>
+
+  <div id="groupList" class="group-list">
+    <!-- JavaScript로 채워짐 -->
+  </div>
+</div>
+
+<!-- 그룹 추가 모달 -->
+<div id="addGroupModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>새 그룹 추가</h2>
+    <form id="addGroupForm">
+      <div class="form-group">
+        <label for="groupName">그룹 이름:</label>
+        <input type="text" id="groupName" required maxlength="100" placeholder="예: 개발 프로젝트">
+      </div>
+      <button type="submit" class="btn-primary">추가</button>
+    </form>
+  </div>
+</div>
+
+<!-- 그룹 수정 모달 -->
+<div id="editGroupModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>그룹 수정</h2>
+    <form id="editGroupForm">
+      <input type="hidden" id="editGroupId">
+      <div class="form-group">
+        <label for="editGroupName">그룹 이름:</label>
+        <input type="text" id="editGroupName" required maxlength="100">
+      </div>
+      <button type="submit" class="btn-primary">수정</button>
+    </form>
+  </div>
+</div>
+
+<script src="groups.js"></script>
+</body>
+</html>
