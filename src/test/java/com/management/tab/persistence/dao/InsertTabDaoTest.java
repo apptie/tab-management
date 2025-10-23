@@ -154,7 +154,7 @@ class InsertTabDaoTest {
         insertTabDao.saveRootTab(groupId, "세번째", "http://3.com", 2, now, now);
 
         // then
-        List<TabDto> actual = selectTabDao.findSiblings(null);
+        List<TabDto> actual = selectTabDao.findRootSiblings();
         assertAll(
                 () -> assertThat(actual).hasSize(4),
                 () -> assertThat(actual.stream().filter(t -> t.position() == 0).count()).isEqualTo(2),

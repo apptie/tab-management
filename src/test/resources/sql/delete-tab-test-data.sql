@@ -29,7 +29,6 @@ VALUES
     (204, 1, 201, '삭제테스트_손자2', 'http://gc2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (205, 1, 202, '삭제테스트_손자3', 'http://gc3.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Closure Table 경로 생성
 -- 200 (루트)
 INSERT INTO tab_tree_paths (ancestor_id, descendant_id, depth) VALUES (200, 200, 0);
 

@@ -318,5 +318,22 @@ class TabTest {
         );
     }
 
+    @Test
+    void TabId로_같은_Tab인지_확인한다() {
+        // given
+        TabId tabId = TabId.create(1L);
+        TabId parentId = TabId.create(10L);
+        TabGroupId tabGroupId = TabGroupId.create(100L);
+        TabTitle title = TabTitle.create("테스트 탭");
+        TabUrl url = TabUrl.create("https://example.com");
+        TabPosition position = TabPosition.create(0);
+        AuditTimestamps timestamps = AuditTimestamps.now();
+        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
 
+        // when
+        boolean actual = tab.isEqualTo(tabId);
+
+        // then
+        assertThat(actual).isTrue();
+    }
 }

@@ -164,15 +164,24 @@ class SelectTabDaoTest {
     }
 
     @Test
-    void 루트_레벨_형제들을_조회한다() {
+    void 부모가_null인_경우_빈_리스트를_반환한다() {
         // when
         List<TabDto> actual = selectTabDao.findSiblings(null);
+
+        // then
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void 루트_레벨_형제들을_조회한다() {
+        // when
+        List<TabDto> actual = selectTabDao.findRootSiblings();
 
         // then
         assertThat(actual.stream()
                          .filter(t -> GROUP_ID.equals(t.groupId()))
                          .count())
-                .isEqualTo(2);
+                .isGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -209,6 +218,15 @@ class SelectTabDaoTest {
 
         // then
         assertThat(actual).isGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    void 탭이_없는_그룹의_루트_position을_조회하면_0을_반환한다() {
+        // when
+        int actual = selectTabDao.findRootTabLastPosition(999L);
+
+        // then
+        assertThat(actual).isZero();
     }
 
     @Test

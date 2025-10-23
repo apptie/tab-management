@@ -16,14 +16,31 @@ class AuditTimestampsTest {
     @Test
     void 생성시각과_수정시각이_같은_AuditTimestamps를_초기화한다() {
         // when
-        AuditTimestamps timestamps = AuditTimestamps.now();
+        AuditTimestamps actual = AuditTimestamps.now();
 
         // then
         assertAll(
-                () -> assertThat(timestamps).isNotNull(),
-                () -> assertThat(timestamps.getCreatedAt()).isNotNull(),
-                () -> assertThat(timestamps.getUpdatedAt()).isNotNull(),
-                () -> assertThat(timestamps.getCreatedAt()).isEqualTo(timestamps.getUpdatedAt())
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getCreatedAt()).isNotNull(),
+                () -> assertThat(actual.getUpdatedAt()).isNotNull(),
+                () -> assertThat(actual.getCreatedAt()).isEqualTo(actual.getUpdatedAt())
+        );
+    }
+
+    @Test
+    void 지정한_시각으로_AuditTimestamps를_생성할_수_있다() {
+        // given
+        LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 15, 30);
+
+        // when
+        AuditTimestamps actual = AuditTimestamps.create(createdAt, updatedAt);
+
+        // then
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getCreatedAt()).isEqualTo(createdAt),
+                () -> assertThat(actual.getUpdatedAt()).isEqualTo(updatedAt)
         );
     }
 
@@ -37,22 +54,23 @@ class AuditTimestampsTest {
         Thread.sleep(10);
 
         // when
-        AuditTimestamps updated = original.updateTimestamp();
+        AuditTimestamps actual = original.updateTimestamp();
 
         // then
         assertAll(
-                () -> assertThat(updated.getCreatedAt()).isEqualTo(originalCreatedAt),
-                () -> assertThat(updated.getUpdatedAt()).isAfter(originalUpdatedAt),
-                () -> assertThat(updated.getCreatedAt()).isBefore(updated.getUpdatedAt())
+                () -> assertThat(actual.getCreatedAt()).isEqualTo(originalCreatedAt),
+                () -> assertThat(actual.getUpdatedAt()).isAfter(originalUpdatedAt),
+                () -> assertThat(actual.getCreatedAt()).isBefore(actual.getUpdatedAt())
         );
     }
 
     @Test
     void 같은_시각을_가진_AuditTimestamps는_동등하다() {
         // given
-        AuditTimestamps timestamps1 = AuditTimestamps.now();
-
-        AuditTimestamps timestamps2 = timestamps1;
+        LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 15, 30);
+        AuditTimestamps timestamps1 = AuditTimestamps.create(createdAt, updatedAt);
+        AuditTimestamps timestamps2 = AuditTimestamps.create(createdAt, updatedAt);
 
         // when & then
         assertAll(
@@ -85,13 +103,12 @@ class AuditTimestampsTest {
         Thread.sleep(10);
 
         // when
-        AuditTimestamps updated = original.updateTimestamp();
+        AuditTimestamps actual = original.updateTimestamp();
 
         // then
         assertAll(
-                () -> assertThat(original).isNotEqualTo(updated),
-                () -> assertThat(original).doesNotHaveSameHashCodeAs(updated)
+                () -> assertThat(original).isNotEqualTo(actual),
+                () -> assertThat(original).doesNotHaveSameHashCodeAs(actual)
         );
     }
 }
-

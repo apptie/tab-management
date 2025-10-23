@@ -3,6 +3,7 @@ package com.management.tab.domain.group;
 import com.management.tab.domain.common.AuditTimestamps;
 import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.domain.group.vo.TabGroupName;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
@@ -14,6 +15,14 @@ public class TabGroup {
 
     public static TabGroup create(String name) {
         return new TabGroup(null, TabGroupName.create(name), AuditTimestamps.now());
+    }
+
+    public static TabGroup create(Long groupId, String name, LocalDateTime createAt, LocalDateTime updatedAt) {
+        return new TabGroup(
+                TabGroupId.create(groupId),
+                TabGroupName.create(name),
+                AuditTimestamps.create(createAt, updatedAt)
+        );
     }
 
     public static TabGroup createWithAssignedId(Long id, TabGroup tabGroup) {
