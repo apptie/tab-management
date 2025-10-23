@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Manager</title>
+  <link rel="stylesheet" href="tabs.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-left">
+      <a href="groups.html" class="btn-back">← 그룹 목록</a>
+      <h1 id="groupTitle">Loading...</h1>
+    </div>
+    <button id="addRootTabBtn" class="btn-primary">+ 최상위 탭 추가</button>
+  </header>
+
+  <div id="tabTree" class="tab-tree">
+    <!-- JavaScript로 채워짐 -->
+  </div>
+</div>
+
+<!-- 탭 추가 모달 -->
+<div id="addTabModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>탭 추가</h2>
+    <form id="addTabForm">
+      <input type="hidden" id="parentId">
+      <div class="form-group">
+        <label for="tabTitle">제목:</label>
+        <input type="text" id="tabTitle" required>
+      </div>
+      <div class="form-group">
+        <label for="tabUrl">URL:</label>
+        <input type="url" id="tabUrl" required>
+      </div>
+      <button type="submit" class="btn-primary">추가</button>
+    </form>
+  </div>
+</div>
+
+<!-- 탭 수정 모달 -->
+<div id="editTabModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>탭 수정</h2>
+    <form id="editTabForm">
+      <input type="hidden" id="editTabId">
+      <div class="form-group">
+        <label for="editTabTitle">제목:</label>
+        <input type="text" id="editTabTitle" required>
+      </div>
+      <div class="form-group">
+        <label for="editTabUrl">URL:</label>
+        <input type="url" id="editTabUrl" required>
+      </div>
+      <button type="submit" class="btn-primary">수정</button>
+    </form>
+  </div>
+</div>
+
+<script src="tabs.js"></script>
+</body>
+</html>
