@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-tab-service-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/tab-service-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class TabServiceTest {
@@ -86,9 +86,12 @@ class TabServiceTest {
         // then
         TabTree actual = tabService.getTabTree(1L);
 
-        assertThat(actual.getAllTabs().stream()
-                         .filter(tab -> tab.isEqualId(TabId.create(105L)))
-                         .findFirst()).isEmpty();
+        assertThat(
+                actual.getAllTabs()
+                      .stream()
+                      .filter(tab -> tab.isEqualId(TabId.create(105L)))
+                      .findFirst()
+        ).isEmpty();
     }
 
     @Test
