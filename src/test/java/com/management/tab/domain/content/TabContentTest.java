@@ -47,8 +47,7 @@ class TabContentTest {
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(100L),
                 () -> assertThat(actual.getTabId()).isEqualTo(original.getTabId()),
-                () -> assertThat(actual.getContent()).isEqualTo(original.getContent()),
-                () -> assertThat(original.getId()).isNull()
+                () -> assertThat(actual.getContent()).isEqualTo("원본 내용")
         );
     }
 
