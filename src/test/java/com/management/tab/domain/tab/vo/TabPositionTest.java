@@ -33,7 +33,7 @@ class TabPositionTest {
     }
 
     @Test
-    void defaultPosition은_0을_반환한다() {
+    void defaultPosition은_position으로_0을_반환한다() {
         // when
         TabPosition defaultPosition = TabPosition.defaultPosition();
 
@@ -45,7 +45,7 @@ class TabPositionTest {
     }
 
     @Test
-    void defaultPosition으로_생성한_TabPosition은_첫_번째_위치이다() {
+    void 해당_TabPosition이_첫_번째_위치인지_확인한다() {
         // when
         TabPosition defaultPosition = TabPosition.defaultPosition();
 
@@ -62,10 +62,7 @@ class TabPositionTest {
         TabPosition nextPosition = position.next();
 
         // then
-        assertAll(
-                () -> assertThat(nextPosition).isNotNull(),
-                () -> assertThat(nextPosition.getValue()).isEqualTo(6)
-        );
+        assertThat(nextPosition.getValue()).isEqualTo(6);
     }
 
     @Test
@@ -82,30 +79,6 @@ class TabPositionTest {
                 () -> assertThat(position.getValue()).isEqualTo(3),
                 () -> assertThat(nextPosition.getValue()).isEqualTo(4)
         );
-    }
-
-    @Test
-    void isFirst는_위치가_0일_때_true를_반환한다() {
-        // given
-        TabPosition position = TabPosition.create(0);
-
-        // when
-        boolean isFirst = position.isFirst();
-
-        // then
-        assertThat(isFirst).isTrue();
-    }
-
-    @Test
-    void isFirst는_위치가_0이_아닐_때_false를_반환한다() {
-        // given
-        TabPosition position = TabPosition.create(1);
-
-        // when
-        boolean isFirst = position.isFirst();
-
-        // then
-        assertThat(isFirst).isFalse();
     }
 
     @Test

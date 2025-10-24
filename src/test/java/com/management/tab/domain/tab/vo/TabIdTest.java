@@ -16,11 +16,8 @@ class TabIdTest {
 
     @Test
     void 양수_값으로_TabId를_초기화할_수_있다() {
-        // given
-        Long value = 1L;
-
         // when
-        TabId tabId = TabId.create(value);
+        TabId tabId = TabId.create(1L);
 
         // then
         assertAll(
@@ -31,12 +28,9 @@ class TabIdTest {
     }
 
     @Test
-    void null_값은_TabId_초기화에_실패한다() {
-        // given
-        Long value = null;
-
+    void null로_TabId를_초기화할_수_없다() {
         // when & then
-        assertThatThrownBy(() -> TabId.create(value))
+        assertThatThrownBy(() -> TabId.create(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TabId는 양수여야 합니다.");
     }

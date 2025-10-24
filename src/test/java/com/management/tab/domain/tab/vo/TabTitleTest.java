@@ -16,11 +16,8 @@ class TabTitleTest {
 
     @Test
     void 유효한_문자열로_TabTitle을_초기화할_수_있다() {
-        // given
-        String value = "테스트 탭";
-
         // when
-        TabTitle tabTitle = TabTitle.create(value);
+        TabTitle tabTitle = TabTitle.create("테스트 탭");
 
         // then
         assertAll(
