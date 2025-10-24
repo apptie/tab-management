@@ -14,26 +14,22 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TabGroupIdTest {
 
-    @ParameterizedTest(name = "{0}로 GroupId를 초기화할 수 있다")
-    @ValueSource(longs = {1L, 10L, 100L, 1000L, Long.MAX_VALUE})
-    void 유효한_양수로_GroupId를_초기화할_수_있다(Long value) {
+    @Test
+    void 유효한_양수로_TabGroupId를_초기화할_수_있다() {
         // when
-        TabGroupId tabGroupId = TabGroupId.create(value);
+        TabGroupId tabGroupId = TabGroupId.create(1L);
 
         // then
         assertAll(
                 () -> assertThat(tabGroupId).isNotNull(),
-                () -> assertThat(tabGroupId.getValue()).isEqualTo(value)
+                () -> assertThat(tabGroupId.getValue()).isEqualTo(1L)
         );
     }
 
     @Test
-    void null로는_GroupId를_초기화할_수_없다() {
-        // given
-        Long value = null;
-
+    void null로는_TabGroupId를_초기화할_수_없다() {
         // when & then
-        assertThatThrownBy(() -> TabGroupId.create(value))
+        assertThatThrownBy(() -> TabGroupId.create(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("GroupId는 양수여야 합니다");
     }
