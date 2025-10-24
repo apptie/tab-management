@@ -1,6 +1,7 @@
 class TabManager {
     constructor() {
         this.API_BASE_URL = 'http://localhost:8080/api/tabs';
+        this.CONTENT_API_BASE_URL = 'http://localhost:8080/api';
         this.GROUP_API_BASE_URL = 'http://localhost:8080/api/groups';
         this.currentGroupId = this.getGroupIdFromUrl();
         this.draggedTab = null;
@@ -8,6 +9,11 @@ class TabManager {
         this.dropTarget = null;
         this.lockStates = new Map();
         this.allTabs = [];
+
+        // 탭 내용 관련 변수
+        this.currentSelectedTabId = null;
+        this.currentSelectedContentId = null;
+
         this.init();
     }
 
@@ -45,6 +51,7 @@ class TabManager {
     }
 
     setupEventListeners() {
+        // 탭 관련 이벤트 리스너
         document.getElementById('addRootTabBtn').addEventListener('click', () => {
             this.showAddModal(null);
         });
@@ -83,6 +90,11 @@ class TabManager {
                 this.handleGlobalDrop(e);
             }
         });
+
+        document.getElementById('contentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveContent();
+        });
     }
 
     async renderTree() {
@@ -92,9 +104,7 @@ class TabManager {
                 throw new Error('트리 조회 실패');
             }
             const data = await response.json();
-
             const tree = data.tabs;
-
             this.allTabs = this.flattenTree(tree);
 
             const treeContainer = document.getElementById('tabTree');
@@ -178,6 +188,12 @@ class TabManager {
             </div>
         `;
 
+        // 탭 클릭으로 컨텐츠 패널 열기
+        div.querySelector('.tab-info').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.onTabClick(tab.id, tab.title, div);
+        });
+
         const lockBtn = div.querySelector('.btn-lock');
         if (lockBtn) {
             lockBtn.addEventListener('click', (e) => {
@@ -225,30 +241,23 @@ class TabManager {
     toggleLock(tabId) {
         const currentState = this.lockStates.get(tabId);
         this.lockStates.set(tabId, !currentState);
-        console.log(`자물쇠 토글: tabId=${tabId}, newState=${!currentState ? 'locked' : 'unlocked'}`);
         this.renderTree();
     }
 
     handleDragStart(e, tab) {
         e.stopPropagation();
-
         this.draggedTab = {
             ...tab,
             isLocked: this.lockStates.get(tab.id) !== false
         };
-
         const draggedElement = e.target.closest('.tab-item');
         draggedElement.classList.add('dragging');
-
         e.dataTransfer.effectAllowed = 'move';
-
-        console.log('드래그 시작:', tab.title, '(id=' + tab.id + ', locked=' + this.draggedTab.isLocked + ')');
     }
 
     handleDragOver(e, targetTab) {
         e.preventDefault();
         e.stopPropagation();
-
         e.dataTransfer.dropEffect = 'move';
 
         if (!this.draggedTab || this.draggedTab.id === targetTab.id) {
@@ -256,7 +265,6 @@ class TabManager {
         }
 
         this.dropTarget = targetTab;
-
         const tabItem = e.currentTarget;
         const rect = tabItem.getBoundingClientRect();
         const mouseY = e.clientY - rect.top;
@@ -296,10 +304,7 @@ class TabManager {
     }
 
     async handleGlobalDrop(e) {
-        console.log('🌐 전역 drop 발생 - dropTarget:', this.dropTarget?.title, 'indicator:', this.dropIndicator);
-
         if (!this.draggedTab || !this.dropTarget || !this.dropIndicator) {
-            console.log('❌ drop 조건 미충족');
             this.clearDropStyles();
             this.draggedTab = null;
             this.dropTarget = null;
@@ -312,7 +317,6 @@ class TabManager {
 
     async performMove() {
         this.clearDropStyles();
-
         const targetTab = this.dropTarget;
 
         try {
@@ -320,30 +324,22 @@ class TabManager {
             const draggedTabId = this.draggedTab.id;
             const targetTabId = targetTab.id;
 
-            console.log(`이동 시작: locked=${isLocked}, indicator=${this.dropIndicator}`);
-
             if (this.dropIndicator === 'child') {
-                console.log(`"${this.draggedTab.title}"을(를) "${targetTab.title}"의 자식으로 이동`);
                 await this.moveTab(draggedTabId, targetTabId, isLocked);
-
             } else if (this.dropIndicator === 'before' || this.dropIndicator === 'after') {
                 const isAfter = this.dropIndicator === 'after';
-                console.log(`"${this.draggedTab.title}"을(를) "${targetTab.title}"의 ${isAfter ? '뒤' : '앞'}으로 이동`);
 
                 if (this.draggedTab.parentId !== targetTab.parentId) {
-                    console.log('부모 변경: ' + this.draggedTab.parentId + ' → ' + targetTab.parentId);
                     await this.moveTab(draggedTabId, targetTab.parentId, isLocked);
                     await this.renderTree();
                     await new Promise(resolve => setTimeout(resolve, 200));
                     await this.reorderTab(draggedTabId, targetTabId, isAfter);
                 } else {
-                    console.log('같은 부모 내 순서 변경');
                     await this.reorderTab(draggedTabId, targetTabId, isAfter);
                 }
             }
 
             await this.renderTree();
-
         } catch (error) {
             console.error('이동 실패:', error);
             alert(error.message || '탭 이동에 실패했습니다.');
@@ -357,12 +353,10 @@ class TabManager {
 
     handleDragEnd(e) {
         e.stopPropagation();
-
         const draggedElement = e.target.closest('.tab-item');
         if (draggedElement) {
             draggedElement.classList.remove('dragging');
         }
-
         this.clearDropStyles();
         this.draggedTab = null;
         this.dropIndicator = null;
@@ -400,14 +394,12 @@ class TabManager {
             let response;
 
             if (parentId) {
-                console.log('자식 탭 추가:', { parentId, title, url });
                 response = await fetch(`${this.API_BASE_URL}/${parentId}/children`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ title, url })
                 });
             } else {
-                console.log('루트 탭 추가:', { groupId: this.currentGroupId, title, url });
                 response = await fetch(`${this.API_BASE_URL}/groups/${this.currentGroupId}/root`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -419,9 +411,6 @@ class TabManager {
                 const error = await response.text();
                 throw new Error(error || '탭 추가에 실패했습니다.');
             }
-
-            const result = await response.json();
-            console.log('탭 생성 완료:', result);
 
             document.getElementById('addTabModal').classList.remove('show');
             await this.renderTree();
@@ -437,7 +426,7 @@ class TabManager {
         const url = document.getElementById('editTabUrl').value.trim();
 
         if (!title || !url) {
-            alert('제목과 URL을 모두 입력해주세요.');
+            alert('제목과 URL을 모두 입력해주세여.');
             return;
         }
 
@@ -463,8 +452,6 @@ class TabManager {
 
     async deleteTab(tabId, withSubtree) {
         try {
-            console.log(`탭 삭제: tabId=${tabId}, withSubtree=${withSubtree}`);
-
             const response = await fetch(`${this.API_BASE_URL}/${tabId}?withSubtree=${withSubtree}`, {
                 method: 'DELETE'
             });
@@ -476,8 +463,6 @@ class TabManager {
 
             this.lockStates.delete(tabId);
             await this.renderTree();
-
-            console.log('탭 삭제 완료');
         } catch (error) {
             console.error('탭 삭제 실패:', error);
             alert(error.message || '탭 삭제에 실패했습니다.');
@@ -485,11 +470,7 @@ class TabManager {
     }
 
     async moveTab(tabId, newParentId, withSubtree) {
-        console.log(`moveTab 호출: tabId=${tabId}, newParentId=${newParentId}, withSubtree=${withSubtree}`);
-
-        // newParentId가 null이면 루트로 이동
         if (newParentId === null || newParentId === undefined || newParentId === '') {
-            console.log('루트로 이동');
             const response = await fetch(`${this.API_BASE_URL}/${tabId}/move/root?withSubtree=${withSubtree}`, {
                 method: 'PUT'
             });
@@ -499,8 +480,6 @@ class TabManager {
                 throw new Error(error || '탭을 루트로 이동하는데 실패했습니다.');
             }
         } else {
-            // 부모 변경
-            console.log('부모 변경');
             const response = await fetch(`${this.API_BASE_URL}/${tabId}/move`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -515,13 +494,9 @@ class TabManager {
                 throw new Error(error || '탭 이동에 실패했습니다.');
             }
         }
-
-        console.log(`moveTab 완료`);
     }
 
     async reorderTab(tabId, targetTabId, after) {
-        console.log(`reorderTab 호출: tabId=${tabId}, targetTabId=${targetTabId}, after=${after}`);
-
         const response = await fetch(`${this.API_BASE_URL}/${tabId}/reorder`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -535,8 +510,198 @@ class TabManager {
             const error = await response.text();
             throw new Error(error || '순서 변경에 실패했습니다.');
         }
+    }
 
-        console.log('reorderTab 완료');
+    // ===== 탭 내용 관련 메서드 =====
+
+    async onTabClick(tabId, tabTitle, element) {
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+
+        element.classList.add('selected');
+
+        this.currentSelectedTabId = tabId;
+        document.getElementById('contentPanel').classList.remove('hidden');
+
+        await this.loadTabContents(tabId);
+        this.showContentList();
+    }
+
+    async loadTabContents(tabId) {
+        try {
+            const response = await fetch(`${this.CONTENT_API_BASE_URL}/tabs/${tabId}/contents`);
+            if (!response.ok) {
+                console.error('Response status:', response.status);
+                throw new Error('Failed to load contents');
+            }
+
+            const data = await response.json();
+            this.renderContents(data.contents);
+        } catch (error) {
+            console.error('Error loading contents:', error);
+            alert('탭 내용을 불러오는데 실패했습니다.');
+        }
+    }
+
+    renderContents(contents) {
+        this.showContentList(contents);
+    }
+
+    async deleteContentFromList(contentId) {
+        if (!confirm('이 내용을 삭제하시겠습니까?')) return;
+
+        try {
+            await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`, {
+                method: 'DELETE'
+            });
+
+            await this.loadTabContents(this.currentSelectedTabId);
+        } catch (error) {
+            console.error('Error deleting content:', error);
+            alert('삭제에 실패했습니다.');
+        }
+    }
+
+    showContentList(contents = null) {
+        const contentPanel = document.getElementById('contentPanel');
+
+        if (contents === null) {
+            // 다시 로드
+            this.loadTabContents(this.currentSelectedTabId);
+            return;
+        }
+
+        let html = `
+            <div style="padding: 20px; border-bottom: 1px solid #dadce0;">
+                <button class="btn-back-detail" onclick="tabManager.closeContentPanel()">← 탭 그룹으로 돌아가기</button>
+            </div>
+            <div style="flex: 1; overflow-y: auto; padding: 20px;">
+        `;
+
+        if (contents.length === 0) {
+            html += '<div style="text-align: center; padding: 40px; color: #5f6368;">탭 내용이 없습니다.</div>';
+        } else {
+            html += contents.map(content => `
+                <div class="content-item" data-content-id="${content.id}" onclick="tabManager.showContentDetail(${content.id}, \`${this.escapeHtml(content.content)}\`)">
+                    <div class="content-item-text">${this.escapeHtml(content.content)}</div>
+                    <button class="content-item-delete" onclick="event.stopPropagation(); tabManager.deleteContentFromList(${content.id})">×</button>
+                </div>
+            `).join('');
+        }
+
+        html += `
+            </div>
+            <div style="padding: 20px; border-top: 1px solid #dadce0; display: flex; justify-content: flex-end;">
+                <button class="btn-primary" onclick="tabManager.openContentModal('add')">탭 내용 추가</button>
+            </div>
+        `;
+
+        contentPanel.innerHTML = html;
+    }
+
+    showContentDetail(contentId, contentText) {
+        this.currentSelectedContentId = contentId;
+
+        const contentPanel = document.getElementById('contentPanel');
+
+        contentPanel.innerHTML = `
+            <div style="padding: 20px; border-bottom: 1px solid #dadce0;">
+                <button class="btn-back-detail" onclick="tabManager.showContentList()">← 목록으로 돌아가기</button>
+            </div>
+            <div style="flex: 1; overflow-y: auto; padding: 30px;">
+                <div class="content-detail-text">${this.escapeHtml(contentText)}</div>
+            </div>
+            <div style="padding: 20px; border-top: 1px solid #dadce0; display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn-secondary" onclick="tabManager.openContentModal('edit', ${contentId})">수정</button>
+                <button class="btn-danger" onclick="tabManager.deleteContent(${contentId})">삭제</button>
+            </div>
+        `;
+    }
+
+    closeContentPanel() {
+        document.getElementById('contentPanel').classList.add('hidden');
+        document.querySelectorAll('.tab-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        this.currentSelectedTabId = null;
+        this.currentSelectedContentId = null;
+    }
+
+    openContentModal(mode, contentId = null) {
+        const modal = document.getElementById('contentModal');
+        const title = document.getElementById('contentModalTitle');
+        const form = document.getElementById('contentForm');
+
+        form.reset();
+        document.getElementById('contentTabId').value = this.currentSelectedTabId;
+
+        if (mode === 'add') {
+            title.textContent = '탭 내용 추가';
+            document.getElementById('contentId').value = '';
+        } else {
+            title.textContent = '탭 내용 수정';
+            document.getElementById('contentId').value = contentId;
+            this.loadContentForEdit(contentId);
+        }
+
+        modal.classList.add('show');
+    }
+
+    async loadContentForEdit(contentId) {
+        try {
+            const response = await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`);
+            if (!response.ok) throw new Error('Failed to load content');
+
+            const data = await response.json();
+            document.getElementById('contentText').value = data.content;
+        } catch (error) {
+            console.error('Error loading content:', error);
+            alert('내용을 불러오는데 실패했습니다.');
+        }
+    }
+
+    async saveContent() {
+        const contentId = document.getElementById('contentId').value;
+        const tabId = document.getElementById('contentTabId').value;
+        const content = document.getElementById('contentText').value;
+
+        try {
+            if (contentId) {
+                await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content })
+                });
+            } else {
+                await fetch(`${this.CONTENT_API_BASE_URL}/tabs/${tabId}/contents`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content })
+                });
+            }
+
+            document.getElementById('contentModal').classList.remove('show');
+            await this.loadTabContents(this.currentSelectedTabId);
+        } catch (error) {
+            console.error('Error saving content:', error);
+            alert('저장에 실패했습니다.');
+        }
+    }
+
+    async deleteContent(contentId) {
+        if (!confirm('이 내용을 삭제하시겠습니까?')) return;
+
+        try {
+            await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`, {
+                method: 'DELETE'
+            });
+
+            await this.loadTabContents(this.currentSelectedTabId);
+        } catch (error) {
+            console.error('Error deleting content:', error);
+            alert('삭제에 실패했습니다.');
+        }
     }
 
     escapeHtml(text) {
@@ -546,6 +711,8 @@ class TabManager {
     }
 }
 
+let tabManager;
+
 document.addEventListener('DOMContentLoaded', () => {
-    new TabManager();
+    tabManager = new TabManager();
 });

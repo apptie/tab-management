@@ -16,8 +16,16 @@
     <button id="addRootTabBtn" class="btn-primary">+ 최상위 탭 추가</button>
   </header>
 
-  <div id="tabTree" class="tab-tree">
-    <!-- JavaScript로 채워짐 -->
+  <div class="main-layout">
+    <div class="left-panel">
+      <div id="tabTree" class="tab-tree">
+        <!-- JavaScript로 채워짐 -->
+      </div>
+    </div>
+
+    <div id="contentPanel" class="right-panel hidden">
+      <!-- 내용이 JavaScript에 의해 완전히 교체됨 -->
+    </div>
   </div>
 </div>
 
@@ -57,6 +65,23 @@
         <input type="url" id="editTabUrl" required>
       </div>
       <button type="submit" class="btn-primary">수정</button>
+    </form>
+  </div>
+</div>
+
+<!-- 탭 내용 추가/수정 모달 -->
+<div id="contentModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2 id="contentModalTitle">탭 내용 추가</h2>
+    <form id="contentForm">
+      <input type="hidden" id="contentId">
+      <input type="hidden" id="contentTabId">
+      <div class="form-group">
+        <label for="contentText">내용:</label>
+        <textarea id="contentText" rows="10" required></textarea>
+      </div>
+      <button type="submit" class="btn-primary">저장</button>
     </form>
   </div>
 </div>
