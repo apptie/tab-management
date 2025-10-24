@@ -48,10 +48,9 @@ class JdbcTabContentRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId().getValue()).isEqualTo(1L),
-                () -> assertThat(actual.getTabId().getValue()).isEqualTo(1L),
-                () -> assertThat(actual.getContent().getValue()).isEqualTo("Spring 프레임워크 학습 내용")
+                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getTabId()).isEqualTo(1L),
+                () -> assertThat(actual.getContent()).isEqualTo("Spring 프레임워크 학습 내용")
         );
     }
 
@@ -73,10 +72,9 @@ class JdbcTabContentRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getTabId().getValue()).isEqualTo(2L),
-                () -> assertThat(actual.getContent().getValue()).isEqualTo("새로운 컨텐츠")
+                () -> assertThat(actual.getTabId()).isEqualTo(2L),
+                () -> assertThat(actual.getContent()).isEqualTo("새로운 컨텐츠")
         );
     }
 
@@ -87,10 +85,10 @@ class JdbcTabContentRepositoryTest {
         TabContent saved = jdbcTabContentRepository.save(tabContent);
 
         // when
-        TabContent actual = jdbcTabContentRepository.findById(saved.getId().getValue());
+        TabContent actual = jdbcTabContentRepository.findById(saved.getId());
 
         // then
-        assertThat(actual.getContent().getValue()).isEqualTo("저장 테스트");
+        assertThat(actual.getContent()).isEqualTo("저장 테스트");
     }
 
     @Test
@@ -104,7 +102,7 @@ class JdbcTabContentRepositoryTest {
 
         // then
         TabContent actual = jdbcTabContentRepository.findById(1L);
-        assertThat(actual.getContent().getValue()).isEqualTo("수정된 내용");
+        assertThat(actual.getContent()).isEqualTo("수정된 내용");
     }
 
     @Test
@@ -118,7 +116,7 @@ class JdbcTabContentRepositoryTest {
 
         // then
         TabContent actual = jdbcTabContentRepository.findById(1L);
-        assertThat(actual.getId().getValue()).isEqualTo(1L);
+        assertThat(actual.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -126,7 +124,7 @@ class JdbcTabContentRepositoryTest {
         // given
         TabContent tabContent = TabContent.create(TabId.create(2L), "삭제할 컨텐츠");
         TabContent saved = jdbcTabContentRepository.save(tabContent);
-        Long contentId = saved.getId().getValue();
+        Long contentId = saved.getId();
 
         // when
         jdbcTabContentRepository.delete(contentId);

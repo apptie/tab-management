@@ -4,17 +4,16 @@ import com.management.tab.domain.common.AuditTimestamps;
 import com.management.tab.domain.content.vo.Content;
 import com.management.tab.domain.content.vo.TabContentId;
 import com.management.tab.domain.tab.vo.TabId;
+import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
-@Getter
 @EqualsAndHashCode(of = "id")
 public class TabContent {
 
     private final TabContentId id;
     private final TabId tabId;
     private final Content content;
-    private final AuditTimestamps auditTimestamps;
+    private final AuditTimestamps timestamps;
 
     public static TabContent create(TabId tabId, String content) {
         return new TabContent(TabContentId.EMPTY_TAB_CONTENT_ID, tabId, Content.create(content), AuditTimestamps.now());
@@ -24,11 +23,11 @@ public class TabContent {
         return new TabContent(id, tabId, content, auditTimestamps);
     }
 
-    private TabContent(TabContentId id, TabId tabId, Content content, AuditTimestamps auditTimestamps) {
+    private TabContent(TabContentId id, TabId tabId, Content content, AuditTimestamps timestamps) {
         this.id = id;
         this.tabId = tabId;
         this.content = content;
-        this.auditTimestamps = auditTimestamps;
+        this.timestamps = timestamps;
     }
 
     public TabContent withId(TabContentId id){
@@ -36,7 +35,7 @@ public class TabContent {
                 id,
                 this.tabId,
                 this.content,
-                this.auditTimestamps.updateTimestamp()
+                this.timestamps.updateTimestamp()
         );
     }
 
@@ -45,7 +44,27 @@ public class TabContent {
                 this.id,
                 this.tabId,
                 Content.create(content),
-                this.auditTimestamps.updateTimestamp()
+                this.timestamps.updateTimestamp()
         );
+    }
+
+    public Long getId() {
+        return id.getValue();
+    }
+
+    public Long getTabId() {
+        return tabId.getValue();
+    }
+
+    public String getContent() {
+        return content.getValue();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return timestamps.getCreatedAt();
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return timestamps.getUpdatedAt();
     }
 }

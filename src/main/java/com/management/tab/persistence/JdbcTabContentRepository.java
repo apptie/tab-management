@@ -35,10 +35,10 @@ public class JdbcTabContentRepository implements TabContentRepository {
     @Override
     public TabContent save(TabContent tabContent) {
         Long tabContentId = tabContentDao.save(
-                tabContent.getTabId().getValue(),
-                tabContent.getContent().getValue(),
-                tabContent.getAuditTimestamps().getCreatedAt(),
-                tabContent.getAuditTimestamps().getUpdatedAt()
+                tabContent.getTabId(),
+                tabContent.getContent(),
+                tabContent.getCreatedAt(),
+                tabContent.getUpdatedAt()
         );
 
         return tabContent.withId(TabContentId.create(tabContentId));
@@ -46,11 +46,7 @@ public class JdbcTabContentRepository implements TabContentRepository {
 
     @Override
     public void update(TabContent updatedTabContent) {
-        tabContentDao.update(
-                updatedTabContent.getId().getValue(),
-                updatedTabContent.getContent().getValue(),
-                LocalDateTime.now()
-        );
+        tabContentDao.update(updatedTabContent.getId(), updatedTabContent.getContent(), LocalDateTime.now());
     }
 
     @Override

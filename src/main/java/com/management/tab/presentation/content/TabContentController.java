@@ -2,7 +2,6 @@ package com.management.tab.presentation.content;
 
 import com.management.tab.application.TabContentService;
 import com.management.tab.domain.content.TabContent;
-import com.management.tab.domain.content.vo.TabContentId;
 import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.presentation.common.ResponseVoidConst;
 import com.management.tab.presentation.content.dto.request.CreateTabContentRequest;
@@ -50,8 +49,8 @@ public class TabContentController {
             @PathVariable Long tabId,
             @RequestBody CreateTabContentRequest request
     ) {
-        TabContentId tabContentId = tabContentService.createContent(TabId.create(tabId), request.content());
-        CreateTabContentResponse response = new CreateTabContentResponse(tabContentId.getValue());
+        Long tabContentId = tabContentService.createContent(TabId.create(tabId), request.content());
+        CreateTabContentResponse response = new CreateTabContentResponse(tabContentId);
 
         return ResponseEntity.ok(response);
     }
