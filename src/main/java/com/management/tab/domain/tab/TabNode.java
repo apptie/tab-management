@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode(of = "tab")
 public class TabNode {
     
     private final Tab tab;
@@ -67,23 +69,5 @@ public class TabNode {
         if (this.tab.isEqualId(child.tab)) {
             throw new IllegalArgumentException("자기 자신을 자식으로 추가할 수 없습니다.");
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        TabNode tabNode = (TabNode) o;
-        return Objects.equals(tab.getId(), tabNode.tab.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(tab.getId());
     }
 }
