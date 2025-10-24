@@ -17,7 +17,7 @@ public class TabContent {
     private final AuditTimestamps auditTimestamps;
 
     public static TabContent create(TabId tabId, String content) {
-        return new TabContent(null, tabId, Content.create(content), AuditTimestamps.now());
+        return new TabContent(TabContentId.EMPTY_TAB_CONTENT_ID, tabId, Content.create(content), AuditTimestamps.now());
     }
 
     public static TabContent create(TabContentId id, TabId tabId, Content content, AuditTimestamps auditTimestamps) {

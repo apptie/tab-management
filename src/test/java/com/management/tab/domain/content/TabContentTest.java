@@ -28,7 +28,7 @@ class TabContentTest {
         // then
         assertAll(
                 () -> assertThat(tabContent).isNotNull(),
-                () -> assertThat(tabContent.getId()).isNull(),
+                () -> assertThat(tabContent.getId()).isEqualTo(TabContentId.EMPTY_TAB_CONTENT_ID),
                 () -> assertThat(tabContent.getTabId()).isEqualTo(tabId),
                 () -> assertThat(tabContent.getContent()).isEqualTo(Content.create(content)),
                 () -> assertThat(tabContent.getAuditTimestamps()).isNotNull()
@@ -42,15 +42,15 @@ class TabContentTest {
         TabContentId newId = TabContentId.create(100L);
 
         // when
-        TabContent updated = original.withId(newId);
+        TabContent actual = original.withId(newId);
 
         // then
         assertAll(
-                () -> assertThat(updated).isNotNull(),
-                () -> assertThat(updated.getId()).isEqualTo(newId),
-                () -> assertThat(updated.getTabId()).isEqualTo(original.getTabId()),
-                () -> assertThat(updated.getContent()).isEqualTo(original.getContent()),
-                () -> assertThat(original.getId()).isNull()
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId().getValue()).isEqualTo(100L),
+                () -> assertThat(actual.getTabId()).isEqualTo(original.getTabId()),
+                () -> assertThat(actual.getContent()).isEqualTo(original.getContent()),
+                () -> assertThat(original.getId()).isSameAs(TabContentId.EMPTY_TAB_CONTENT_ID)
         );
     }
 
