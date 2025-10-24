@@ -20,6 +20,10 @@ public class TabContent {
         return new TabContent(null, tabId, Content.create(content), AuditTimestamps.now());
     }
 
+    public static TabContent create(TabContentId id, TabId tabId, Content content, AuditTimestamps auditTimestamps) {
+        return new TabContent(id, tabId, content, auditTimestamps);
+    }
+
     private TabContent(TabContentId id, TabId tabId, Content content, AuditTimestamps auditTimestamps) {
         this.id = id;
         this.tabId = tabId;

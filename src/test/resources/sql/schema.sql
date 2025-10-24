@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS tab_contents;
 DROP TABLE IF EXISTS tab_tree_paths;
 DROP TABLE IF EXISTS tabs;
 DROP TABLE IF EXISTS tab_groups;
@@ -39,3 +40,15 @@ CREATE TABLE tab_tree_paths (
 
 CREATE INDEX idx_paths_descendant ON tab_tree_paths(descendant_id);
 CREATE INDEX idx_paths_depth ON tab_tree_paths(depth);
+
+CREATE TABLE tab_contents (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    tab_id BIGINT NOT NULL,
+    content VARCHAR(1000) NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+
+    CONSTRAINT fk_tab_contents_tab FOREIGN KEY (tab_id) REFERENCES tabs(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_tab_contents_tab_id ON tab_contents(tab_id);
