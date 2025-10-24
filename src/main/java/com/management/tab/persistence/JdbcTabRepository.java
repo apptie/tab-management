@@ -96,14 +96,9 @@ public class JdbcTabRepository implements TabRepository {
 
     @Override
     public TabId findParentId(Long tabId) {
-        Long parentId = selectTabDao.findParentId(tabId)
-                                    .orElse(null);
-
-        if (parentId == null) {
-            return null;
-        }
-
-        return TabId.create(parentId);
+        return selectTabDao.findParentId(tabId)
+                           .map(TabId::create)
+                           .orElse(TabId.EMPTY_TAB_ID);
     }
 
     @Override

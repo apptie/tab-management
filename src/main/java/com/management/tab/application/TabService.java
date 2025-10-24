@@ -131,8 +131,8 @@ public class TabService {
     }
 
     private void validateReorderTab(TabId movingParentId, TabId targetParentId) {
-        boolean sameLevel = (movingParentId == null && targetParentId == null)
-                || (movingParentId != null && movingParentId.equals(targetParentId));
+        boolean sameLevel = (movingParentId.isRoot() && targetParentId.isRoot())
+                || (!movingParentId.isRoot() && movingParentId.equals(targetParentId));
 
         if (!sameLevel) {
             throw new IllegalArgumentException("같은 레벨의 탭만 순서를 변경할 수 있습니다");
@@ -140,7 +140,7 @@ public class TabService {
     }
 
     private List<Tab> findMovingSiblings(TabId movingParentId, Tab movingTab) {
-        if (movingParentId == null) {
+        if (movingParentId.isRoot()) {
            return tabRepository.findRootSiblings()
                                .stream()
                                .filter(tab -> !tab.isEqualId(movingTab))

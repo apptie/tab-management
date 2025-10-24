@@ -125,7 +125,7 @@ class JdbcTabRepositoryTest {
     }
 
     @Test
-    void 루트_탭의_부모_ID를_조회하면_null을_반환한다() {
+    void 루트_탭의_부모_ID를_조회하면_빈_TabId를_반환한다() {
         // given
         Long rootTabId = 100L;
 
@@ -133,7 +133,7 @@ class JdbcTabRepositoryTest {
         TabId actual = jdbcTabRepository.findParentId(rootTabId);
 
         // then
-        assertThat(actual).isNull();
+        assertThat(actual).isSameAs(TabId.EMPTY_TAB_ID);
     }
 
     @Test
