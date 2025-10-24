@@ -77,7 +77,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -113,7 +113,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -133,7 +133,7 @@ class TabNodeTest {
         // given
         Tab tab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -153,7 +153,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -208,7 +208,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -242,7 +242,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -296,7 +296,7 @@ class TabNodeTest {
         // given
         Tab tab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -317,7 +317,7 @@ class TabNodeTest {
         // given
         Tab tab1 = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -348,7 +348,7 @@ class TabNodeTest {
         // given
         Tab tab1 = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -357,7 +357,7 @@ class TabNodeTest {
         );
         Tab tab2 = new Tab(
                 TabId.create(2L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -379,7 +379,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -413,7 +413,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),

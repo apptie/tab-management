@@ -20,22 +20,20 @@ class TabBuilderTest {
 
     @Test
     void 루트_탭을_초기화할_수_있다() {
-        // given
-        Long groupId = 1L;
-        String title = "루트 탭";
-        String url = "https://example.com";
-        TabPosition position = TabPosition.create(0);
-
         // when
-        Tab actual = TabBuilder.createRoot(groupId, title, url, position)
+        Tab actual = TabBuilder.createRoot(
+                                       1L,
+                                       "루트 탭",
+                                       "https://example.com",
+                                       TabPosition.create(0)
+                               )
                                .build();
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(groupId),
-                () -> assertThat(actual.getTitle()).isEqualTo(title),
-                () -> assertThat(actual.getUrl()).isEqualTo(url),
+                () -> assertThat(actual.getTabGroupId()).isEqualTo(1L),
+                () -> assertThat(actual.getTitle()).isEqualTo("루트 탭"),
+                () -> assertThat(actual.getUrl()).isEqualTo("https://example.com"),
                 () -> assertThat(actual.getPosition()).isZero(),
                 () -> assertThat(actual.parentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.isRoot()).isTrue()
@@ -45,29 +43,26 @@ class TabBuilderTest {
     @Test
     void 자식_탭을_초기화할_수_있다() {
         // given
-        TabGroupId tabGroupId = TabGroupId.create(1L);
-        TabId parentId = null;
-        TabTitle title = TabTitle.create("부모 탭");
-        TabUrl url = TabUrl.create("https://parent.com");
-        TabPosition position = TabPosition.create(0);
-        AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab parentTab = new Tab(TabId.create(10L), parentId, tabGroupId, title, url, position, timestamps);
-
-        String childTitle = "자식 탭";
-        String childUrl = "https://child.com";
-        TabPosition childPosition = TabPosition.create(0);
+        Tab parentTab = new Tab(
+                TabId.create(10L),
+                null,
+                TabGroupId.create(1L),
+                TabTitle.create("부모 탭"),
+                TabUrl.create("https://parent.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
 
         // when
-        Tab actual = TabBuilder.createChild(parentTab, childTitle, childUrl, childPosition)
+        Tab actual = TabBuilder.createChild(parentTab, "자식 탭", "https://child.com", TabPosition.create(0))
                                .build();
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.tabGroupId()).isEqualTo(tabGroupId),
+                () -> assertThat(actual.tabGroupId()).isEqualTo(TabGroupId.create(1L)),
                 () -> assertThat(actual.getParentId()).isEqualTo(10L),
-                () -> assertThat(actual.getTitle()).isEqualTo(childTitle),
-                () -> assertThat(actual.getUrl()).isEqualTo(childUrl),
+                () -> assertThat(actual.getTitle()).isEqualTo("자식 탭"),
+                () -> assertThat(actual.getUrl()).isEqualTo("https://child.com"),
                 () -> assertThat(actual.getPosition()).isZero(),
                 () -> assertThat(actual.isRoot()).isFalse()
         );
@@ -141,14 +136,8 @@ class TabBuilderTest {
 
     @Test
     void 루트_탭은_부모_ID_없이_초기화된다() {
-        // given
-        Long groupId = 1L;
-        String title = "루트 탭";
-        String url = "https://root.com";
-        TabPosition position = TabPosition.create(0);
-
         // when
-        Tab actual = TabBuilder.createRoot(groupId, title, url, position)
+        Tab actual = TabBuilder.createRoot(1L, "루트 탭", "https://root.com", TabPosition.create(0))
                                .build();
 
         // then
