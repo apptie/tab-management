@@ -1,7 +1,6 @@
 package com.management.tab.application;
 
 import com.management.tab.domain.group.TabGroup;
-import com.management.tab.domain.group.vo.TabGroupId;
 import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -42,14 +41,14 @@ class TabGroupServiceTest {
         // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getName().getValue()).isEqualTo("테스트 그룹1")
+                () -> assertThat(actual.getName()).isEqualTo("테스트 그룹1")
         );
     }
 
     @Test
     void 새로운_탭_그룹을_초기화한다() {
         // when
-        TabGroupId actual = tabGroupService.createGroup("새로운 그룹");
+        Long actual = tabGroupService.createGroup("새로운 그룹");
 
         // then
         assertThat(actual).isNotNull();
@@ -63,7 +62,7 @@ class TabGroupServiceTest {
         // then
         TabGroup actual = tabGroupService.getGroup(1L);
 
-        assertThat(actual.getName().getValue()).isEqualTo("변경된 이름");
+        assertThat(actual.getName()).isEqualTo("변경된 이름");
     }
 
     @Test
@@ -76,9 +75,9 @@ class TabGroupServiceTest {
 
         assertAll(
                 () -> assertThat(actual).hasSize(1),
-                () -> assertThat(actual).extracting("id")
-                                        .extracting("value")
-                                        .doesNotContain(2L)
+                () -> assertThat(actual)
+                        .extracting(TabGroup::getId)
+                        .doesNotContain(2L)
         );
     }
 

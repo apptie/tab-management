@@ -1,7 +1,6 @@
 package com.management.tab.application;
 
 import com.management.tab.domain.group.TabGroup;
-import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.domain.repository.TabGroupRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class TabGroupService {
     }
 
     @Transactional
-    public TabGroupId createGroup(String name) {
+    public Long createGroup(String name) {
         TabGroup tabGroup = TabGroup.create(name);
 
         return tabGroupRepository.save(tabGroup)
