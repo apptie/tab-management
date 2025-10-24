@@ -34,7 +34,7 @@ public record TabWithDepthDto(
         }
 
         Tab tab = builder.build();
-        return TabNode.create(tab, this.depth, tab.parentId());
+        return TabNode.create(tab, this.depth);
     }
 
     public boolean hasParent() {

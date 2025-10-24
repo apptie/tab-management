@@ -111,7 +111,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         rootNode.addChild(childNode);
 
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
@@ -146,7 +146,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
 
         Tab grandchildTab = new Tab(
                 TabId.create(3L),
@@ -157,7 +157,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode grandchildNode = TabNode.create(grandchildTab, 2, TabId.create(2L));
+        TabNode grandchildNode = TabNode.create(grandchildTab, 2);
 
         childNode.addChild(grandchildNode);
         rootNode.addChild(childNode);
@@ -202,7 +202,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode deepNode = TabNode.create(deepTab, 9, TabId.create(99L));
+        TabNode deepNode = TabNode.create(deepTab, 9);
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(deepNode)));
 
         // when & then
@@ -266,7 +266,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         rootNode.addChild(childNode);
 
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
@@ -289,7 +289,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode deepNode = TabNode.create(deepTab, 9, TabId.create(99L));
+        TabNode deepNode = TabNode.create(deepTab, 9);
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(deepNode)));
 
         // when & then
@@ -332,7 +332,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         rootNode.addChild(childNode);
 
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
@@ -353,7 +353,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode deepParentNode = TabNode.create(deepParentTab, 8, TabId.create(99L));
+        TabNode deepParentNode = TabNode.create(deepParentTab, 8);
 
         Tab movingTab = new Tab(
                 TabId.create(2L),
@@ -375,7 +375,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childOfMovingNode = TabNode.create(childOfMovingTab, 1, TabId.create(2L));
+        TabNode childOfMovingNode = TabNode.create(childOfMovingTab, 1);
         movingNode.addChild(childOfMovingNode);
 
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(deepParentNode, movingNode)));
@@ -451,8 +451,8 @@ class TabTreeTest {
                 TabPosition.create(1),
                 AuditTimestamps.now()
         );
-        TabNode childNode1 = TabNode.create(childTab1, 1, TabId.create(1L));
-        TabNode childNode2 = TabNode.create(childTab2, 1, TabId.create(1L));
+        TabNode childNode1 = TabNode.create(childTab1, 1);
+        TabNode childNode2 = TabNode.create(childTab2, 1);
         rootNode.addChild(childNode1);
         rootNode.addChild(childNode2);
 
@@ -500,7 +500,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         rootNode.addChild(childNode);
 
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
@@ -535,7 +535,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         rootNode.addChild(childNode);
 
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
@@ -570,7 +570,7 @@ class TabTreeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         rootNode.addChild(childNode);
 
         TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
@@ -681,8 +681,8 @@ class TabTreeTest {
                 TabPosition.create(1),
                 AuditTimestamps.now()
         );
-        TabNode childNode1 = TabNode.create(childTab1, 1, TabId.create(1L));
-        TabNode childNode2 = TabNode.create(childTab2, 1, TabId.create(1L));
+        TabNode childNode1 = TabNode.create(childTab1, 1);
+        TabNode childNode2 = TabNode.create(childTab2, 1);
         rootNode.addChild(childNode1);
         rootNode.addChild(childNode2);
 

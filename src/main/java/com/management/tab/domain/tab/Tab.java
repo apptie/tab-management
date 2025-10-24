@@ -158,6 +158,4 @@ public class Tab {
     public LocalDateTime getUpdatedAt() {
         return timestamps.getUpdatedAt();
     }
-
-
 }

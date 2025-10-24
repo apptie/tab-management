@@ -196,8 +196,8 @@ public class TabTree {
             return rootTabNodes;
         }
 
-        return findNode(node.getParentId()).map(TabNode::getChildren)
-                                           .orElse(Collections.emptyList());
+        return findNode(node.parentId()).map(TabNode::getChildren)
+                                        .orElse(Collections.emptyList());
     }
 
     private TabPosition calculateNextChildPosition(TabNode parentNode) {

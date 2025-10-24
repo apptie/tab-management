@@ -14,22 +14,20 @@ public class TabNode {
     
     private final Tab tab;
     private final int depth;
-    private final TabId parentId;
     private final List<TabNode> children;
 
-    private TabNode(Tab tab, int depth, TabId parentId, List<TabNode> children) {
-        this.tab = Objects.requireNonNull(tab, "Tab은 필수입니다");
-        this.depth = depth;
-        this.parentId = parentId;
-        this.children = new ArrayList<>(children);
-    }
-
-    public static TabNode create(Tab tab, Integer depth, TabId parentId) {
-        return new TabNode(tab, depth, parentId, new ArrayList<>());
+    public static TabNode create(Tab tab, Integer depth) {
+        return new TabNode(tab, depth, new ArrayList<>());
     }
 
     public static TabNode createRoot(Tab tab) {
-        return new TabNode(tab, 0, TabId.EMPTY_TAB_ID, new ArrayList<>());
+        return new TabNode(tab, 0, new ArrayList<>());
+    }
+
+    private TabNode(Tab tab, int depth, List<TabNode> children) {
+        this.tab = Objects.requireNonNull(tab, "Tab은 필수입니다");
+        this.depth = depth;
+        this.children = new ArrayList<>(children);
     }
 
     public void addChild(TabNode child) {
@@ -63,6 +61,10 @@ public class TabNode {
 
     public int getPosition() {
         return tab.getPosition();
+    }
+
+    public TabId parentId() {
+        return tab.parentId();
     }
 
     private void validateChildAddition(TabNode child) {
