@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-tab-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/dao/insert-tab-dao-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class InsertTabDaoTest {
@@ -27,19 +27,17 @@ class InsertTabDaoTest {
     @Autowired
     SelectTabDao selectTabDao;
 
-    private static final Long TEST_PARENT_ID = 100L;
-
     @Test
     void 루트_탭을_저장한다() {
-        // given
-        Long groupId = 1L;
-        String title = "테스트 탭";
-        String url = "http://test.com";
-        int position = 0;
-        LocalDateTime now = LocalDateTime.now();
-
         // when
-        Long tabId = insertTabDao.saveRootTab(groupId, title, url, position, now, now);
+        Long tabId = insertTabDao.saveRootTab(
+                1L,
+                "테스트 탭",
+                "http://test.com",
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
         assertThat(selectTabDao.findById(tabId)).isPresent();
@@ -47,12 +45,15 @@ class InsertTabDaoTest {
 
     @Test
     void 루트_탭의_parent_id는_null이다() {
-        // given
-        Long groupId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-
         // when
-        Long tabId = insertTabDao.saveRootTab(groupId, "루트 탭", "http://test.com", 0, now, now);
+        Long tabId = insertTabDao.saveRootTab(
+                1L,
+                "루트 탭",
+                "http://test.com",
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
         assertThat(selectTabDao.findParentId(tabId)).isEmpty();
@@ -60,12 +61,16 @@ class InsertTabDaoTest {
 
     @Test
     void 자식_탭을_저장한다() {
-        // given
-        Long groupId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-
         // when
-        Long childId = insertTabDao.saveChildTab(groupId, "자식", "http://child.com", TEST_PARENT_ID, 0, now, now);
+        Long childId = insertTabDao.saveChildTab(
+                1L,
+                "자식",
+                "http://child.com",
+                100L,
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
         assertThat(selectTabDao.findById(childId)).isPresent();
@@ -73,44 +78,76 @@ class InsertTabDaoTest {
 
     @Test
     void 자식_탭의_parent_id가_설정된다() {
-        // given
-        Long groupId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-
         // when
-        Long childId = insertTabDao.saveChildTab(groupId, "자식", "http://child.com", TEST_PARENT_ID, 0, now, now);
+        Long childId = insertTabDao.saveChildTab(
+                1L,
+                "자식",
+                "http://child.com",
+                100L,
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
-        assertThat(selectTabDao.findParentId(childId)).contains(TEST_PARENT_ID);
+        assertThat(selectTabDao.findParentId(childId)).contains(100L);
     }
 
     @Test
     void 같은_부모의_여러_자식을_저장할_수_있다() {
-        // given
-        Long groupId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-
         // when
-        insertTabDao.saveChildTab(groupId, "자식1", "http://child1.com", TEST_PARENT_ID, 0, now, now);
-        insertTabDao.saveChildTab(groupId, "자식2", "http://child2.com", TEST_PARENT_ID, 1, now, now);
-        insertTabDao.saveChildTab(groupId, "자식3", "http://child3.com", TEST_PARENT_ID, 2, now, now);
+        insertTabDao.saveChildTab(
+                1L,
+                "자식1",
+                "http://child1.com",
+                100L,
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        insertTabDao.saveChildTab(
+                1L,
+                "자식2",
+                "http://child2.com",
+                100L,
+                1,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        insertTabDao.saveChildTab(
+                1L,
+                "자식3",
+                "http://child3.com",
+                100L,
+                2,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
-        List<TabDto> actual = selectTabDao.findSiblings(TEST_PARENT_ID);
+        List<TabDto> actual = selectTabDao.findSiblings(100L);
         assertThat(actual).hasSize(3);
     }
 
     @Test
     void 다른_그룹에_같은_제목의_탭을_저장할_수_있다() {
-        // given
-        Long groupId1 = 1L;
-        Long groupId2 = 2L;
-        String sameTitle = "동일한 제목";
-        LocalDateTime now = LocalDateTime.now();
-
         // when
-        Long id1 = insertTabDao.saveRootTab(groupId1, sameTitle, "http://test.com", 0, now, now);
-        Long id2 = insertTabDao.saveRootTab(groupId2, sameTitle, "http://test.com", 0, now, now);
+        Long id1 = insertTabDao.saveRootTab(
+                1L,
+                "동일한 제목",
+                "http://test.com",
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        Long id2 = insertTabDao.saveRootTab(
+                2L,
+                "동일한 제목",
+                "http://test.com",
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
         assertAll(
@@ -122,44 +159,80 @@ class InsertTabDaoTest {
 
     @Test
     void 트리_구조로_탭을_조회할_수_있다() {
-        // given
-        Long groupId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-
-        Long rootId = insertTabDao.saveRootTab(groupId, "루트", "http://root.com", 0, now, now);
-        Long childId = insertTabDao.saveChildTab(groupId, "자식", "http://child.com", rootId, 0, now, now);
-        insertTabDao.saveChildTab(groupId, "손자", "http://grandchild.com", childId, 0, now, now);
-
         // when
-        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(groupId);
+        Long rootId = insertTabDao.saveRootTab(
+                1L,
+                "루트",
+                "http://root.com",
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        Long childId = insertTabDao.saveChildTab(
+                1L,
+                "자식",
+                "http://child.com",
+                rootId,
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        insertTabDao.saveChildTab(
+                1L,
+                "손자",
+                "http://grandchild.com",
+                childId,
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(1L);
 
         // then
         assertAll(
                 () -> assertThat(actual).hasSize(4),
-                () -> assertThat(actual.stream().anyMatch(t -> t.depth() == 0)).isTrue(),
-                () -> assertThat(actual.stream().anyMatch(t -> t.depth() == 1)).isTrue(),
-                () -> assertThat(actual.stream().anyMatch(t -> t.depth() == 2)).isTrue()
+                () -> assertThat(actual).anyMatch(t -> t.depth() == 0),
+                () -> assertThat(actual).anyMatch(t -> t.depth() == 1),
+                () -> assertThat(actual).anyMatch(t -> t.depth() == 2)
         );
     }
 
     @Test
     void position이_올바르게_저장된다() {
-        // given
-        Long groupId = 1L;
-        LocalDateTime now = LocalDateTime.now();
-
         // when
-        insertTabDao.saveRootTab(groupId, "첫번째", "http://1.com", 0, now, now);
-        insertTabDao.saveRootTab(groupId, "두번째", "http://2.com", 1, now, now);
-        insertTabDao.saveRootTab(groupId, "세번째", "http://3.com", 2, now, now);
+        insertTabDao.saveRootTab(
+                1L,
+                "첫번째",
+                "http://1.com",
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        insertTabDao.saveRootTab(
+                1L,
+                "두번째",
+                "http://2.com",
+                1,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+        insertTabDao.saveRootTab(
+                1L,
+                "세번째",
+                "http://3.com",
+                2,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
         List<TabDto> actual = selectTabDao.findRootSiblings();
         assertAll(
                 () -> assertThat(actual).hasSize(4),
-                () -> assertThat(actual.stream().filter(t -> t.position() == 0).count()).isEqualTo(2),
-                () -> assertThat(actual.stream().anyMatch(t -> t.position() == 1)).isTrue(),
-                () -> assertThat(actual.stream().anyMatch(t -> t.position() == 2)).isTrue()
+                () -> assertThat(actual).filteredOn(t -> t.position() == 0).hasSize(2),
+                () -> assertThat(actual).anyMatch(t -> t.position() == 1),
+                () -> assertThat(actual).anyMatch(t -> t.position() == 2)
         );
     }
 }
