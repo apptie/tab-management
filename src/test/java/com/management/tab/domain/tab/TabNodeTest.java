@@ -407,4 +407,25 @@ class TabNodeTest {
                 () -> assertThat(node1).hasSameHashCodeAs(node2)
         );
     }
+
+    @Test
+    void 탭_노드의_자식이_있는지_확인한다() {
+        // given
+        Tab parentTab = new Tab(
+                TabId.create(1L),
+                null,
+                TabGroupId.create(1L),
+                TabTitle.create("테스트 탭"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        TabNode node = TabNode.createRoot(parentTab);
+
+        // when
+        boolean actual = node.isLeaf();
+
+        // then
+        assertThat(actual).isTrue();
+    }
 }

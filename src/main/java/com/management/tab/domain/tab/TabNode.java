@@ -45,8 +45,12 @@ public class TabNode {
         return Collections.unmodifiableList(children);
     }
 
+    public boolean isLeaf() {
+        return children.isEmpty();
+    }
+
     public boolean hasChildren() {
-        return !children.isEmpty();
+        return !isLeaf();
     }
 
     public boolean isRoot() {
@@ -58,7 +62,8 @@ public class TabNode {
     }
 
     public int getPosition() {
-        return tab.getPosition().getValue();
+        return tab.getPosition()
+                  .getValue();
     }
 
     private void validateChildAddition(TabNode child) {
