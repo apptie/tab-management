@@ -3,7 +3,6 @@ package com.management.tab.persistence;
 import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.domain.repository.TabRepository;
 import com.management.tab.domain.tab.Tab;
-import com.management.tab.domain.tab.TabBuilder;
 import com.management.tab.domain.tab.TabNode;
 import com.management.tab.domain.tab.TabTree;
 import com.management.tab.domain.tab.vo.TabId;
@@ -41,8 +40,7 @@ public class JdbcTabRepository implements TabRepository {
                 rootTab.getUpdatedAt()
         );
 
-        return TabBuilder.createWithAssignedId(rootTabId, rootTab)
-                         .build();
+        return rootTab.updateAssignedId(rootTabId);
     }
 
     @Override
@@ -57,8 +55,7 @@ public class JdbcTabRepository implements TabRepository {
                 childTab.getUpdatedAt()
         );
 
-        return TabBuilder.createWithAssignedId(childTabId, childTab)
-                         .build();
+        return childTab.updateAssignedId(childTabId);
     }
 
     @Override

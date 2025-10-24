@@ -74,36 +74,6 @@ class TabBuilderTest {
     }
 
     @Test
-    void 기존_탭에서_ID를_할당한_새로운_탭을_초기화할_수_있다() {
-        // given
-        TabId tabId = TabId.create(1L);
-        TabId parentId = TabId.create(10L);
-        TabGroupId tabGroupId = TabGroupId.create(100L);
-        TabTitle title = TabTitle.create("기존 탭");
-        TabUrl url = TabUrl.create("https://existing.com");
-        TabPosition position = TabPosition.create(0);
-        AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab existingTab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
-
-        Long newTabId = 999L;
-
-        // when
-        Tab actual = TabBuilder.createWithAssignedId(newTabId, existingTab).build();
-
-        // then
-        assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId().getValue()).isEqualTo(newTabId),
-                () -> assertThat(actual.getParentId()).isEqualTo(existingTab.getParentId()),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(existingTab.getTabGroupId()),
-                () -> assertThat(actual.getTitle()).isEqualTo(existingTab.getTitle()),
-                () -> assertThat(actual.getUrl()).isEqualTo(existingTab.getUrl()),
-                () -> assertThat(actual.getPosition()).isEqualTo(existingTab.getPosition()),
-                () -> assertThat(actual.getTimestamps()).isEqualTo(existingTab.getTimestamps())
-        );
-    }
-
-    @Test
     void position을_설정하지_않으면_기본값이_설정된다() {
         // when
         Tab actual = TabBuilder.builder()

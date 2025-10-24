@@ -41,6 +41,18 @@ public class Tab {
         this.timestamps = timestamps;
     }
 
+    public Tab updateAssignedId(Long tabId) {
+        return new Tab(
+                TabId.create(tabId),
+                this.parentId,
+                this.tabGroupId,
+                this.title,
+                this.url,
+                this.position,
+                this.timestamps
+        );
+    }
+
     public Tab updateInfo(String newTitle, String newUrl) {
         return new Tab(
                 this.id,

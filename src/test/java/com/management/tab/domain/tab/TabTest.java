@@ -336,4 +336,31 @@ class TabTest {
         // then
         assertThat(actual).isTrue();
     }
+
+    @Test
+    void 기존_탭에서_ID를_업데이트_할_수_있다() {
+        // given
+        TabId parentId = TabId.create(10L);
+        TabGroupId tabGroupId = TabGroupId.create(100L);
+        TabTitle title = TabTitle.create("테스트 탭");
+        TabUrl url = TabUrl.create("https://example.com");
+        TabPosition position = TabPosition.create(0);
+        AuditTimestamps timestamps = AuditTimestamps.now();
+        Tab tab = new Tab(null, parentId, tabGroupId, title, url, position, timestamps);
+
+        // when
+        Tab actual = tab.updateAssignedId(1L);
+
+        // then
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId().getValue()).isEqualTo(1L),
+                () -> assertThat(actual.getParentId()).isEqualTo(parentId),
+                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
+                () -> assertThat(actual.getTitle().getValue()).isEqualTo("테스트 탭"),
+                () -> assertThat(actual.getUrl().getValue()).isEqualTo("https://example.com"),
+                () -> assertThat(actual.getPosition()).isEqualTo(position),
+                () -> assertThat(actual.getUpdatedAt()).isEqualTo(timestamps.getUpdatedAt())
+        );
+    }
 }

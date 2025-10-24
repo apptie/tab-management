@@ -43,20 +43,6 @@ public class TabBuilder {
                       .url(url);
     }
 
-    public static TabBuilder createWithAssignedId(Long tabId, Tab tab) {
-        TabBuilder builder = new TabBuilder();
-
-        builder.id = TabId.create(tabId);
-        builder.parentId = tab.getParentId();
-        builder.tabGroupId = tab.getTabGroupId();
-        builder.title = tab.getTitle();
-        builder.url = tab.getUrl();
-        builder.position = tab.getPosition();
-        builder.timestamps = tab.getTimestamps();
-
-        return builder;
-    }
-
     private TabBuilder() {
     }
 
