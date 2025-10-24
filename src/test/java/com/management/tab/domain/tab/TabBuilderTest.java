@@ -33,11 +33,11 @@ class TabBuilderTest {
         // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getTabGroupId().getValue()).isEqualTo(groupId),
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo(title),
-                () -> assertThat(actual.getUrl().getValue()).isEqualTo(url),
-                () -> assertThat(actual.getPosition().getValue()).isZero(),
-                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
+                () -> assertThat(actual.getTabGroupId()).isEqualTo(groupId),
+                () -> assertThat(actual.getTitle()).isEqualTo(title),
+                () -> assertThat(actual.getUrl()).isEqualTo(url),
+                () -> assertThat(actual.getPosition()).isZero(),
+                () -> assertThat(actual.parentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.isRoot()).isTrue()
         );
     }
@@ -64,11 +64,11 @@ class TabBuilderTest {
         // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
-                () -> assertThat(actual.getParentId().getValue()).isEqualTo(10L),
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo(childTitle),
-                () -> assertThat(actual.getUrl().getValue()).isEqualTo(childUrl),
-                () -> assertThat(actual.getPosition().getValue()).isZero(),
+                () -> assertThat(actual.tabGroupId()).isEqualTo(tabGroupId),
+                () -> assertThat(actual.getParentId()).isEqualTo(10L),
+                () -> assertThat(actual.getTitle()).isEqualTo(childTitle),
+                () -> assertThat(actual.getUrl()).isEqualTo(childUrl),
+                () -> assertThat(actual.getPosition()).isZero(),
                 () -> assertThat(actual.isRoot()).isFalse()
         );
     }
@@ -83,7 +83,7 @@ class TabBuilderTest {
                                .build();
 
         // then
-        assertThat(actual.getPosition()).isEqualTo(TabPosition.defaultPosition());
+        assertThat(actual.position()).isEqualTo(TabPosition.defaultPosition());
     }
 
     @Test
@@ -153,7 +153,7 @@ class TabBuilderTest {
 
         // then
         assertAll(
-                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
+                () -> assertThat(actual.parentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.isRoot()).isTrue()
         );
     }

@@ -35,8 +35,8 @@ public class TabBuilder {
     public static TabBuilder createChild(Tab parentTab, String title, String url, TabPosition position) {
         TabBuilder builder = new TabBuilder();
 
-        builder.tabGroupId = parentTab.getTabGroupId();
-        builder.parentId = parentTab.getId();
+        builder.tabGroupId = parentTab.tabGroupId();
+        builder.parentId = parentTab.id();
         builder.position = position;
 
         return builder.title(title)

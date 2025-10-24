@@ -40,10 +40,10 @@ class JdbcTabRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo("새 루트 탭"),
-                () -> assertThat(actual.getUrl().getValue()).isEqualTo("https://new-root.com"),
-                () -> assertThat(actual.getPosition().getValue()).isEqualTo(10),
+                () -> assertThat(actual.id()).isNotNull(),
+                () -> assertThat(actual.getTitle()).isEqualTo("새 루트 탭"),
+                () -> assertThat(actual.getUrl()).isEqualTo("https://new-root.com"),
+                () -> assertThat(actual.getPosition()).isEqualTo(10),
                 () -> assertThat(actual.isRoot()).isTrue()
         );
     }
@@ -62,9 +62,9 @@ class JdbcTabRepositoryTest {
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo("새 자식 탭"),
-                () -> assertThat(actual.getUrl().getValue()).isEqualTo("https://new-child.com"),
-                () -> assertThat(actual.getParentId().getValue()).isEqualTo(100L),
+                () -> assertThat(actual.getTitle()).isEqualTo("새 자식 탭"),
+                () -> assertThat(actual.getUrl()).isEqualTo("https://new-child.com"),
+                () -> assertThat(actual.getParentId()).isEqualTo(100L),
                 () -> assertThat(actual.isRoot()).isFalse()
         );
     }
@@ -80,8 +80,8 @@ class JdbcTabRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId().getValue()).isEqualTo(100L),
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo("루트_탭1")
+                () -> assertThat(actual.getId()).isEqualTo(100L),
+                () -> assertThat(actual.getTitle()).isEqualTo("루트_탭1")
         );
     }
 
@@ -170,7 +170,7 @@ class JdbcTabRepositoryTest {
 
         // then
         assertThat(actual).isNotEmpty()
-                          .allMatch(tab -> tab.getParentId().getValue().equals(100L));
+                          .allMatch(tab -> tab.getParentId().equals(100L));
     }
 
     @Test
@@ -204,7 +204,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(103L);
-        assertThat(actual.getParentId().getValue()).isEqualTo(102L);
+        assertThat(actual.getParentId()).isEqualTo(102L);
     }
 
     @Test
@@ -218,7 +218,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(101L);
-        assertThat(actual.getParentId().getValue()).isEqualTo(102L);
+        assertThat(actual.getParentId()).isEqualTo(102L);
     }
 
     @Test
@@ -235,7 +235,7 @@ class JdbcTabRepositoryTest {
         Tab actual = jdbcTabRepository.findTab(101L);
 
         assertAll(
-                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
+                () -> assertThat(actual.parentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.isRoot()).isTrue()
         );
     }
@@ -251,7 +251,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(101L);
-        assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID);
+        assertThat(actual.parentId()).isSameAs(TabId.EMPTY_TAB_ID);
     }
 
     @Test
@@ -265,7 +265,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(101L);
-        assertThat(actual.getPosition().getValue()).isEqualTo(10);
+        assertThat(actual.getPosition()).isEqualTo(10);
     }
 
     @Test
@@ -280,8 +280,8 @@ class JdbcTabRepositoryTest {
         // then
         Tab actual = jdbcTabRepository.findTab(100L);
         assertAll(
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo("수정된 제목"),
-                () -> assertThat(actual.getUrl().getValue()).isEqualTo("https://updated.com")
+                () -> assertThat(actual.getTitle()).isEqualTo("수정된 제목"),
+                () -> assertThat(actual.getUrl()).isEqualTo("https://updated.com")
         );
     }
 

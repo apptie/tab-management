@@ -87,7 +87,7 @@ class TabServiceTest {
         TabTree actual = tabService.getTabTree(1L);
 
         assertThat(actual.getAllTabs().stream()
-                         .filter(tab -> tab.getId().equals(TabId.create(105L)))
+                         .filter(tab -> tab.isEqualId(TabId.create(105L)))
                          .findFirst()).isEmpty();
     }
 
@@ -117,15 +117,15 @@ class TabServiceTest {
         assertAll(
                 () -> assertThat(actual.getAllTabs()
                                        .stream()
-                                       .filter(tab -> tab.getId().equals(TabId.create(101L)))
+                                       .filter(tab -> tab.isEqualId(TabId.create(101L)))
                                        .findFirst()).isEmpty(),
                 () -> assertThat(actual.getAllTabs()
                                        .stream()
-                                       .filter(tab -> tab.getId().equals(TabId.create(103L)))
+                                       .filter(tab -> tab.isEqualId(TabId.create(103L)))
                                        .findFirst()).isEmpty(),
                 () -> assertThat(actual.getAllTabs()
                                        .stream()
-                                       .filter(tab -> tab.getId().equals(TabId.create(104L)))
+                                       .filter(tab -> tab.isEqualId(TabId.create(104L)))
                                        .findFirst()).isEmpty()
         );
     }
@@ -141,10 +141,10 @@ class TabServiceTest {
         assertThat(
                 actual.getAllTabs()
                       .stream()
-                      .filter(tab -> tab.getId().equals(TabId.create(101L)))
+                      .filter(tab -> tab.isEqualId(TabId.create(101L)))
                       .findFirst()
         ).isPresent()
-         .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isSameAs(TabId.EMPTY_TAB_ID));
+         .hasValueSatisfying(tab -> assertThat(tab.parentId()).isSameAs(TabId.EMPTY_TAB_ID));
     }
 
     @Test
@@ -158,10 +158,10 @@ class TabServiceTest {
         assertThat(
                 actual.getAllTabs()
                       .stream()
-                      .filter(tab -> tab.getId().equals(TabId.create(101L)))
+                      .filter(tab -> tab.isEqualId(TabId.create(101L)))
                       .findFirst()
         ).isPresent()
-         .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isSameAs(TabId.EMPTY_TAB_ID));
+         .hasValueSatisfying(tab -> assertThat(tab.parentId()).isSameAs(TabId.EMPTY_TAB_ID));
     }
 
     @Test
@@ -175,10 +175,10 @@ class TabServiceTest {
         assertThat(
                 actual.getAllTabs()
                       .stream()
-                      .filter(tab -> tab.getId().equals(TabId.create(103L)))
+                      .filter(tab -> tab.isEqualId(TabId.create(103L)))
                       .findFirst()
         ).isPresent()
-         .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isEqualTo(TabId.create(102L)));
+         .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isEqualTo(102L));
     }
 
     @Test
@@ -214,10 +214,10 @@ class TabServiceTest {
         TabTree actual = tabService.getTabTree(1L);
 
         assertThat(actual.getAllTabs().stream()
-                         .filter(tab -> tab.getId().equals(TabId.create(101L)))
+                         .filter(tab -> tab.isEqualId(TabId.create(101L)))
                          .findFirst())
                 .isPresent()
-                .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isEqualTo(TabId.create(102L)));
+                .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isEqualTo(102L));
     }
 
     @Test
@@ -231,11 +231,11 @@ class TabServiceTest {
         assertAll(
                 () -> assertThat(actual.getAllTabs()
                                        .stream()
-                                       .filter(tab -> tab.getId().equals(TabId.create(103L)))
+                                       .filter(tab -> tab.isEqualId(TabId.create(103L)))
                                        .findFirst()).isPresent(),
                 () -> assertThat(actual.getAllTabs()
                                        .stream()
-                                       .filter(tab -> tab.getId().equals(TabId.create(104L)))
+                                       .filter(tab -> tab.isEqualId(TabId.create(104L)))
                                        .findFirst()).isPresent()
         );
     }
@@ -266,13 +266,13 @@ class TabServiceTest {
 
         assertThat(actual.getAllTabs()
                          .stream()
-                         .filter(tab -> tab.getId().equals(TabId.create(100L)))
+                         .filter(tab -> tab.isEqualId(TabId.create(100L)))
                          .findFirst()
         ).isPresent()
          .hasValueSatisfying(
                  tab -> assertAll(
-                         () -> assertThat(tab.getTitle().getValue()).isEqualTo("수정된 제목"),
-                         () -> assertThat(tab.getUrl().getValue()).isEqualTo("https://updated.com")
+                         () -> assertThat(tab.getTitle()).isEqualTo("수정된 제목"),
+                         () -> assertThat(tab.getUrl()).isEqualTo("https://updated.com")
                  )
          );
     }
@@ -314,9 +314,9 @@ class TabServiceTest {
         assertThat(
                 actual.getAllTabs()
                       .stream()
-                      .filter(tab -> tab.getId().equals(TabId.create(100L)))
+                      .filter(tab -> tab.isEqualId(TabId.create(100L)))
                       .findFirst()
         ).isPresent()
-         .hasValueSatisfying(tab -> assertThat(tab.getPosition().getValue()).isZero());
+         .hasValueSatisfying(tab -> assertThat(tab.getPosition()).isZero());
     }
 }

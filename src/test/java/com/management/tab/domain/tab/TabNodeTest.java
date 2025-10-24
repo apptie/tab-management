@@ -306,10 +306,10 @@ class TabNodeTest {
         TabNode node = TabNode.createRoot(tab);
 
         // when
-        TabId id = node.getId();
+        TabId actual = node.getId();
 
         // then
-        assertThat(id).isEqualTo(tab.getId());
+        assertThat(actual.getValue()).isEqualTo(1L);
     }
 
     @Test

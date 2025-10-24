@@ -27,22 +27,22 @@ public class TabService {
                                 .build();
 
         return tabRepository.saveRoot(rootTab)
-                            .getId();
+                            .id();
     }
 
     @Transactional
     public TabId createChildTab(Long parentId, String title, String url) {
         Tab parentTab = tabRepository.findTab(parentId);
-        TabTree tabTree = tabRepository.findTabTree(parentTab.getTabGroupId());
+        TabTree tabTree = tabRepository.findTabTree(parentTab.tabGroupId());
 
-        tabTree.validateAddChildDepth(parentTab.getId());
+        tabTree.validateAddChildDepth(parentTab.id());
 
-        TabPosition nextChildPosition = tabTree.getNextChildPosition(parentTab.getId());
+        TabPosition nextChildPosition = tabTree.getNextChildPosition(parentTab.id());
         Tab childTab = TabBuilder.createChild(parentTab, title, url, nextChildPosition)
                                  .build();
 
         return tabRepository.saveChild(childTab)
-                            .getId();
+                            .id();
     }
 
     @Transactional
@@ -62,17 +62,17 @@ public class TabService {
     @Transactional
     public void moveRoot(Long tabId) {
         Tab tab = tabRepository.findTab(tabId);
-        TabTree tabTree = tabRepository.findTabTree(tab.getTabGroupId());
+        TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
         TabPosition nextRootPosition = tabTree.getNextRootPosition();
         Tab movedTab = tab.moveToRoot(nextRootPosition);
 
-        tabRepository.updateMovedRoot(movedTab, tab.getParentId());
+        tabRepository.updateMovedRoot(movedTab, tab.parentId());
     }
 
     @Transactional
     public void moveRootWithSubtree(Long tabId) {
         Tab tab = tabRepository.findTab(tabId);
-        TabTree tabTree = tabRepository.findTabTree(tab.getTabGroupId());
+        TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
         TabPosition nextRootPosition = tabTree.getNextRootPosition();
         Tab movedTab = tab.moveToRoot(nextRootPosition);
 
@@ -82,24 +82,24 @@ public class TabService {
     @Transactional
     public void move(Long tabId, Long newParentId) {
         Tab tab = tabRepository.findTab(tabId);
-        TabTree tabTree = tabRepository.findTabTree(tab.getTabGroupId());
+        TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
 
-        tabTree.validateMove(tab.getId(), TabId.create(newParentId));
+        tabTree.validateMove(tab.id(), TabId.create(newParentId));
         tabTree.validateMoveDepth(TabId.create(newParentId));
 
         TabPosition nextChildPosition = tabTree.getNextChildPosition(TabId.create(newParentId));
         Tab movedTab = tab.moveTo(TabId.create(newParentId), nextChildPosition);
 
-        tabRepository.updateMoved(movedTab, tab.getParentId());
+        tabRepository.updateMoved(movedTab, tab.parentId());
     }
 
     @Transactional
     public void moveWithSubtree(Long tabId, Long newParentId) {
         Tab tab = tabRepository.findTab(tabId);
-        TabTree tabTree = tabRepository.findTabTree(tab.getTabGroupId());
+        TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
 
-        tabTree.validateMove(tab.getId(), TabId.create(newParentId));
-        tabTree.validateMoveDepthWithSubtree(tab.getId(), TabId.create(newParentId));
+        tabTree.validateMove(tab.id(), TabId.create(newParentId));
+        tabTree.validateMoveDepthWithSubtree(tab.id(), TabId.create(newParentId));
 
         TabPosition nextChildPosition = tabTree.getNextChildPosition(TabId.create(newParentId));
         Tab movedTab = tab.moveTo(TabId.create(newParentId), nextChildPosition);
@@ -126,10 +126,7 @@ public class TabService {
             Tab sibling = reorderedSiblings.get(i);
             Tab updatedTab = sibling.updatePosition(i);
 
-            tabRepository.updatePosition(
-                    updatedTab.getId(),
-                    updatedTab.getPosition()
-            );
+            tabRepository.updatePosition(updatedTab.id(), updatedTab.position());
         }
     }
 
@@ -158,7 +155,7 @@ public class TabService {
 
     private int findTabIndexInDomain(List<Tab> tabs, TabId targetId) {
         return IntStream.range(0, tabs.size())
-                        .filter(i -> tabs.get(i).isEqualTo(targetId))
+                        .filter(i -> tabs.get(i).isEqualId(targetId))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("대상 탭을 찾을 수 없습니다."));
     }

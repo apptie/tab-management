@@ -32,10 +32,10 @@ public class JdbcTabRepository implements TabRepository {
     @Override
     public Tab saveRoot(Tab rootTab) {
         Long rootTabId = insertTabDao.saveRootTab(
-                rootTab.getTabGroupId().getValue(),
-                rootTab.getTitle().getValue(),
-                rootTab.getUrl().getValue(),
-                rootTab.getPosition().getValue(),
+                rootTab.getTabGroupId(),
+                rootTab.getTitle(),
+                rootTab.getUrl(),
+                rootTab.getPosition(),
                 rootTab.getCreatedAt(),
                 rootTab.getUpdatedAt()
         );
@@ -46,11 +46,11 @@ public class JdbcTabRepository implements TabRepository {
     @Override
     public Tab saveChild(Tab childTab) {
         Long childTabId = insertTabDao.saveChildTab(
-                childTab.getTabGroupId().getValue(),
-                childTab.getTitle().getValue(),
-                childTab.getUrl().getValue(),
-                childTab.getParentId().getValue(),
-                childTab.getPosition().getValue(),
+                childTab.getTabGroupId(),
+                childTab.getTitle(),
+                childTab.getUrl(),
+                childTab.getParentId(),
+                childTab.getPosition(),
                 childTab.getCreatedAt(),
                 childTab.getUpdatedAt()
         );
@@ -131,26 +131,22 @@ public class JdbcTabRepository implements TabRepository {
 
     @Override
     public void updateMoved(Tab movedTab, TabId currentParentId) {
-        updateTabDao.updateMovingTabOnly(
-                movedTab.getId().getValue(),
-                currentParentId.getValue(),
-                movedTab.getParentId().getValue()
-        );
+        updateTabDao.updateMovingTabOnly(movedTab.getId(), currentParentId.getValue(), movedTab.getParentId());
     }
 
     @Override
     public void updateMovedTabWithSubtree(Tab movedTab) {
-        updateTabDao.updateMovingTabWithSubtree(movedTab.getId().getValue(), movedTab.getParentId().getValue());
+        updateTabDao.updateMovingTabWithSubtree(movedTab.getId(), movedTab.getParentId());
     }
 
     @Override
     public void updateMovedRoot(Tab movedTab, TabId currentParentId) {
-        updateTabDao.updateMovingTabOnly(movedTab.getId().getValue(), currentParentId.getValue(), null);
+        updateTabDao.updateMovingTabOnly(movedTab.getId(), currentParentId.getValue(), null);
     }
 
     @Override
     public void updateMovedRootWithSubtree(Tab movedTab) {
-        updateTabDao.updateMovingTabWithSubtree(movedTab.getId().getValue(), null);
+        updateTabDao.updateMovingTabWithSubtree(movedTab.getId(), null);
     }
 
     @Override
@@ -160,20 +156,16 @@ public class JdbcTabRepository implements TabRepository {
 
     @Override
     public void updateTabInfo(Tab updatedTab) {
-        updateTabDao.updateTab(
-                updatedTab.getId().getValue(),
-                updatedTab.getTitle().getValue(),
-                updatedTab.getUrl().getValue()
-        );
+        updateTabDao.updateTab(updatedTab.getId(), updatedTab.getTitle(), updatedTab.getUrl());
     }
 
     @Override
     public void deleteTabWithSubtree(Tab tab) {
-        deleteTabDao.deleteTabWithSubtree(tab.getId().getValue());
+        deleteTabDao.deleteTabWithSubtree(tab.getId());
     }
 
     @Override
     public void deleteTab(Tab tab) {
-        deleteTabDao.deleteTabOnly(tab.getId().getValue(), tab.getParentId().getValue());
+        deleteTabDao.deleteTabOnly(tab.getId(), tab.getParentId());
     }
 }

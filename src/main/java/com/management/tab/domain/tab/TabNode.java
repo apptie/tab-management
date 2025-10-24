@@ -38,7 +38,7 @@ public class TabNode {
     }
 
     public void removeChild(TabId childId) {
-        this.children.removeIf(child -> child.getTab().getId().equals(childId));
+        this.children.removeIf(child -> child.tab.isEqualId(childId));
     }
 
     public List<TabNode> getChildren() {
@@ -58,12 +58,11 @@ public class TabNode {
     }
 
     public TabId getId() {
-        return tab.getId();
+        return tab.id();
     }
 
     public int getPosition() {
-        return tab.getPosition()
-                  .getValue();
+        return tab.getPosition();
     }
 
     private void validateChildAddition(TabNode child) {

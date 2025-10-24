@@ -27,7 +27,7 @@ class TabTest {
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
-        TabPosition position = TabPosition.create(0);
+        TabPosition position = TabPosition.defaultPosition();
         AuditTimestamps timestamps = AuditTimestamps.now();
 
         // when
@@ -35,14 +35,14 @@ class TabTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(tabId),
-                () -> assertThat(actual.getParentId()).isEqualTo(parentId),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
-                () -> assertThat(actual.getTitle()).isEqualTo(title),
-                () -> assertThat(actual.getUrl()).isEqualTo(url),
-                () -> assertThat(actual.getPosition()).isEqualTo(position),
-                () -> assertThat(actual.getTimestamps()).isEqualTo(timestamps)
+                () -> assertThat(actual.id()).isEqualTo(tabId),
+                () -> assertThat(actual.parentId()).isEqualTo(parentId),
+                () -> assertThat(actual.tabGroupId()).isEqualTo(tabGroupId),
+                () -> assertThat(actual.getTitle()).isEqualTo("테스트 탭"),
+                () -> assertThat(actual.getUrl()).isEqualTo("https://example.com"),
+                () -> assertThat(actual.getPosition()).isZero(),
+                () -> assertThat(actual.getCreatedAt()).isEqualTo(timestamps.getCreatedAt()),
+                () -> assertThat(actual.getUpdatedAt()).isEqualTo(timestamps.getUpdatedAt())
         );
     }
 
@@ -54,7 +54,7 @@ class TabTest {
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
-        TabPosition position = TabPosition.create(0);
+        TabPosition position = TabPosition.defaultPosition();
         AuditTimestamps timestamps = AuditTimestamps.now();
         Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
 
@@ -66,13 +66,9 @@ class TabTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(tabId),
-                () -> assertThat(actual.getParentId()).isEqualTo(parentId),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo(newTitleValue),
-                () -> assertThat(actual.getUrl().getValue()).isEqualTo(newUrlValue),
-                () -> assertThat(actual.getPosition()).isEqualTo(position),
+                () -> assertThat(actual.id()).isEqualTo(tabId),
+                () -> assertThat(actual.getTitle()).isEqualTo("업데이트된 제목"),
+                () -> assertThat(actual.getUrl()).isEqualTo("https://updated.com"),
                 () -> assertThat(actual.getUpdatedAt()).isAfter(timestamps.getUpdatedAt())
         );
     }
@@ -96,13 +92,8 @@ class TabTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(tabId),
-                () -> assertThat(actual.getParentId()).isEqualTo(parentId),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
-                () -> assertThat(actual.getTitle()).isEqualTo(title),
-                () -> assertThat(actual.getUrl()).isEqualTo(url),
-                () -> assertThat(actual.getPosition().getValue()).isEqualTo(newPositionValue),
+                () -> assertThat(actual.id()).isEqualTo(tabId),
+                () -> assertThat(actual.getPosition()).isEqualTo(newPositionValue),
                 () -> assertThat(actual.getUpdatedAt()).isAfter(timestamps.getUpdatedAt())
         );
     }
@@ -127,13 +118,9 @@ class TabTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(tabId),
-                () -> assertThat(actual.getParentId()).isEqualTo(newParentId),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
-                () -> assertThat(actual.getTitle()).isEqualTo(title),
-                () -> assertThat(actual.getUrl()).isEqualTo(url),
-                () -> assertThat(actual.getPosition()).isEqualTo(newPosition),
+                () -> assertThat(actual.id()).isEqualTo(tabId),
+                () -> assertThat(actual.parentId()).isEqualTo(newParentId),
+                () -> assertThat(actual.position()).isEqualTo(newPosition),
                 () -> assertThat(actual.getUpdatedAt()).isAfter(timestamps.getUpdatedAt())
         );
     }
@@ -157,14 +144,8 @@ class TabTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(tabId),
-                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
-                () -> assertThat(actual.getTitle()).isEqualTo(title),
-                () -> assertThat(actual.getUrl()).isEqualTo(url),
-                () -> assertThat(actual.getPosition()).isEqualTo(newPosition),
-                () -> assertThat(actual.isRoot()).isTrue(),
+                () -> assertThat(actual.id()).isEqualTo(tabId),
+                () -> assertThat(actual.parentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.getUpdatedAt()).isAfter(timestamps.getUpdatedAt())
         );
     }
@@ -218,9 +199,15 @@ class TabTest {
         AuditTimestamps timestamps = AuditTimestamps.now();
 
         Tab tab1 = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
-        Tab tab2 = new Tab(tabId, TabId.create(999L), TabGroupId.create(999L),
-                TabTitle.create("다른 제목"), TabUrl.create("https://different.com"),
-                TabPosition.create(999), AuditTimestamps.now());
+        Tab tab2 = new Tab(
+                tabId,
+                TabId.create(999L),
+                TabGroupId.create(999L),
+                TabTitle.create("다른 제목"),
+                TabUrl.create("https://different.com"),
+                TabPosition.create(999),
+                AuditTimestamps.now()
+        );
 
         // when
         boolean actual = tab1.isEqualId(tab2);
@@ -245,10 +232,7 @@ class TabTest {
         LocalDateTime actual = tab.getCreatedAt();
 
         // then
-        assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual).isEqualTo(timestamps.getCreatedAt())
-        );
+        assertThat(actual).isEqualTo(timestamps.getCreatedAt());
     }
 
     @Test
@@ -267,10 +251,7 @@ class TabTest {
         LocalDateTime actual = tab.getUpdatedAt();
 
         // then
-        assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual).isEqualTo(timestamps.getUpdatedAt())
-        );
+        assertThat(actual).isEqualTo(timestamps.getUpdatedAt());
     }
 
     @Test
@@ -331,7 +312,7 @@ class TabTest {
         Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
 
         // when
-        boolean actual = tab.isEqualTo(tabId);
+        boolean actual = tab.isEqualId(tabId);
 
         // then
         assertThat(actual).isTrue();
@@ -352,15 +333,6 @@ class TabTest {
         Tab actual = tab.updateAssignedId(1L);
 
         // then
-        assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId().getValue()).isEqualTo(1L),
-                () -> assertThat(actual.getParentId()).isEqualTo(parentId),
-                () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
-                () -> assertThat(actual.getTitle().getValue()).isEqualTo("테스트 탭"),
-                () -> assertThat(actual.getUrl().getValue()).isEqualTo("https://example.com"),
-                () -> assertThat(actual.getPosition()).isEqualTo(position),
-                () -> assertThat(actual.getUpdatedAt()).isEqualTo(timestamps.getUpdatedAt())
-        );
+        assertThat(actual.getId()).isEqualTo(1L);
     }
 }

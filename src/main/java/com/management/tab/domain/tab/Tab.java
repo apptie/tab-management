@@ -7,11 +7,9 @@ import com.management.tab.domain.tab.vo.TabPosition;
 import com.management.tab.domain.tab.vo.TabTitle;
 import com.management.tab.domain.tab.vo.TabUrl;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
 @EqualsAndHashCode(of = "id")
 public class Tab {
 
@@ -109,8 +107,48 @@ public class Tab {
         return this.id.equals(other.id);
     }
 
-    public boolean isEqualTo(TabId id) {
+    public boolean isEqualId(TabId id) {
         return this.id.equals(id);
+    }
+
+    public TabId id() {
+        return id;
+    }
+
+    public TabPosition position() {
+        return position;
+    }
+
+    public TabGroupId tabGroupId() {
+        return tabGroupId;
+    }
+
+    public TabId parentId() {
+        return parentId;
+    }
+
+    public Long getId() {
+        return id.getValue();
+    }
+
+    public Long getParentId() {
+        return parentId.getValue();
+    }
+
+    public Long getTabGroupId() {
+        return tabGroupId.getValue();
+    }
+
+    public String getTitle() {
+        return title.getValue();
+    }
+
+    public String getUrl() {
+        return url.getValue();
+    }
+
+    public int getPosition() {
+        return position.getValue();
     }
 
     public LocalDateTime getCreatedAt() {
@@ -120,4 +158,6 @@ public class Tab {
     public LocalDateTime getUpdatedAt() {
         return timestamps.getUpdatedAt();
     }
+
+
 }
