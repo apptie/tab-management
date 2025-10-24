@@ -15,16 +15,13 @@ class TabGroupTest {
 
     @Test
     void TabGroup을_초기화할_수_있다() {
-        // given
-        String name = "테스트 그룹";
-
         // when
-        TabGroup actual = TabGroup.create(name);
+        TabGroup actual = TabGroup.create("테스트 그룹");
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNull(),
-                () -> assertThat(actual.getName()).isEqualTo(name),
+                () -> assertThat(actual.getName()).isEqualTo("테스트 그룹"),
                 () -> assertThat(actual.getCreatedAt()).isNotNull(),
                 () -> assertThat(actual.getUpdatedAt()).isNotNull()
         );
@@ -33,19 +30,17 @@ class TabGroupTest {
     @Test
     void 지정한_시각과_ID로_TabGroup을_생성할_수_있다() {
         // given
-        Long groupId = 100L;
-        String name = "테스트 그룹";
         LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
         LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 15, 30);
 
         // when
-        TabGroup actual = TabGroup.create(groupId, name, createdAt, updatedAt);
+        TabGroup actual = TabGroup.create(100L, "테스트 그룹", createdAt, updatedAt);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getId()).isEqualTo(groupId),
-                () -> assertThat(actual.getName()).isEqualTo(name),
+                () -> assertThat(actual.getId()).isEqualTo(100L),
+                () -> assertThat(actual.getName()).isEqualTo("테스트 그룹"),
                 () -> assertThat(actual.getCreatedAt()).isEqualTo(createdAt),
                 () -> assertThat(actual.getUpdatedAt()).isEqualTo(updatedAt)
         );
@@ -53,11 +48,8 @@ class TabGroupTest {
 
     @Test
     void id를_전달하지_않으면_초기화된_TabGroup은_id가_할당되지_않는다() {
-        // given
-        String name = "테스트 그룹";
-
         // when
-        TabGroup actual = TabGroup.create(name);
+        TabGroup actual = TabGroup.create("테스트 그룹");
 
         // then
         assertThat(actual.getId()).isNull();
@@ -89,10 +81,7 @@ class TabGroupTest {
         TabGroup actual = tabGroup.rename("변경된 이름");
 
         // then
-        assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getName()).isEqualTo("변경된 이름")
-        );
+        assertThat(actual.getName()).isEqualTo("변경된 이름");
     }
 
     @Test
