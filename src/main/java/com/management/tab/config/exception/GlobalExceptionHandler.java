@@ -1,5 +1,6 @@
 package com.management.tab.config.exception;
 
+import com.management.tab.domain.tab.TabTree.TabNodeNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -10,6 +11,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest()
+                             .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(TabNodeNotFoundException.class)
+    public ResponseEntity<String> handleTabNodeNotFoundException(TabNodeNotFoundException ex) {
         return ResponseEntity.badRequest()
                              .body(ex.getMessage());
     }
