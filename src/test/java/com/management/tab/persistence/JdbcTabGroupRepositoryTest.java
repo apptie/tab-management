@@ -1,6 +1,7 @@
 package com.management.tab.persistence;
 
 import com.management.tab.domain.group.TabGroup;
+import com.management.tab.domain.repository.TabGroupRepository.TabGroupNotFoundException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -60,8 +61,8 @@ class JdbcTabGroupRepositoryTest {
 
         // when & then
         assertThatThrownBy(() -> jdbcTabGroupRepository.findById(groupId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 ID에 해당하는 탭 그룹이 없습니다.");
+                .isInstanceOf(TabGroupNotFoundException.class)
+                .hasMessage("탭 그룹을 찾을 수 없습니다.");
     }
 
     @Test
@@ -121,8 +122,8 @@ class JdbcTabGroupRepositoryTest {
 
         // then
         assertThatThrownBy(() -> jdbcTabGroupRepository.findById(groupId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 ID에 해당하는 탭 그룹이 없습니다.");
+                .isInstanceOf(TabGroupNotFoundException.class)
+                .hasMessage("탭 그룹을 찾을 수 없습니다.");
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.management.tab.persistence;
 
 import com.management.tab.domain.content.TabContent;
+import com.management.tab.domain.repository.TabContentRepository.TabContentNotFoundException;
 import com.management.tab.domain.tab.vo.TabId;
 import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -58,8 +59,8 @@ class JdbcTabContentRepositoryTest {
     void 존재하지_않는_ID로_조회하면_예외가_발생한다() {
         // when & then
         assertThatThrownBy(() -> jdbcTabContentRepository.findById(999L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 탭 내용을 찾을 수 없습니다.");
+                .isInstanceOf(TabContentNotFoundException.class)
+                .hasMessage("탭 내용을 찾을 수 없습니다.");
     }
 
     @Test
@@ -131,8 +132,8 @@ class JdbcTabContentRepositoryTest {
 
         // then
         assertThatThrownBy(() -> jdbcTabContentRepository.findById(contentId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 탭 내용을 찾을 수 없습니다.");
+                .isInstanceOf(TabContentNotFoundException.class)
+                .hasMessage("탭 내용을 찾을 수 없습니다.");
     }
 
     @Test

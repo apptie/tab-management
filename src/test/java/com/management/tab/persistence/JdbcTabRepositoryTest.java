@@ -1,6 +1,7 @@
 package com.management.tab.persistence;
 
 import com.management.tab.domain.group.vo.TabGroupId;
+import com.management.tab.domain.repository.TabRepository.TabNotFoundException;
 import com.management.tab.domain.tab.Tab;
 import com.management.tab.domain.tab.TabBuilder;
 import com.management.tab.domain.tab.TabTree;
@@ -92,8 +93,8 @@ class JdbcTabRepositoryTest {
 
         // when & then
         assertThatThrownBy(() -> jdbcTabRepository.findTab(tabId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 탭을 찾을 수 없습니다.");
+                .isInstanceOf(TabNotFoundException.class)
+                .hasMessage("탭을 찾을 수 없습니다.");
     }
 
     @Test
@@ -329,8 +330,8 @@ class JdbcTabRepositoryTest {
 
         // then
         assertThatThrownBy(() -> jdbcTabRepository.findTab(105L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 탭을 찾을 수 없습니다.");
+                .isInstanceOf(TabNotFoundException.class)
+                .hasMessage("탭을 찾을 수 없습니다.");
     }
 
     @Test

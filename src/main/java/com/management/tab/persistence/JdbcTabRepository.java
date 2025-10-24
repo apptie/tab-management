@@ -61,7 +61,7 @@ public class JdbcTabRepository implements TabRepository {
     @Override
     public Tab findTab(Long tabId) {
         return selectTabDao.findById(tabId)
-                           .orElseThrow(() -> new IllegalArgumentException("지정한 탭을 찾을 수 없습니다."))
+                           .orElseThrow(TabNotFoundException::new)
                            .toTab();
     }
 

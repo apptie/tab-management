@@ -29,7 +29,7 @@ public class JdbcTabContentRepository implements TabContentRepository {
     public TabContent findById(Long id) {
         return tabContentDao.findById(id)
                             .map(TabContentDto::toTabContent)
-                            .orElseThrow(() -> new IllegalArgumentException("지정한 탭 내용을 찾을 수 없습니다."));
+                            .orElseThrow(TabContentNotFoundException::new);
     }
 
     @Override

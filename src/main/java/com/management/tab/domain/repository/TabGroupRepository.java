@@ -16,4 +16,11 @@ public interface TabGroupRepository {
     void delete(Long id);
 
     int countTabs(Long id);
+
+    class TabGroupNotFoundException extends IllegalArgumentException {
+
+        public TabGroupNotFoundException() {
+            super("탭 그룹을 찾을 수 없습니다.");
+        }
+    }
 }
