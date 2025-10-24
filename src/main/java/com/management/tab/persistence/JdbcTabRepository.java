@@ -76,7 +76,7 @@ public class JdbcTabRepository implements TabRepository {
 
             nodeMap.put(tabNode.getId().getValue(), tabNode);
 
-            if (tabNode.getParentId() == null) {
+            if (tabNode.isRoot()) {
                 rootNodes.add(tabNode);
             }
         }

@@ -10,8 +10,8 @@ import java.util.Objects;
 
 public class TabBuilder {
 
-    private TabId id;
-    private TabId parentId;
+    private TabId id = TabId.EMPTY_TAB_ID;
+    private TabId parentId = TabId.EMPTY_TAB_ID;
     private TabGroupId tabGroupId;
     private TabTitle title;
     private TabUrl url;
@@ -85,17 +85,14 @@ public class TabBuilder {
     public Tab build() {
         validateValues();
 
-        TabPosition finalPosition = position != null ? position : TabPosition.defaultPosition();
-        AuditTimestamps auditTimestamps = timestamps != null ? timestamps : AuditTimestamps.now();
-
         return new Tab(
                 id,
                 parentId,
                 tabGroupId,
                 title,
                 url,
-                finalPosition,
-                auditTimestamps
+                getTabPosition(),
+                getAuditTimestamps()
         );
     }
 
@@ -103,5 +100,21 @@ public class TabBuilder {
         Objects.requireNonNull(tabGroupId, "그룹 ID는 필수입니다.");
         Objects.requireNonNull(title, "제목은 필수입니다.");
         Objects.requireNonNull(url, "Url은 필수입니다.");
+    }
+
+    private TabPosition getTabPosition() {
+        if (position != null) {
+            return position;
+        }
+
+        return TabPosition.defaultPosition();
+    }
+
+    private AuditTimestamps getAuditTimestamps() {
+        if (timestamps != null) {
+            return timestamps;
+        }
+
+        return AuditTimestamps.now();
     }
 }

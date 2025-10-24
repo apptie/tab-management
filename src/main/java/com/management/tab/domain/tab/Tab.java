@@ -12,7 +12,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = "id")
 public class Tab {
 
     private final TabId id;
@@ -92,7 +92,7 @@ public class Tab {
     public Tab moveToRoot(TabPosition newPosition) {
         return new Tab(
                 this.id,
-                null,
+                TabId.EMPTY_TAB_ID,
                 this.tabGroupId,
                 this.title,
                 this.url,
@@ -102,7 +102,7 @@ public class Tab {
     }
 
     public boolean isRoot() {
-        return parentId == null;
+        return parentId.isRoot();
     }
 
     public boolean isEqualId(Tab other) {

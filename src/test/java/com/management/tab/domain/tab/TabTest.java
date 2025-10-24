@@ -159,7 +159,7 @@ class TabTest {
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isEqualTo(tabId),
-                () -> assertThat(actual.getParentId()).isNull(),
+                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.getTabGroupId()).isEqualTo(tabGroupId),
                 () -> assertThat(actual.getTitle()).isEqualTo(title),
                 () -> assertThat(actual.getUrl()).isEqualTo(url),
@@ -178,7 +178,7 @@ class TabTest {
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab rootTab = new Tab(tabId, null, tabGroupId, title, url, position, timestamps);
+        Tab rootTab = new Tab(tabId, TabId.EMPTY_TAB_ID, tabGroupId, title, url, position, timestamps);
 
         // when
         boolean actual = rootTab.isRoot();

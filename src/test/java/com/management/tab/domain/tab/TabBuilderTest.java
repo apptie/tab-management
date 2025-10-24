@@ -37,7 +37,7 @@ class TabBuilderTest {
                 () -> assertThat(actual.getTitle().getValue()).isEqualTo(title),
                 () -> assertThat(actual.getUrl().getValue()).isEqualTo(url),
                 () -> assertThat(actual.getPosition().getValue()).isZero(),
-                () -> assertThat(actual.getParentId()).isNull(),
+                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.isRoot()).isTrue()
         );
     }
@@ -153,7 +153,7 @@ class TabBuilderTest {
 
         // then
         assertAll(
-                () -> assertThat(actual.getParentId()).isNull(),
+                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.isRoot()).isTrue()
         );
     }

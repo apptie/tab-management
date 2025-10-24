@@ -29,7 +29,7 @@ public class TabNode {
     }
 
     public static TabNode createRoot(Tab tab) {
-        return new TabNode(tab, 0, null, new ArrayList<>());
+        return new TabNode(tab, 0, TabId.EMPTY_TAB_ID, new ArrayList<>());
     }
 
     public void addChild(TabNode child) {

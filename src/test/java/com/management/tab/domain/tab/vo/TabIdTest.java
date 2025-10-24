@@ -77,15 +77,11 @@ class TabIdTest {
     }
 
     @Test
-    void id_메서드는_생성_시_전달한_값을_반환한다() {
-        // given
-        Long value = 100L;
-        TabId tabId = TabId.create(value);
-
+    void 해당_ID가_루트인지_확인한다() {
         // when
-        Long result = tabId.getValue();
+        TabId actual = TabId.EMPTY_TAB_ID;
 
         // then
-        assertThat(result).isEqualTo(value);
+        assertThat(actual.isRoot()).isTrue();
     }
 }

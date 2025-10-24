@@ -454,7 +454,7 @@ class TabTreeTest {
         Long groupId = 1L;
         Tab rootTab1 = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(groupId),
                 TabTitle.create("루트 탭 1"),
                 TabUrl.create("http://test.com"),
@@ -463,7 +463,7 @@ class TabTreeTest {
         );
         Tab rootTab2 = new Tab(
                 TabId.create(2L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(groupId),
                 TabTitle.create("루트 탭 2"),
                 TabUrl.create("http://test.com"),

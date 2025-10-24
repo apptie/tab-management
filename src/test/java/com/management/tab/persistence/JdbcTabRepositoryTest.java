@@ -235,7 +235,7 @@ class JdbcTabRepositoryTest {
         Tab actual = jdbcTabRepository.findTab(101L);
 
         assertAll(
-                () -> assertThat(actual.getParentId()).isNull(),
+                () -> assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(actual.isRoot()).isTrue()
         );
     }
@@ -251,7 +251,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(101L);
-        assertThat(actual.getParentId()).isNull();
+        assertThat(actual.getParentId()).isSameAs(TabId.EMPTY_TAB_ID);
     }
 
     @Test

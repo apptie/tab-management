@@ -67,7 +67,7 @@ class TabNodeTest {
                 () -> assertThat(rootNode).isNotNull(),
                 () -> assertThat(rootNode.getTab()).isEqualTo(tab),
                 () -> assertThat(rootNode.getDepth()).isZero(),
-                () -> assertThat(rootNode.getParentId()).isNull(),
+                () -> assertThat(rootNode.getParentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(rootNode.getChildren()).isEmpty()
         );
     }
@@ -275,7 +275,7 @@ class TabNodeTest {
         // given
         Tab rootTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
