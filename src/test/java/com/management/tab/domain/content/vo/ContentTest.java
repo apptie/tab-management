@@ -16,11 +16,8 @@ class ContentTest {
 
     @Test
     void 유효한_문자열로_Content를_초기화할_수_있다() {
-        // given
-        String value = "테스트 내용";
-
         // when
-        Content content = Content.create(value);
+        Content content = Content.create("테스트 내용");
 
         // then
         assertAll(

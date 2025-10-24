@@ -31,11 +31,11 @@ public record TabTreeResponse(List<TabNodeResponse> tabs) {
             Tab tab = node.getTab();
 
             return TabNodeResponse.builder()
-                                  .id(tab.getId().getValue())
-                                  .parentId(tab.getParentId() != null ? tab.getParentId().getValue() : null)
-                                  .title(tab.getTitle().getValue())
-                                  .url(tab.getUrl().getValue())
-                                  .position(tab.getPosition().getValue())
+                                  .id(tab.getId())
+                                  .parentId(tab.getParentId() != null ? tab.getParentId() : null)
+                                  .title(tab.getTitle())
+                                  .url(tab.getUrl())
+                                  .position(tab.getPosition())
                                   .depth(node.getDepth())
                                   .children(
                                           node.getChildren()

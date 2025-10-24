@@ -16,27 +16,21 @@ class TabIdTest {
 
     @Test
     void 양수_값으로_TabId를_초기화할_수_있다() {
-        // given
-        Long value = 1L;
-
         // when
-        TabId tabId = TabId.create(value);
+        TabId tabId = TabId.create(1L);
 
         // then
         assertAll(
                 () -> assertThat(tabId).isNotNull(),
-                () -> assertThat(tabId.id()).isEqualTo(1L),
+                () -> assertThat(tabId.getValue()).isEqualTo(1L),
                 () -> assertThat(tabId.getValue()).isEqualTo(1L)
         );
     }
 
     @Test
-    void null_값은_TabId_초기화에_실패한다() {
-        // given
-        Long value = null;
-
+    void null로_TabId를_초기화할_수_없다() {
         // when & then
-        assertThatThrownBy(() -> TabId.create(value))
+        assertThatThrownBy(() -> TabId.create(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TabId는 양수여야 합니다.");
     }
@@ -77,15 +71,11 @@ class TabIdTest {
     }
 
     @Test
-    void id_메서드는_생성_시_전달한_값을_반환한다() {
-        // given
-        Long value = 100L;
-        TabId tabId = TabId.create(value);
-
+    void 해당_ID가_루트인지_확인한다() {
         // when
-        Long result = tabId.id();
+        TabId actual = TabId.EMPTY_TAB_ID;
 
         // then
-        assertThat(result).isEqualTo(value);
+        assertThat(actual.isRoot()).isTrue();
     }
 }

@@ -19,4 +19,11 @@ public interface TabContentRepository {
     void deleteAllByTabId(TabId tabId);
 
     int countByTabId(TabId tabId);
+
+    class TabContentNotFoundException extends IllegalArgumentException {
+
+        public TabContentNotFoundException() {
+            super("탭 내용을 찾을 수 없습니다.");
+        }
+    }
 }

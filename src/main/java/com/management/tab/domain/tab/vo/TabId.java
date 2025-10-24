@@ -7,6 +7,8 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class TabId {
 
+    public static final TabId EMPTY_TAB_ID = new TabId(null);
+
     private final Long value;
 
     public static TabId create(Long value) {
@@ -25,8 +27,8 @@ public class TabId {
         this.value = value;
     }
 
-    public Long id() {
-        return value;
+    public boolean isRoot() {
+        return value == null;
     }
 }
 

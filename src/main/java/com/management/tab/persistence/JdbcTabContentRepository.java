@@ -19,7 +19,7 @@ public class JdbcTabContentRepository implements TabContentRepository {
 
     @Override
     public List<TabContent> findAllByTabId(TabId tabid) {
-        return tabContentDao.findAllByTabId(tabid.id())
+        return tabContentDao.findAllByTabId(tabid.getValue())
                             .stream()
                             .map(TabContentDto::toTabContent)
                             .toList();
@@ -29,16 +29,16 @@ public class JdbcTabContentRepository implements TabContentRepository {
     public TabContent findById(Long id) {
         return tabContentDao.findById(id)
                             .map(TabContentDto::toTabContent)
-                            .orElseThrow(() -> new IllegalArgumentException("지정한 탭 내용을 찾을 수 없습니다."));
+                            .orElseThrow(TabContentNotFoundException::new);
     }
 
     @Override
     public TabContent save(TabContent tabContent) {
         Long tabContentId = tabContentDao.save(
-                tabContent.getTabId().id(),
-                tabContent.getContent().getValue(),
-                tabContent.getAuditTimestamps().getCreatedAt(),
-                tabContent.getAuditTimestamps().getUpdatedAt()
+                tabContent.getTabId(),
+                tabContent.getContent(),
+                tabContent.getCreatedAt(),
+                tabContent.getUpdatedAt()
         );
 
         return tabContent.withId(TabContentId.create(tabContentId));
@@ -46,11 +46,7 @@ public class JdbcTabContentRepository implements TabContentRepository {
 
     @Override
     public void update(TabContent updatedTabContent) {
-        tabContentDao.update(
-                updatedTabContent.getId().getValue(),
-                updatedTabContent.getContent().getValue(),
-                LocalDateTime.now()
-        );
+        tabContentDao.update(updatedTabContent.getId(), updatedTabContent.getContent(), LocalDateTime.now());
     }
 
     @Override
@@ -60,11 +56,11 @@ public class JdbcTabContentRepository implements TabContentRepository {
 
     @Override
     public void deleteAllByTabId(TabId tabId) {
-        tabContentDao.deleteAllByTabId(tabId.id());
+        tabContentDao.deleteAllByTabId(tabId.getValue());
     }
 
     @Override
     public int countByTabId(TabId tabId) {
-        return tabContentDao.countByTabId(tabId.id());
+        return tabContentDao.countByTabId(tabId.getValue());
     }
 }

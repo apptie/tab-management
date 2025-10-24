@@ -10,8 +10,8 @@ import java.util.Objects;
 
 public class TabBuilder {
 
-    private TabId id;
-    private TabId parentId;
+    private TabId id = TabId.EMPTY_TAB_ID;
+    private TabId parentId = TabId.EMPTY_TAB_ID;
     private TabGroupId tabGroupId;
     private TabTitle title;
     private TabUrl url;
@@ -35,26 +35,12 @@ public class TabBuilder {
     public static TabBuilder createChild(Tab parentTab, String title, String url, TabPosition position) {
         TabBuilder builder = new TabBuilder();
 
-        builder.tabGroupId = parentTab.getTabGroupId();
-        builder.parentId = parentTab.getId();
+        builder.tabGroupId = parentTab.tabGroupId();
+        builder.parentId = parentTab.id();
         builder.position = position;
 
         return builder.title(title)
                       .url(url);
-    }
-
-    public static TabBuilder createWithAssignedId(Long tabId, Tab tab) {
-        TabBuilder builder = new TabBuilder();
-
-        builder.id = TabId.create(tabId);
-        builder.parentId = tab.getParentId();
-        builder.tabGroupId = tab.getTabGroupId();
-        builder.title = tab.getTitle();
-        builder.url = tab.getUrl();
-        builder.position = tab.getPosition();
-        builder.timestamps = tab.getTimestamps();
-
-        return builder;
     }
 
     private TabBuilder() {
@@ -99,17 +85,14 @@ public class TabBuilder {
     public Tab build() {
         validateValues();
 
-        TabPosition finalPosition = position != null ? position : TabPosition.defaultPosition();
-        AuditTimestamps auditTimestamps = timestamps != null ? timestamps : AuditTimestamps.now();
-
         return new Tab(
                 id,
                 parentId,
                 tabGroupId,
                 title,
                 url,
-                finalPosition,
-                auditTimestamps
+                getTabPosition(),
+                getAuditTimestamps()
         );
     }
 
@@ -117,5 +100,21 @@ public class TabBuilder {
         Objects.requireNonNull(tabGroupId, "그룹 ID는 필수입니다.");
         Objects.requireNonNull(title, "제목은 필수입니다.");
         Objects.requireNonNull(url, "Url은 필수입니다.");
+    }
+
+    private TabPosition getTabPosition() {
+        if (position != null) {
+            return position;
+        }
+
+        return TabPosition.defaultPosition();
+    }
+
+    private AuditTimestamps getAuditTimestamps() {
+        if (timestamps != null) {
+            return timestamps;
+        }
+
+        return AuditTimestamps.now();
     }
 }

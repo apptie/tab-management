@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/select-tab-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/dao/select-tab-dao-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class SelectTabDaoTest {
@@ -25,25 +25,18 @@ class SelectTabDaoTest {
     @Autowired
     SelectTabDao selectTabDao;
 
-    private static final Long GROUP_ID = 1L;
-    private static final Long ROOT1_ID = 100L;
-    private static final Long CHILD1_1_ID = 101L;
-    private static final Long CHILD1_2_ID = 102L;
-    private static final Long GRANDCHILD1_1_ID = 103L;
-    private static final Long GROUP2_ROOT_ID = 200L;
-
     @Test
     void ID로_탭을_조회한다() {
         // when
-        Optional<TabDto> actual = selectTabDao.findById(ROOT1_ID);
+        Optional<TabDto> actual = selectTabDao.findById(100L);
 
         // then
         assertThat(actual)
                 .isPresent()
                 .hasValueSatisfying(
                         tab -> assertAll(
-                                () -> assertThat(tab.id()).isEqualTo(ROOT1_ID),
-                                () -> assertThat(tab.groupId()).isEqualTo(GROUP_ID),
+                                () -> assertThat(tab.id()).isEqualTo(100L),
+                                () -> assertThat(tab.groupId()).isEqualTo(1L),
                                 () -> assertThat(tab.title()).isEqualTo("조회테스트_루트1"),
                                 () -> assertThat(tab.url()).isEqualTo("http://root1.com"),
                                 () -> assertThat(tab.position()).isZero()
@@ -63,7 +56,7 @@ class SelectTabDaoTest {
     @Test
     void 그룹별로_트리를_조회한다() {
         // when
-        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(GROUP_ID);
+        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(1L);
 
         // then
         assertThat(actual).hasSize(5);
@@ -72,29 +65,29 @@ class SelectTabDaoTest {
     @Test
     void 트리_조회_시_정확한_depth를_조회한다() {
         // when
-        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(GROUP_ID);
+        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(1L);
 
         // then
         assertAll(
-                () -> assertThat(actual.stream()
-                                       .filter(t -> t.id().equals(ROOT1_ID))
-                                       .findFirst())
-                        .hasValueSatisfying(tab -> assertThat(tab.depth()).isZero()),
-                () -> assertThat(actual.stream()
-                                       .filter(t -> t.id().equals(CHILD1_1_ID))
-                                       .findFirst())
-                        .hasValueSatisfying(tab -> assertThat(tab.depth()).isEqualTo(1)),
-                () -> assertThat(actual.stream()
-                                       .filter(t -> t.id().equals(GRANDCHILD1_1_ID))
-                                       .findFirst())
-                        .hasValueSatisfying(tab -> assertThat(tab.depth()).isEqualTo(2))
+                () -> assertThat(actual)
+                        .filteredOn(t -> t.id().equals(100L))
+                        .first()
+                        .satisfies(tab -> assertThat(tab.depth()).isZero()),
+                () -> assertThat(actual)
+                        .filteredOn(t -> t.id().equals(101L))
+                        .first()
+                        .satisfies(tab -> assertThat(tab.depth()).isEqualTo(1)),
+                () -> assertThat(actual)
+                        .filteredOn(t -> t.id().equals(103L))
+                        .first()
+                        .satisfies(tab -> assertThat(tab.depth()).isEqualTo(2))
         );
     }
 
     @Test
     void 트리_조회_시_depth와_position_순으로_정렬된다() {
         // when
-        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(GROUP_ID);
+        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(1L);
 
         // then
         assertThat(actual).isSortedAccordingTo(
@@ -106,28 +99,25 @@ class SelectTabDaoTest {
     @Test
     void 다른_그룹의_탭은_조회되지_않는다() {
         // when
-        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(GROUP_ID);
+        List<TabWithDepthDto> actual = selectTabDao.findTreeByGroup(1L);
 
         // then
-        assertThat(
-                actual.stream()
-                      .noneMatch(t -> t.id().equals(GROUP2_ROOT_ID))
-        ).isTrue();
+        assertThat(actual).noneMatch(t -> t.id().equals(200L));
     }
 
     @Test
     void 부모_ID를_조회한다() {
         // when
-        Optional<Long> actual = selectTabDao.findParentId(CHILD1_1_ID);
+        Optional<Long> actual = selectTabDao.findParentId(101L);
 
         // then
-        assertThat(actual).hasValue(ROOT1_ID);
+        assertThat(actual).hasValue(100L);
     }
 
     @Test
     void 루트_탭의_부모_ID를_조회하면_빈_Optional을_반환한다() {
         // when
-        Optional<Long> actual = selectTabDao.findParentId(ROOT1_ID);
+        Optional<Long> actual = selectTabDao.findParentId(100L);
 
         // then
         assertThat(actual).isEmpty();
@@ -145,7 +135,7 @@ class SelectTabDaoTest {
     @Test
     void 형제_탭들을_조회한다() {
         // when
-        List<TabDto> actual = selectTabDao.findSiblings(ROOT1_ID);
+        List<TabDto> actual = selectTabDao.findSiblings(100L);
 
         // then
         assertThat(actual).hasSize(2);
@@ -154,12 +144,12 @@ class SelectTabDaoTest {
     @Test
     void 형제_탭_조회_시_position_순으로_정렬된다() {
         // when
-        List<TabDto> actual = selectTabDao.findSiblings(ROOT1_ID);
+        List<TabDto> actual = selectTabDao.findSiblings(100L);
 
         // then
         assertAll(
-                () -> assertThat(actual.get(0).id()).isEqualTo(CHILD1_1_ID),
-                () -> assertThat(actual.get(1).id()).isEqualTo(CHILD1_2_ID)
+                () -> assertThat(actual.get(0).id()).isEqualTo(101L),
+                () -> assertThat(actual.get(1).id()).isEqualTo(102L)
         );
     }
 
@@ -178,10 +168,8 @@ class SelectTabDaoTest {
         List<TabDto> actual = selectTabDao.findRootSiblings();
 
         // then
-        assertThat(actual.stream()
-                         .filter(t -> GROUP_ID.equals(t.groupId()))
-                         .count())
-                .isGreaterThanOrEqualTo(1);
+        assertThat(actual).filteredOn(t -> t.groupId().equals(1L))
+                          .hasSizeGreaterThanOrEqualTo(1);
     }
 
     @Test
@@ -196,7 +184,7 @@ class SelectTabDaoTest {
     @Test
     void 특정_부모의_마지막_position을_조회한다() {
         // when
-        int actual = selectTabDao.findTabLastPosition(GROUP_ID, ROOT1_ID);
+        int actual = selectTabDao.findTabLastPosition(1L, 100L);
 
         // then
         assertThat(actual).isEqualTo(1);
@@ -205,7 +193,7 @@ class SelectTabDaoTest {
     @Test
     void 자식이_없는_탭의_마지막_position을_조회하면_0을_반환한다() {
         // when
-        int actual = selectTabDao.findTabLastPosition(GROUP_ID, CHILD1_1_ID);
+        int actual = selectTabDao.findTabLastPosition(1L, 101L);
 
         // then
         assertThat(actual).isZero();
@@ -214,7 +202,7 @@ class SelectTabDaoTest {
     @Test
     void 루트_레벨의_마지막_position을_조회한다() {
         // when
-        int actual = selectTabDao.findRootTabLastPosition(GROUP_ID);
+        int actual = selectTabDao.findRootTabLastPosition(1L);
 
         // then
         assertThat(actual).isGreaterThanOrEqualTo(1);
@@ -232,7 +220,7 @@ class SelectTabDaoTest {
     @Test
     void 존재하지_않는_부모의_마지막_position을_조회하면_0을_반환한다() {
         // when
-        int actual = selectTabDao.findTabLastPosition(GROUP_ID, 999L);
+        int actual = selectTabDao.findTabLastPosition(1L, 999L);
 
         // then
         assertThat(actual).isZero();
@@ -241,8 +229,8 @@ class SelectTabDaoTest {
     @Test
     void 그룹별로_자식_position이_별도로_관리된다() {
         // when
-        int group1ChildPosition = selectTabDao.findTabLastPosition(1L, ROOT1_ID);
-        int group2ChildPosition = selectTabDao.findTabLastPosition(2L, GROUP2_ROOT_ID);
+        int group1ChildPosition = selectTabDao.findTabLastPosition(1L, 100L);
+        int group2ChildPosition = selectTabDao.findTabLastPosition(2L, 200L);
 
         // then
         assertAll(

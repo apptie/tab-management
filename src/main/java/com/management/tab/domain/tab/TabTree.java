@@ -63,25 +63,8 @@ public class TabTree {
         this.tabNodeMap = tabNodeMap;
     }
 
-    public boolean isDescendant(TabId potentialAncestor, TabId potentialDescendant) {
-        Optional<TabNode> ancestorNode = findNode(potentialAncestor);
-
-        return ancestorNode.filter(tabNode -> containsDescendant(tabNode, potentialDescendant))
-                           .isPresent();
-    }
-
-    private boolean containsDescendant(TabNode node, TabId targetId) {
-        return node.getChildren()
-                   .stream()
-                   .anyMatch(
-                           child -> child.getId().equals(targetId) || containsDescendant(child, targetId)
-                   );
-    }
-
     public void validateAddChildDepth(TabId parentId) {
-        TabNode parentNode = findNode(parentId)
-                .orElseThrow(() -> new IllegalArgumentException("부모 탭을 찾을 수 없습니다."));
-
+        TabNode parentNode = findNode(parentId).orElseThrow(TabNodeNotFoundException::new);
         int currentDepth = parentNode.getDepth() + 1;
 
         validateDepth(currentDepth);
@@ -98,64 +81,30 @@ public class TabTree {
     }
 
     public void validateMoveDepth(TabId newParentId) {
-        TabNode newParentNode = findNode(newParentId)
-                .orElseThrow(() -> new IllegalArgumentException("새 부모를 찾을 수 없습니다."));
-
+        TabNode newParentNode = findNode(newParentId).orElseThrow(TabNodeNotFoundException::new);
         int newParentDepth = newParentNode.getDepth() + 1;
 
         validateDepth(newParentDepth);
     }
 
     public void validateMoveDepthWithSubtree(TabId tabId, TabId newParentId) {
-        TabNode newParentNode = findNode(newParentId)
-                .orElseThrow(() -> new IllegalArgumentException("새 부모를 찾을 수 없습니다"));
-        TabNode movingNode = findNode(tabId)
-                .orElseThrow(() -> new IllegalArgumentException("이동할 탭을 찾을 수 없습니다"));
-
-        int newParentDepth = newParentNode.getDepth();
-        int subtreeDepth = calculateSubtreeDepth(movingNode);
-        int newMaxDepth = newParentDepth + 1 + subtreeDepth;
+        TabNode newParentNode = findNode(newParentId).orElseThrow(TabNodeNotFoundException::new);
+        TabNode movingNode = findNode(tabId).orElseThrow(TabNodeNotFoundException::new);
+        int newMaxDepth = calculateAfterMovedDepth(newParentNode, movingNode);
 
         validateDepth(newMaxDepth);
     }
 
-    public Optional<TabNode> findNode(TabId tabId) {
-        return Optional.ofNullable(tabNodeMap.get(tabId));
+    public boolean isDescendant(TabId potentialAncestor, TabId potentialDescendant) {
+        Optional<TabNode> ancestorNode = findNode(potentialAncestor);
+
+        return ancestorNode.filter(tabNode -> containsDescendant(tabNode, potentialDescendant))
+                           .isPresent();
     }
 
     public List<TabNode> findSiblings(TabId tabId) {
         return findNode(tabId).map(this::getSiblingsOf)
                               .orElse(Collections.emptyList());
-    }
-
-    private void validateDepth(int targetDepth) {
-        if (targetDepth >= MAX_DEPTH) {
-            throw new IllegalArgumentException("탭의 계층은 " + MAX_DEPTH + "를 초과할 수 없습니다.");
-        }
-    }
-
-    private int calculateSubtreeDepth(TabNode node) {
-        if (node.getChildren().isEmpty()) {
-            return 0;
-        }
-
-        int maxChildDepth = 0;
-
-        for (TabNode child : node.getChildren()) {
-            int childDepth = calculateSubtreeDepth(child);
-            maxChildDepth = Math.max(maxChildDepth, childDepth);
-        }
-
-        return maxChildDepth + 1;
-    }
-
-    private List<TabNode> getSiblingsOf(TabNode node) {
-        if (node.isRoot()) {
-            return rootTabNodes;
-        }
-
-        return findNode(node.getParentId()).map(TabNode::getChildren)
-                                           .orElse(Collections.emptyList());
     }
 
     public List<Tab> getAllTabs() {
@@ -181,28 +130,90 @@ public class TabTree {
         }
 
         int position = rootTabNodes.stream()
-                            .mapToInt(TabNode::getPosition)
-                            .max()
-                            .orElse(-1) + 1;
+                                   .mapToInt(TabNode::getPosition)
+                                   .max()
+                                   .orElse(-1) + 1;
 
         return TabPosition.create(position);
     }
 
     public TabPosition getNextChildPosition(TabId parentId) {
-        TabNode parentNode = findNode(parentId)
-                .orElseThrow(() -> new IllegalArgumentException("부모 탭을 찾을 수 없습니다."));
+        TabNode parentNode = findNode(parentId).orElseThrow(TabNodeNotFoundException::new);
 
-        List<TabNode> children = parentNode.getChildren();
-        if (children.isEmpty()) {
+        if (parentNode.isLeaf()) {
             return TabPosition.defaultPosition();
         }
 
-        int position = children.stream()
-                        .mapToInt(TabNode::getPosition)
-                        .max()
-                        .orElse(-1) + 1;
+        return calculateNextChildPosition(parentNode);
+    }
+
+    private Optional<TabNode> findNode(TabId tabId) {
+        return Optional.ofNullable(tabNodeMap.get(tabId));
+    }
+
+    private void validateDepth(int targetDepth) {
+        if (targetDepth >= MAX_DEPTH) {
+            throw new IllegalArgumentException("탭의 계층은 " + MAX_DEPTH + "를 초과할 수 없습니다.");
+        }
+    }
+
+    private boolean containsDescendant(TabNode node, TabId targetId) {
+        return node.getChildren()
+                   .stream()
+                   .anyMatch(child -> child.getId().equals(targetId) || containsDescendant(child, targetId));
+    }
+
+    private int calculateAfterMovedDepth(TabNode newParentNode, TabNode movingNode) {
+        int newParentDepth = newParentNode.getDepth();
+        int subtreeDepth = calculateSubtreeDepth(movingNode);
+
+        return newParentDepth + 1 + subtreeDepth;
+    }
+
+    private int calculateSubtreeDepth(TabNode node) {
+        if (node.isLeaf()) {
+            return 0;
+        }
+
+        int maxChildDepth = calculateMaxChildDepth(node);
+
+        return maxChildDepth + 1;
+    }
+
+    private int calculateMaxChildDepth(TabNode node) {
+        int maxChildDepth = 0;
+
+        for (TabNode child : node.getChildren()) {
+            int childDepth = calculateSubtreeDepth(child);
+            maxChildDepth = Math.max(maxChildDepth, childDepth);
+        }
+
+        return maxChildDepth;
+    }
+
+    private List<TabNode> getSiblingsOf(TabNode node) {
+        if (node.isRoot()) {
+            return rootTabNodes;
+        }
+
+        return findNode(node.parentId()).map(TabNode::getChildren)
+                                        .orElse(Collections.emptyList());
+    }
+
+    private TabPosition calculateNextChildPosition(TabNode parentNode) {
+        int position = parentNode.getChildren()
+                                 .stream()
+                                 .mapToInt(TabNode::getPosition)
+                                 .max()
+                                 .orElse(-1) + 1;
 
         return TabPosition.create(position);
     }
-}
 
+    public static class TabNodeNotFoundException extends IllegalArgumentException {
+
+        public TabNodeNotFoundException() {
+            super("지정한 탭 노드를 찾을 수 없습니다.");
+        }
+    }
+}

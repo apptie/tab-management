@@ -2,7 +2,6 @@ package com.management.tab.presentation.group;
 
 import com.management.tab.application.TabGroupService;
 import com.management.tab.domain.group.TabGroup;
-import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.presentation.common.ResponseVoidConst;
 import com.management.tab.presentation.group.dto.request.CreateTabGroupRequest;
 import com.management.tab.presentation.group.dto.request.UpdateTabGroupRequest;
@@ -46,8 +45,8 @@ public class TabGroupController {
 
     @PostMapping
     public ResponseEntity<CreateTabGroupResponse> createGroup(@RequestBody CreateTabGroupRequest request) {
-        TabGroupId tabGroupId = tabGroupService.createGroup(request.name());
-        CreateTabGroupResponse response = new CreateTabGroupResponse(tabGroupId.getValue());
+        Long tabGroupId = tabGroupService.createGroup(request.name());
+        CreateTabGroupResponse response = new CreateTabGroupResponse(tabGroupId);
 
         return ResponseEntity.ok(response);
     }

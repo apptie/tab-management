@@ -16,11 +16,8 @@ class TabContentIdTest {
 
     @Test
     void 양수_값으로_TabContentId를_초기화할_수_있다() {
-        // given
-        Long value = 1L;
-
         // when
-        TabContentId tabContentId = TabContentId.create(value);
+        TabContentId tabContentId = TabContentId.create(1L);
 
         // then
         assertAll(
@@ -30,12 +27,9 @@ class TabContentIdTest {
     }
 
     @Test
-    void null_값은_TabContentId_초기화에_실패한다() {
-        // given
-        Long value = null;
-
+    void null로_TabContentId를_초기화할_수_없다() {
         // when & then
-        assertThatThrownBy(() -> TabContentId.create(value))
+        assertThatThrownBy(() -> TabContentId.create(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TabContentId는 null일 수 없습니다.");
     }

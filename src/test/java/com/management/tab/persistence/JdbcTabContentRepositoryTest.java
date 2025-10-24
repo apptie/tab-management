@@ -1,6 +1,7 @@
 package com.management.tab.persistence;
 
 import com.management.tab.domain.content.TabContent;
+import com.management.tab.domain.repository.TabContentRepository.TabContentNotFoundException;
 import com.management.tab.domain.tab.vo.TabId;
 import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-jdbc-tab-content-repository-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/jdbc/tab-content-repository-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class JdbcTabContentRepositoryTest {
@@ -48,10 +49,9 @@ class JdbcTabContentRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId().getValue()).isEqualTo(1L),
-                () -> assertThat(actual.getTabId().getValue()).isEqualTo(1L),
-                () -> assertThat(actual.getContent().getValue()).isEqualTo("Spring 프레임워크 학습 내용")
+                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getTabId()).isEqualTo(1L),
+                () -> assertThat(actual.getContent()).isEqualTo("Spring 프레임워크 학습 내용")
         );
     }
 
@@ -59,8 +59,8 @@ class JdbcTabContentRepositoryTest {
     void 존재하지_않는_ID로_조회하면_예외가_발생한다() {
         // when & then
         assertThatThrownBy(() -> jdbcTabContentRepository.findById(999L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 탭 내용을 찾을 수 없습니다.");
+                .isInstanceOf(TabContentNotFoundException.class)
+                .hasMessage("탭 내용을 찾을 수 없습니다.");
     }
 
     @Test
@@ -73,10 +73,9 @@ class JdbcTabContentRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getTabId().getValue()).isEqualTo(2L),
-                () -> assertThat(actual.getContent().getValue()).isEqualTo("새로운 컨텐츠")
+                () -> assertThat(actual.getTabId()).isEqualTo(2L),
+                () -> assertThat(actual.getContent()).isEqualTo("새로운 컨텐츠")
         );
     }
 
@@ -87,10 +86,10 @@ class JdbcTabContentRepositoryTest {
         TabContent saved = jdbcTabContentRepository.save(tabContent);
 
         // when
-        TabContent actual = jdbcTabContentRepository.findById(saved.getId().getValue());
+        TabContent actual = jdbcTabContentRepository.findById(saved.getId());
 
         // then
-        assertThat(actual.getContent().getValue()).isEqualTo("저장 테스트");
+        assertThat(actual.getContent()).isEqualTo("저장 테스트");
     }
 
     @Test
@@ -104,7 +103,8 @@ class JdbcTabContentRepositoryTest {
 
         // then
         TabContent actual = jdbcTabContentRepository.findById(1L);
-        assertThat(actual.getContent().getValue()).isEqualTo("수정된 내용");
+
+        assertThat(actual.getContent()).isEqualTo("수정된 내용");
     }
 
     @Test
@@ -118,7 +118,8 @@ class JdbcTabContentRepositoryTest {
 
         // then
         TabContent actual = jdbcTabContentRepository.findById(1L);
-        assertThat(actual.getId().getValue()).isEqualTo(1L);
+
+        assertThat(actual.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -126,15 +127,15 @@ class JdbcTabContentRepositoryTest {
         // given
         TabContent tabContent = TabContent.create(TabId.create(2L), "삭제할 컨텐츠");
         TabContent saved = jdbcTabContentRepository.save(tabContent);
-        Long contentId = saved.getId().getValue();
+        Long contentId = saved.getId();
 
         // when
         jdbcTabContentRepository.delete(contentId);
 
         // then
         assertThatThrownBy(() -> jdbcTabContentRepository.findById(contentId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 탭 내용을 찾을 수 없습니다.");
+                .isInstanceOf(TabContentNotFoundException.class)
+                .hasMessage("탭 내용을 찾을 수 없습니다.");
     }
 
     @Test

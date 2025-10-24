@@ -11,10 +11,10 @@ public record TabGroupResponse(
 
     public static TabGroupResponse from(TabGroup tabGroup) {
         return new TabGroupResponse(
-                tabGroup.getId().getValue(),
-                tabGroup.getName().getValue(),
-                tabGroup.getTimestamps().getCreatedAt().toString(),
-                tabGroup.getTimestamps().getUpdatedAt().toString()
+                tabGroup.getId(),
+                tabGroup.getName(),
+                tabGroup.getCreatedAt().toString(),
+                tabGroup.getUpdatedAt().toString()
         );
     }
 }

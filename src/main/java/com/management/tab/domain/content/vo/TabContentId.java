@@ -7,6 +7,8 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class TabContentId {
 
+    public static final TabContentId EMPTY_TAB_CONTENT_ID = new TabContentId(null);
+
     private final Long value;
 
     public static TabContentId create(Long value) {
@@ -25,7 +27,6 @@ public class TabContentId {
     }
 
     private TabContentId(Long value) {
-        validateValue(value);
         this.value = value;
     }
 }

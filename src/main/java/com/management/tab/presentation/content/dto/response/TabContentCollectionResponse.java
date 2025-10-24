@@ -23,11 +23,11 @@ public record TabContentCollectionResponse(List<TabContentResponse> contents) {
 
         public static TabContentResponse from(TabContent tabContent) {
             return new TabContentResponse(
-                    tabContent.getId().getValue(),
-                    tabContent.getTabId().getValue(),
-                    tabContent.getContent().getValue(),
-                    tabContent.getAuditTimestamps().getCreatedAt().toString(),
-                    tabContent.getAuditTimestamps().getUpdatedAt().toString()
+                    tabContent.getId(),
+                    tabContent.getTabId(),
+                    tabContent.getContent(),
+                    tabContent.getCreatedAt().toString(),
+                    tabContent.getUpdatedAt().toString()
             );
         }
     }

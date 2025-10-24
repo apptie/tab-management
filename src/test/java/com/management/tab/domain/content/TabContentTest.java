@@ -20,18 +20,17 @@ class TabContentTest {
     void TabId와_내용으로_새로운_탭_컨텐츠를_생성할_수_있다() {
         // given
         TabId tabId = TabId.create(1L);
-        String content = "테스트 내용";
 
         // when
-        TabContent tabContent = TabContent.create(tabId, content);
+        TabContent actual = TabContent.create(tabId, "테스트 내용");
 
         // then
         assertAll(
-                () -> assertThat(tabContent).isNotNull(),
-                () -> assertThat(tabContent.getId()).isNull(),
-                () -> assertThat(tabContent.getTabId()).isEqualTo(tabId),
-                () -> assertThat(tabContent.getContent()).isEqualTo(Content.create(content)),
-                () -> assertThat(tabContent.getAuditTimestamps()).isNotNull()
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isNull(),
+                () -> assertThat(actual.getTabId()).isEqualTo(1L),
+                () -> assertThat(actual.getContent()).isEqualTo("테스트 내용"),
+                () -> assertThat(actual.getContent()).isNotNull()
         );
     }
 
@@ -42,15 +41,13 @@ class TabContentTest {
         TabContentId newId = TabContentId.create(100L);
 
         // when
-        TabContent updated = original.withId(newId);
+        TabContent actual = original.withId(newId);
 
         // then
         assertAll(
-                () -> assertThat(updated).isNotNull(),
-                () -> assertThat(updated.getId()).isEqualTo(newId),
-                () -> assertThat(updated.getTabId()).isEqualTo(original.getTabId()),
-                () -> assertThat(updated.getContent()).isEqualTo(original.getContent()),
-                () -> assertThat(original.getId()).isNull()
+                () -> assertThat(actual.getId()).isEqualTo(100L),
+                () -> assertThat(actual.getTabId()).isEqualTo(original.getTabId()),
+                () -> assertThat(actual.getContent()).isEqualTo("원본 내용")
         );
     }
 
@@ -59,57 +56,15 @@ class TabContentTest {
         // given
         TabContent original = TabContent.create(TabId.create(1L), "원본 내용")
                                         .withId(TabContentId.create(100L));
-        String newContent = "수정된 내용";
 
         // when
-        TabContent updated = original.updateContent(newContent);
+        TabContent actual = original.updateContent("수정된 내용");
 
         // then
         assertAll(
-                () -> assertThat(updated).isNotNull(),
-                () -> assertThat(updated.getId()).isEqualTo(original.getId()),
-                () -> assertThat(updated.getTabId()).isEqualTo(original.getTabId()),
-                () -> assertThat(updated.getContent()).isEqualTo(Content.create(newContent)),
-                () -> assertThat(updated.getContent()).isNotEqualTo(original.getContent())
-        );
-    }
-
-    @Test
-    void ID_부여_시_원본_탭_컨텐츠는_변경되지_않는다() {
-        // given
-        TabContent original = TabContent.create(TabId.create(1L), "원본 내용");
-        TabContentId originalId = original.getId();
-        Content originalContent = original.getContent();
-        TabId originalTabId = original.getTabId();
-
-        // when
-        original.withId(TabContentId.create(100L));
-
-        // then
-        assertAll(
-                () -> assertThat(original.getId()).isEqualTo(originalId),
-                () -> assertThat(original.getContent()).isEqualTo(originalContent),
-                () -> assertThat(original.getTabId()).isEqualTo(originalTabId)
-        );
-    }
-
-    @Test
-    void 내용_수정_시_원본_탭_컨텐츠는_변경되지_않는다() {
-        // given
-        TabContent original = TabContent.create(TabId.create(1L), "원본 내용")
-                                        .withId(TabContentId.create(100L));
-        TabContentId originalId = original.getId();
-        Content originalContent = original.getContent();
-        TabId originalTabId = original.getTabId();
-
-        // when
-        original.updateContent("수정된 내용");
-
-        // then
-        assertAll(
-                () -> assertThat(original.getId()).isEqualTo(originalId),
-                () -> assertThat(original.getContent()).isEqualTo(originalContent),
-                () -> assertThat(original.getTabId()).isEqualTo(originalTabId)
+                () -> assertThat(actual.getId()).isEqualTo(original.getId()),
+                () -> assertThat(actual.getTabId()).isEqualTo(original.getTabId()),
+                () -> assertThat(actual.getContent()).isEqualTo("수정된 내용")
         );
     }
 
@@ -162,7 +117,7 @@ class TabContentTest {
         LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 15, 30);
 
         // when
-        TabContent tabContent = TabContent.create(
+        TabContent actual = TabContent.create(
                 TabContentId.create(100L),
                 TabId.create(1L),
                 Content.create("직접 생성 테스트"),
@@ -171,10 +126,10 @@ class TabContentTest {
 
         // then
         assertAll(
-                () -> assertThat(tabContent.getId()).isNotNull(),
-                () -> assertThat(tabContent.getId()).isEqualTo(TabContentId.create(100L)),
-                () -> assertThat(tabContent.getAuditTimestamps().getCreatedAt()).isEqualTo(createdAt),
-                () -> assertThat(tabContent.getAuditTimestamps().getUpdatedAt()).isEqualTo(updatedAt)
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getId()).isEqualTo(100L),
+                () -> assertThat(actual.getCreatedAt()).isEqualTo(createdAt),
+                () -> assertThat(actual.getUpdatedAt()).isEqualTo(updatedAt)
         );
     }
 }

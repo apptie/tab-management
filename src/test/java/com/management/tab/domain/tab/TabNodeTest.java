@@ -34,14 +34,14 @@ class TabNodeTest {
         TabId parentId = TabId.create(10L);
 
         // when
-        TabNode tabNode = TabNode.create(tab, depth, parentId);
+        TabNode tabNode = TabNode.create(tab, depth);
 
         // then
         assertAll(
                 () -> assertThat(tabNode).isNotNull(),
                 () -> assertThat(tabNode.getTab()).isEqualTo(tab),
                 () -> assertThat(tabNode.getDepth()).isEqualTo(depth),
-                () -> assertThat(tabNode.getParentId()).isEqualTo(parentId),
+                () -> assertThat(tabNode.parentId()).isEqualTo(parentId),
                 () -> assertThat(tabNode.getChildren()).isEmpty()
         );
     }
@@ -51,7 +51,7 @@ class TabNodeTest {
         // given
         Tab tab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -67,7 +67,7 @@ class TabNodeTest {
                 () -> assertThat(rootNode).isNotNull(),
                 () -> assertThat(rootNode.getTab()).isEqualTo(tab),
                 () -> assertThat(rootNode.getDepth()).isZero(),
-                () -> assertThat(rootNode.getParentId()).isNull(),
+                () -> assertThat(rootNode.parentId()).isSameAs(TabId.EMPTY_TAB_ID),
                 () -> assertThat(rootNode.getChildren()).isEmpty()
         );
     }
@@ -77,7 +77,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -95,7 +95,7 @@ class TabNodeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
 
         // when
         parentNode.addChild(childNode);
@@ -113,7 +113,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -133,7 +133,7 @@ class TabNodeTest {
         // given
         Tab tab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -153,7 +153,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -171,7 +171,7 @@ class TabNodeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         parentNode.addChild(childNode);
 
         // when
@@ -208,7 +208,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -226,7 +226,7 @@ class TabNodeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         parentNode.addChild(childNode);
 
         // when
@@ -242,7 +242,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -260,7 +260,7 @@ class TabNodeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         parentNode.addChild(childNode);
 
         // when
@@ -275,7 +275,7 @@ class TabNodeTest {
         // given
         Tab rootTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -296,7 +296,7 @@ class TabNodeTest {
         // given
         Tab tab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -306,10 +306,10 @@ class TabNodeTest {
         TabNode node = TabNode.createRoot(tab);
 
         // when
-        TabId id = node.getId();
+        TabId actual = node.getId();
 
         // then
-        assertThat(id).isEqualTo(tab.getId());
+        assertThat(actual.getValue()).isEqualTo(1L);
     }
 
     @Test
@@ -317,7 +317,7 @@ class TabNodeTest {
         // given
         Tab tab1 = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -334,7 +334,7 @@ class TabNodeTest {
                 AuditTimestamps.now()
         );
         TabNode node1 = TabNode.createRoot(tab1);
-        TabNode node2 = TabNode.create(tab2, 1, TabId.create(10L));
+        TabNode node2 = TabNode.create(tab2, 1);
 
         // when & then
         assertAll(
@@ -348,7 +348,7 @@ class TabNodeTest {
         // given
         Tab tab1 = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -357,7 +357,7 @@ class TabNodeTest {
         );
         Tab tab2 = new Tab(
                 TabId.create(2L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -379,7 +379,7 @@ class TabNodeTest {
         // given
         Tab parentTab = new Tab(
                 TabId.create(1L),
-                null,
+                TabId.EMPTY_TAB_ID,
                 TabGroupId.create(1L),
                 TabTitle.create("테스트 탭"),
                 TabUrl.create("http://test.com"),
@@ -398,7 +398,7 @@ class TabNodeTest {
                 TabPosition.create(0),
                 AuditTimestamps.now()
         );
-        TabNode childNode = TabNode.create(childTab, 1, TabId.create(1L));
+        TabNode childNode = TabNode.create(childTab, 1);
         node1.addChild(childNode);
 
         // when & then
@@ -406,5 +406,26 @@ class TabNodeTest {
                 () -> assertThat(node1).isEqualTo(node2),
                 () -> assertThat(node1).hasSameHashCodeAs(node2)
         );
+    }
+
+    @Test
+    void 탭_노드의_자식이_있는지_확인한다() {
+        // given
+        Tab parentTab = new Tab(
+                TabId.create(1L),
+                TabId.EMPTY_TAB_ID,
+                TabGroupId.create(1L),
+                TabTitle.create("테스트 탭"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        TabNode node = TabNode.createRoot(parentTab);
+
+        // when
+        boolean actual = node.isLeaf();
+
+        // then
+        assertThat(actual).isTrue();
     }
 }

@@ -38,7 +38,7 @@ public class TabController {
             @RequestBody CreateRootTabRequest request
     ) {
         TabId tabId = tabService.createRootTab(groupId, request.title(), request.url());
-        CreateRootTabResponse response = new CreateRootTabResponse(tabId.id().longValue());
+        CreateRootTabResponse response = new CreateRootTabResponse(tabId.getValue());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(response);
@@ -50,7 +50,7 @@ public class TabController {
             @RequestBody CreateChildTabRequest request
     ) {
         TabId childTabId = tabService.createChildTab(parentId, request.title(), request.url());
-        CreateChildTabResponse response = new CreateChildTabResponse(childTabId.id().longValue());
+        CreateChildTabResponse response = new CreateChildTabResponse(childTabId.getValue());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                              .body(response);

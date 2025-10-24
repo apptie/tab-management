@@ -1,7 +1,6 @@
 package com.management.tab.application;
 
 import com.management.tab.domain.content.TabContent;
-import com.management.tab.domain.content.vo.TabContentId;
 import com.management.tab.domain.tab.vo.TabId;
 import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -15,10 +14,9 @@ import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-tab-content-service-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/service/tab-content-service-test-data.sql"})
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TabContentServiceTest {
@@ -41,16 +39,13 @@ class TabContentServiceTest {
         TabContent actual = tabContentService.getContent(1L);
 
         // then
-        assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getContent().getValue()).isEqualTo("Spring 프레임워크 학습 내용")
-        );
+        assertThat(actual.getContent()).isEqualTo("Spring 프레임워크 학습 내용");
     }
 
     @Test
     void 새로운_컨텐츠를_초기화한다() {
         // when
-        TabContentId actual = tabContentService.createContent(TabId.create(2L), "새로운 컨텐츠");
+        Long actual = tabContentService.createContent(TabId.create(2L), "새로운 컨텐츠");
 
         // then
         assertThat(actual).isNotNull();
@@ -64,7 +59,7 @@ class TabContentServiceTest {
         // then
         TabContent actual = tabContentService.getContent(1L);
 
-        assertThat(actual.getContent().getValue()).isEqualTo("변경된 내용");
+        assertThat(actual.getContent()).isEqualTo("변경된 내용");
     }
 
     @Test

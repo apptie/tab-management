@@ -1,7 +1,6 @@
 package com.management.tab.application;
 
 import com.management.tab.domain.content.TabContent;
-import com.management.tab.domain.content.vo.TabContentId;
 import com.management.tab.domain.repository.TabContentRepository;
 import com.management.tab.domain.tab.vo.TabId;
 import java.util.List;
@@ -24,7 +23,7 @@ public class TabContentService {
     }
 
     @Transactional
-    public TabContentId createContent(TabId tabId, String content) {
+    public Long createContent(TabId tabId, String content) {
         TabContent newTabContent = TabContent.create(tabId, content);
 
         return tabContentRepository.save(newTabContent)

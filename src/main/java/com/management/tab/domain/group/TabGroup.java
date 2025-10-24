@@ -4,9 +4,7 @@ import com.management.tab.domain.common.AuditTimestamps;
 import com.management.tab.domain.group.vo.TabGroupId;
 import com.management.tab.domain.group.vo.TabGroupName;
 import java.time.LocalDateTime;
-import lombok.Getter;
 
-@Getter
 public class TabGroup {
 
     private final TabGroupId id;
@@ -14,7 +12,7 @@ public class TabGroup {
     private final AuditTimestamps timestamps;
 
     public static TabGroup create(String name) {
-        return new TabGroup(null, TabGroupName.create(name), AuditTimestamps.now());
+        return new TabGroup(TabGroupId.EMPTY_TAB_GROUP_ID, TabGroupName.create(name), AuditTimestamps.now());
     }
 
     public static TabGroup create(Long groupId, String name, LocalDateTime createAt, LocalDateTime updatedAt) {
@@ -37,5 +35,21 @@ public class TabGroup {
 
     public TabGroup rename(String newName) {
         return new TabGroup(this.id, TabGroupName.create(newName), this.timestamps);
+    }
+
+    public Long getId() {
+        return id.getValue();
+    }
+
+    public String getName() {
+        return name.getValue();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return timestamps.getCreatedAt();
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return timestamps.getUpdatedAt();
     }
 }

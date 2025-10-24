@@ -26,23 +26,19 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     public TabGroup findById(Long id) {
         return tabGroupDao.findById(id)
                 .map(TabGroupDto::toTabGroup)
-                .orElseThrow(() -> new IllegalArgumentException("지정한 ID에 해당하는 탭 그룹이 없습니다."));
+                .orElseThrow(TabGroupNotFoundException::new);
     }
 
     @Override
     public TabGroup save(TabGroup tabGroup) {
-        Long tabGroupId = tabGroupDao.save(
-                tabGroup.getName().getValue(),
-                tabGroup.getTimestamps().getCreatedAt(),
-                tabGroup.getTimestamps().getUpdatedAt()
-        );
+        Long tabGroupId = tabGroupDao.save(tabGroup.getName(), tabGroup.getCreatedAt(), tabGroup.getUpdatedAt());
 
         return TabGroup.createWithAssignedId(tabGroupId, tabGroup);
     }
 
     @Override
     public void updateRenamed(TabGroup renamedTabGroup) {
-        tabGroupDao.update(renamedTabGroup.getId().getValue(), renamedTabGroup.getName().getValue());
+        tabGroupDao.update(renamedTabGroup.getId(), renamedTabGroup.getName());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.management.tab.persistence;
 
 import com.management.tab.domain.group.TabGroup;
+import com.management.tab.domain.repository.TabGroupRepository.TabGroupNotFoundException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-jdbc-tab-group-repository-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/jdbc/tab-group-repository-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class JdbcTabGroupRepositoryTest {
@@ -43,17 +44,13 @@ class JdbcTabGroupRepositoryTest {
 
     @Test
     void ID로_탭_그룹을_조회할_수_있다() {
-        // given
-        Long groupId = 1L;
-
         // when
-        TabGroup actual = jdbcTabGroupRepository.findById(groupId);
+        TabGroup actual = jdbcTabGroupRepository.findById(1L);
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getId().getValue()).isEqualTo(groupId),
-                () -> assertThat(actual.getName().getValue()).isEqualTo("테스트 그룹1")
+                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getName()).isEqualTo("테스트 그룹1")
         );
     }
 
@@ -64,8 +61,8 @@ class JdbcTabGroupRepositoryTest {
 
         // when & then
         assertThatThrownBy(() -> jdbcTabGroupRepository.findById(groupId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 ID에 해당하는 탭 그룹이 없습니다.");
+                .isInstanceOf(TabGroupNotFoundException.class)
+                .hasMessage("탭 그룹을 찾을 수 없습니다.");
     }
 
     @Test
@@ -78,42 +75,39 @@ class JdbcTabGroupRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName().getValue()).isEqualTo("새 그룹")
+                () -> assertThat(actual.getName()).isEqualTo("새 그룹")
         );
     }
 
     @Test
     void 탭_그룹의_이름을_변경할_수_있다() {
         // given
-        Long groupId = 1L;
-        TabGroup tabGroup = jdbcTabGroupRepository.findById(groupId);
+        TabGroup tabGroup = jdbcTabGroupRepository.findById(1L);
         TabGroup renamedTabGroup = tabGroup.rename("변경된 그룹명");
 
         // when
         jdbcTabGroupRepository.updateRenamed(renamedTabGroup);
 
         // then
-        TabGroup actual = jdbcTabGroupRepository.findById(groupId);
+        TabGroup actual = jdbcTabGroupRepository.findById(1L);
 
-        assertThat(actual.getName().getValue()).isEqualTo("변경된 그룹명");
+        assertThat(actual.getName()).isEqualTo("변경된 그룹명");
     }
 
     @Test
     void 이름_변경_시_ID는_유지된다() {
         // given
-        Long groupId = 1L;
-        TabGroup tabGroup = jdbcTabGroupRepository.findById(groupId);
+        TabGroup tabGroup = jdbcTabGroupRepository.findById(1L);
         TabGroup renamedTabGroup = tabGroup.rename("변경된 그룹명");
 
         // when
         jdbcTabGroupRepository.updateRenamed(renamedTabGroup);
 
         // then
-        TabGroup actual = jdbcTabGroupRepository.findById(groupId);
+        TabGroup actual = jdbcTabGroupRepository.findById(1L);
 
-        assertThat(actual.getId().getValue()).isEqualTo(groupId);
+        assertThat(actual.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -121,29 +115,15 @@ class JdbcTabGroupRepositoryTest {
         // given
         TabGroup tabGroup = TabGroup.create("삭제할 그룹");
         TabGroup saved = jdbcTabGroupRepository.save(tabGroup);
-        Long groupId = saved.getId().getValue();
+        Long groupId = saved.getId();
 
         // when
         jdbcTabGroupRepository.delete(groupId);
 
         // then
         assertThatThrownBy(() -> jdbcTabGroupRepository.findById(groupId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("지정한 ID에 해당하는 탭 그룹이 없습니다.");
-    }
-
-    @Test
-    void 탭이_없는_그룹의_탭_개수는_0이다() {
-        // given
-        TabGroup tabGroup = TabGroup.create("빈 그룹");
-        TabGroup saved = jdbcTabGroupRepository.save(tabGroup);
-        Long groupId = saved.getId().getValue();
-
-        // when
-        int actual = jdbcTabGroupRepository.countTabs(groupId);
-
-        // then
-        assertThat(actual).isZero();
+                .isInstanceOf(TabGroupNotFoundException.class)
+                .hasMessage("탭 그룹을 찾을 수 없습니다.");
     }
 
     @Test

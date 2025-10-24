@@ -174,6 +174,7 @@ class TabManager {
                     <div class="tab-url">${this.escapeHtml(tab.url)}</div>
                 </div>
                 <div class="tab-actions">
+                    <button class="btn-open-url" data-url="${this.escapeHtml(tab.url)}" title="새 탭에서 열기"></button>
                     ${lockButton}
                     <button class="btn-secondary add-child" data-id="${tab.id}">
                         자식 추가
@@ -192,6 +193,12 @@ class TabManager {
         div.querySelector('.tab-info').addEventListener('click', (e) => {
             e.stopPropagation();
             this.onTabClick(tab.id, tab.title, div);
+        });
+
+        // URL 열기 버튼
+        div.querySelector('.btn-open-url').addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.open(tab.url, '_blank', 'noopener,noreferrer');
         });
 
         const lockBtn = div.querySelector('.btn-lock');

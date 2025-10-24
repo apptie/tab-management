@@ -40,4 +40,11 @@ public interface TabRepository {
     void deleteTabWithSubtree(Tab tab);
 
     void deleteTab(Tab tab);
+
+    class TabNotFoundException extends IllegalArgumentException {
+
+        public TabNotFoundException() {
+            super("탭을 찾을 수 없습니다.");
+        }
+    }
 }

@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-tab-content-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/dao/insert-tab-content-dao-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class TabContentDaoTest {

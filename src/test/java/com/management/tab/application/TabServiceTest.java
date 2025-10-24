@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-tab-service-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/service/tab-service-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class TabServiceTest {
@@ -25,13 +25,8 @@ class TabServiceTest {
 
     @Test
     void 루트_탭을_생성할_수_있다() {
-        // given
-        Long groupId = 1L;
-        String title = "새 루트 탭";
-        String url = "https://new-root.com";
-
         // when
-        TabId actual = tabService.createRootTab(groupId, title, url);
+        TabId actual = tabService.createRootTab(1L, "새 루트 탭", "https://new-root.com");
 
         // then
         assertThat(actual).isNotNull();
@@ -40,29 +35,22 @@ class TabServiceTest {
     @Test
     void 루트_탭_생성_시_마지막_위치_다음에_추가된다() {
         // given
-        Long groupId = 1L;
-        String title = "새 루트 탭";
-        String url = "https://new-root.com";
-        TabTree beforeTree = tabService.getTabTree(groupId);
+        TabTree beforeTree = tabService.getTabTree(1L);
         int beforeCount = beforeTree.getTotalCount();
 
         // when
-        tabService.createRootTab(groupId, title, url);
+        tabService.createRootTab(1L, "새 루트 탭", "https://new-root.com");
 
         // then
-        TabTree actual = tabService.getTabTree(groupId);
+        TabTree actual = tabService.getTabTree(1L);
+
         assertThat(actual.getTotalCount()).isEqualTo(beforeCount + 1);
     }
 
     @Test
     void 자식_탭을_생성할_수_있다() {
-        // given
-        Long parentId = 100L;
-        String title = "새 자식 탭";
-        String url = "https://new-child.com";
-
         // when
-        TabId actual = tabService.createChildTab(parentId, title, url);
+        TabId actual = tabService.createChildTab(100L, "새 자식 탭", "https://new-child.com");
 
         // then
         assertThat(actual).isNotNull();
@@ -71,243 +59,231 @@ class TabServiceTest {
     @Test
     void 자식_탭_생성_시_부모의_마지막_위치_다음에_추가된다() {
         // given
-        Long parentId = 100L;
-        String title = "새 자식 탭";
-        String url = "https://new-child.com";
         TabTree beforeTree = tabService.getTabTree(1L);
         int beforeCount = beforeTree.getTotalCount();
 
         // when
-        tabService.createChildTab(parentId, title, url);
+        tabService.createChildTab(100L, "새 자식 탭", "https://new-child.com");
 
         // then
         TabTree actual = tabService.getTabTree(1L);
+
         assertThat(actual.getTotalCount()).isEqualTo(beforeCount + 1);
     }
 
     @Test
     void 최대_깊이를_초과하면_자식_탭을_생성할_수_없다() {
-        // given
-        Long deepParentId = 112L;  // depth 9 탭 (MAX_DEPTH - 1)
-        String title = "깊은 자식 탭";
-        String url = "https://deep-child.com";
-
         // when & then
-        assertThatThrownBy(() -> tabService.createChildTab(deepParentId, title, url))
+        assertThatThrownBy(() -> tabService.createChildTab(112L, "깊은 자식 탭", "https://deep-child.com"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 탭을_삭제할_수_있다() {
-        // given
-        Long tabId = 105L;
-
         // when
-        tabService.deleteTab(tabId);
+        tabService.deleteTab(105L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
-        assertThat(actual.findNode(TabId.create(tabId))).isEmpty();
+
+        assertThat(
+                actual.getAllTabs()
+                      .stream()
+                      .filter(tab -> tab.isEqualId(TabId.create(105L)))
+                      .findFirst()
+        ).isEmpty();
     }
 
     @Test
     void 탭을_서브트리와_함께_삭제할_수_있다() {
         // given
-        Long tabId = 101L;
         TabTree beforeTree = tabService.getTabTree(1L);
         int beforeCount = beforeTree.getTotalCount();
 
         // when
-        tabService.deleteTabWithSubtree(tabId);
+        tabService.deleteTabWithSubtree(101L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
+
         assertThat(actual.getTotalCount()).isLessThan(beforeCount);
     }
 
     @Test
     void 서브트리와_함께_삭제하면_자손도_모두_삭제된다() {
-        // given
-        Long tabId = 101L;
-
         // when
-        tabService.deleteTabWithSubtree(tabId);
+        tabService.deleteTabWithSubtree(101L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
+
         assertAll(
-                () -> assertThat(actual.findNode(TabId.create(101L))).isEmpty(),
-                () -> assertThat(actual.findNode(TabId.create(103L))).isEmpty(),
-                () -> assertThat(actual.findNode(TabId.create(104L))).isEmpty()
+                () -> assertThat(actual.getAllTabs()
+                                       .stream()
+                                       .filter(tab -> tab.isEqualId(TabId.create(101L)))
+                                       .findFirst()).isEmpty(),
+                () -> assertThat(actual.getAllTabs()
+                                       .stream()
+                                       .filter(tab -> tab.isEqualId(TabId.create(103L)))
+                                       .findFirst()).isEmpty(),
+                () -> assertThat(actual.getAllTabs()
+                                       .stream()
+                                       .filter(tab -> tab.isEqualId(TabId.create(104L)))
+                                       .findFirst()).isEmpty()
         );
     }
 
     @Test
     void 탭을_루트로_이동할_수_있다() {
-        // given
-        Long tabId = 101L;
-
         // when
-        tabService.moveRoot(tabId);
+        tabService.moveRoot(101L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
-        assertThat(actual.findNode(TabId.create(tabId)))
-                .isPresent()
-                .hasValueSatisfying(node -> assertThat(node.isRoot()).isTrue());
+
+        assertThat(
+                actual.getAllTabs()
+                      .stream()
+                      .filter(tab -> tab.isEqualId(TabId.create(101L)))
+                      .findFirst()
+        ).isPresent()
+         .hasValueSatisfying(tab -> assertThat(tab.parentId()).isSameAs(TabId.EMPTY_TAB_ID));
     }
 
     @Test
     void 탭을_서브트리와_함께_루트로_이동할_수_있다() {
-        // given
-        Long tabId = 101L;
-
         // when
-        tabService.moveRootWithSubtree(tabId);
+        tabService.moveRootWithSubtree(101L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
-        assertThat(actual.findNode(TabId.create(tabId)))
-                .isPresent()
-                .hasValueSatisfying(node -> assertThat(node.isRoot()).isTrue());
+
+        assertThat(
+                actual.getAllTabs()
+                      .stream()
+                      .filter(tab -> tab.isEqualId(TabId.create(101L)))
+                      .findFirst()
+        ).isPresent()
+         .hasValueSatisfying(tab -> assertThat(tab.parentId()).isSameAs(TabId.EMPTY_TAB_ID));
     }
 
     @Test
     void 탭을_다른_부모로_이동할_수_있다() {
-        // given
-        Long tabId = 103L;
-        Long newParentId = 102L;
-
         // when
-        tabService.move(tabId, newParentId);
+        tabService.move(103L, 102L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
-        assertThat(actual.findNode(TabId.create(tabId)))
-                .isPresent()
-                .hasValueSatisfying(node -> assertThat(node.getParentId()).isEqualTo(TabId.create(newParentId)));
+
+        assertThat(
+                actual.getAllTabs()
+                      .stream()
+                      .filter(tab -> tab.isEqualId(TabId.create(103L)))
+                      .findFirst()
+        ).isPresent()
+         .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isEqualTo(102L));
     }
 
     @Test
     void 자기_자신을_부모로_이동할_수_없다() {
-        // given
-        Long tabId = 101L;
-        Long newParentId = 101L;
-
         // when & then
-        assertThatThrownBy(() -> tabService.move(tabId, newParentId))
+        assertThatThrownBy(() -> tabService.move(101L, 101L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("자기 자신을 부모로 설정할 수 없습니다.");
     }
 
     @Test
     void 자손을_부모로_이동할_수_없다() {
-        // given
-        Long tabId = 101L;
-        Long newParentId = 103L;
-
         // when & then
-        assertThatThrownBy(() -> tabService.move(tabId, newParentId))
+        assertThatThrownBy(() -> tabService.move(101L, 103L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("순환 참조가 발생합니다: 자손을 부모로 설정할 수 없습니다.");
     }
 
     @Test
     void 최대_깊이를_초과하면_이동할_수_없다() {
-        // given
-        Long tabId = 101L;
-        Long deepParentId = 112L;
-
         // when & then
-        assertThatThrownBy(() -> tabService.move(tabId, deepParentId))
+        assertThatThrownBy(() -> tabService.move(101L, 112L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("탭의 계층은 10를 초과할 수 없습니다.");
     }
 
     @Test
     void 탭을_서브트리와_함께_이동할_수_있다() {
-        // given
-        Long tabId = 101L;
-        Long newParentId = 102L;
-
         // when
-        tabService.moveWithSubtree(tabId, newParentId);
+        tabService.moveWithSubtree(101L, 102L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
-        assertThat(actual.findNode(TabId.create(tabId)))
+
+        assertThat(actual.getAllTabs().stream()
+                         .filter(tab -> tab.isEqualId(TabId.create(101L)))
+                         .findFirst())
                 .isPresent()
-                .hasValueSatisfying(node -> assertThat(node.getParentId()).isEqualTo(TabId.create(newParentId)));
+                .hasValueSatisfying(tab -> assertThat(tab.getParentId()).isEqualTo(102L));
     }
 
     @Test
     void 서브트리와_함께_이동하면_자손도_함께_이동한다() {
-        // given
-        Long tabId = 101L;
-        Long newParentId = 102L;
-
         // when
-        tabService.moveWithSubtree(tabId, newParentId);
+        tabService.moveWithSubtree(101L, 102L);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
+
         assertAll(
-                () -> assertThat(actual.findNode(TabId.create(103L))).isPresent(),
-                () -> assertThat(actual.findNode(TabId.create(104L))).isPresent()
+                () -> assertThat(actual.getAllTabs()
+                                       .stream()
+                                       .filter(tab -> tab.isEqualId(TabId.create(103L)))
+                                       .findFirst()).isPresent(),
+                () -> assertThat(actual.getAllTabs()
+                                       .stream()
+                                       .filter(tab -> tab.isEqualId(TabId.create(104L)))
+                                       .findFirst()).isPresent()
         );
     }
 
     @Test
     void 서브트리와_함께_이동_시_최대_깊이를_초과하면_이동할_수_없다() {
-        // given
-        Long tabId = 101L;
-        Long deepParentId = 111L;
-
         // when & then
-        assertThatThrownBy(() -> tabService.moveWithSubtree(tabId, deepParentId))
+        assertThatThrownBy(() -> tabService.moveWithSubtree(101L, 111L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("탭의 계층은 10를 초과할 수 없습니다.");
     }
 
     @Test
     void 같은_레벨이_아닌_탭의_순서를_변경할_수_없다() {
-        // given
-        Long tabId = 101L;
-        Long targetTabId = 103L;
-
         // when & then
-        assertThatThrownBy(() -> tabService.reorderTab(tabId, targetTabId, true))
+        assertThatThrownBy(() -> tabService.reorderTab(101L, 103L, true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("같은 레벨의 탭만 순서를 변경할 수 있습니다");
     }
 
     @Test
     void 탭의_정보를_수정할_수_있다() {
-        // given
-        Long tabId = 100L;
-        String newTitle = "수정된 제목";
-        String newUrl = "https://updated.com";
-
         // when
-        tabService.updateTab(tabId, newTitle, newUrl);
+        tabService.updateTab(100L, "수정된 제목", "https://updated.com");
 
         // then
         TabTree actual = tabService.getTabTree(1L);
-        assertThat(actual.findNode(TabId.create(tabId)))
-                .isPresent()
-                .hasValueSatisfying(node -> assertAll(
-                        () -> assertThat(node.getTab().getTitle().getValue()).isEqualTo(newTitle),
-                        () -> assertThat(node.getTab().getUrl().getValue()).isEqualTo(newUrl)
-                ));
+
+        assertThat(actual.getAllTabs()
+                         .stream()
+                         .filter(tab -> tab.isEqualId(TabId.create(100L)))
+                         .findFirst()
+        ).isPresent()
+         .hasValueSatisfying(
+                 tab -> assertAll(
+                         () -> assertThat(tab.getTitle()).isEqualTo("수정된 제목"),
+                         () -> assertThat(tab.getUrl()).isEqualTo("https://updated.com")
+                 )
+         );
     }
 
     @Test
     void 그룹의_탭_트리를_조회할_수_있다() {
-        // given
-        Long groupId = 1L;
-
         // when
-        TabTree actual = tabService.getTabTree(groupId);
+        TabTree actual = tabService.getTabTree(1L);
 
         // then
         assertAll(
@@ -318,39 +294,32 @@ class TabServiceTest {
 
     @Test
     void 루트_레벨_탭의_순서를_변경할_수_있다() {
-        // given
-        Long tabId = 100L;
-        Long targetTabId = 200L;
-
         // when & then
-        assertDoesNotThrow(() -> tabService.reorderTab(tabId, targetTabId, true));
+        assertDoesNotThrow(() -> tabService.reorderTab(100L, 200L, true));
     }
 
     @Test
     void 루트_탭과_일반_탭의_순서를_변경할_수_없다() {
-        // given
-        Long rootTabId = 100L;
-        Long childTabId = 101L;
-
         // when & then
-        assertThatThrownBy(() -> tabService.reorderTab(rootTabId, childTabId, true))
+        assertThatThrownBy(() -> tabService.reorderTab(100L, 101L, true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("같은 레벨의 탭만 순서를 변경할 수 있습니다");
     }
 
     @Test
     void 루트_레벨_탭_순서_변경_시_position이_업데이트된다() {
-        // given
-        Long tabId = 100L;
-        Long targetTabId = 200L;
-
         // when
-        tabService.reorderTab(tabId, targetTabId, false);
+        tabService.reorderTab(100L, 200L, false);
 
         // then
         TabTree actual = tabService.getTabTree(1L);
-        assertThat(actual.findNode(TabId.create(tabId)))
-                .isPresent()
-                .hasValueSatisfying(node -> assertThat(node.getTab().getPosition().getValue()).isZero());
+
+        assertThat(
+                actual.getAllTabs()
+                      .stream()
+                      .filter(tab -> tab.isEqualId(TabId.create(100L)))
+                      .findFirst()
+        ).isPresent()
+         .hasValueSatisfying(tab -> assertThat(tab.getPosition()).isZero());
     }
 }
