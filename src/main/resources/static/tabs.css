@@ -508,3 +508,26 @@ textarea:focus {
     border-color: #1a73e8;
     box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
 }
+
+.btn-open-url {
+    background: #34a853;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-open-url:hover {
+    background: #2d8e47;
+}
+
+.btn-open-url::before {
+    content: '🔗';
+    font-size: 14px;
+}
