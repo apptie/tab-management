@@ -1,6 +1,5 @@
 package com.management.tab.domain.group;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class TabGroupTest {
 
     @Test
-    @Disabled("TabGroupId null object 패턴 적용 예정")
     void TabGroup을_초기화할_수_있다() {
         // given
         String name = "테스트 그룹";
@@ -54,7 +52,6 @@ class TabGroupTest {
     }
 
     @Test
-    @Disabled("TabGroupId null object 패턴 적용 예정")
     void id를_전달하지_않으면_초기화된_TabGroup은_id가_할당되지_않는다() {
         // given
         String name = "테스트 그룹";

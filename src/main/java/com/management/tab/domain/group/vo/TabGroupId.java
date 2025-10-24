@@ -7,6 +7,8 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class TabGroupId {
 
+    public static final TabGroupId EMPTY_TAB_GROUP_ID = new TabGroupId(null);
+
     private final Long value;
 
     public static TabGroupId create(Long value) {

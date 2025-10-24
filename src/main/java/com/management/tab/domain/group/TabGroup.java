@@ -12,7 +12,7 @@ public class TabGroup {
     private final AuditTimestamps timestamps;
 
     public static TabGroup create(String name) {
-        return new TabGroup(null, TabGroupName.create(name), AuditTimestamps.now());
+        return new TabGroup(TabGroupId.EMPTY_TAB_GROUP_ID, TabGroupName.create(name), AuditTimestamps.now());
     }
 
     public static TabGroup create(Long groupId, String name, LocalDateTime createAt, LocalDateTime updatedAt) {
