@@ -1,8 +1,10 @@
 package com.management.tab.domain.content;
 
+import com.management.tab.domain.common.AuditTimestamps;
 import com.management.tab.domain.content.vo.Content;
 import com.management.tab.domain.content.vo.TabContentId;
 import com.management.tab.domain.tab.vo.TabId;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -151,5 +153,28 @@ class TabContentTest {
 
         // when & then
         assertThat(tabContentWithoutId).isNotEqualTo(tabContentWithId);
+    }
+
+    @Test
+    void ID가_포함된_탭_컨텐츠를_초기화할_수_있다() {
+        // given
+        LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 15, 30);
+
+        // when
+        TabContent tabContent = TabContent.create(
+                TabContentId.create(100L),
+                TabId.create(1L),
+                Content.create("직접 생성 테스트"),
+                AuditTimestamps.create(createdAt, updatedAt)
+        );
+
+        // then
+        assertAll(
+                () -> assertThat(tabContent.getId()).isNotNull(),
+                () -> assertThat(tabContent.getId()).isEqualTo(TabContentId.create(100L)),
+                () -> assertThat(tabContent.getAuditTimestamps().getCreatedAt()).isEqualTo(createdAt),
+                () -> assertThat(tabContent.getAuditTimestamps().getUpdatedAt()).isEqualTo(updatedAt)
+        );
     }
 }
