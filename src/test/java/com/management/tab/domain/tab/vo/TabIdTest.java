@@ -25,7 +25,7 @@ class TabIdTest {
         // then
         assertAll(
                 () -> assertThat(tabId).isNotNull(),
-                () -> assertThat(tabId.id()).isEqualTo(1L),
+                () -> assertThat(tabId.getValue()).isEqualTo(1L),
                 () -> assertThat(tabId.getValue()).isEqualTo(1L)
         );
     }
@@ -83,7 +83,7 @@ class TabIdTest {
         TabId tabId = TabId.create(value);
 
         // when
-        Long result = tabId.id();
+        Long result = tabId.getValue();
 
         // then
         assertThat(result).isEqualTo(value);

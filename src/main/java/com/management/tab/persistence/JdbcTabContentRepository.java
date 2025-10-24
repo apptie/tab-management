@@ -19,7 +19,7 @@ public class JdbcTabContentRepository implements TabContentRepository {
 
     @Override
     public List<TabContent> findAllByTabId(TabId tabid) {
-        return tabContentDao.findAllByTabId(tabid.id())
+        return tabContentDao.findAllByTabId(tabid.getValue())
                             .stream()
                             .map(TabContentDto::toTabContent)
                             .toList();
@@ -35,7 +35,7 @@ public class JdbcTabContentRepository implements TabContentRepository {
     @Override
     public TabContent save(TabContent tabContent) {
         Long tabContentId = tabContentDao.save(
-                tabContent.getTabId().id(),
+                tabContent.getTabId().getValue(),
                 tabContent.getContent().getValue(),
                 tabContent.getAuditTimestamps().getCreatedAt(),
                 tabContent.getAuditTimestamps().getUpdatedAt()
@@ -60,11 +60,11 @@ public class JdbcTabContentRepository implements TabContentRepository {
 
     @Override
     public void deleteAllByTabId(TabId tabId) {
-        tabContentDao.deleteAllByTabId(tabId.id());
+        tabContentDao.deleteAllByTabId(tabId.getValue());
     }
 
     @Override
     public int countByTabId(TabId tabId) {
-        return tabContentDao.countByTabId(tabId.id());
+        return tabContentDao.countByTabId(tabId.getValue());
     }
 }

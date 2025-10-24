@@ -24,9 +24,5 @@ public class TabId {
     private TabId(Long value) {
         this.value = value;
     }
-
-    public Long id() {
-        return value;
-    }
 }
 
