@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/tab-content-service-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/service/tab-content-service-test-data.sql"})
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TabContentServiceTest {
