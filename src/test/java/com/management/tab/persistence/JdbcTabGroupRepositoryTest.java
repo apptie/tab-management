@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-jdbc-tab-group-repository-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/jdbc/tab-group-repository-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class JdbcTabGroupRepositoryTest {

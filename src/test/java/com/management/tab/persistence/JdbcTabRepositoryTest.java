@@ -21,13 +21,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-jdbc-tab-repository-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/jdbc/tab-repository-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class JdbcTabRepositoryTest {
 
     @Autowired
-    private JdbcTabRepository jdbcTabRepository;
+    JdbcTabRepository jdbcTabRepository;
 
     @Test
     void 루트_탭을_저장할_수_있다() {
@@ -40,7 +40,6 @@ class JdbcTabRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.id()).isNotNull(),
                 () -> assertThat(actual.getTitle()).isEqualTo("새 루트 탭"),
                 () -> assertThat(actual.getUrl()).isEqualTo("https://new-root.com"),
@@ -61,7 +60,6 @@ class JdbcTabRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getTitle()).isEqualTo("새 자식 탭"),
                 () -> assertThat(actual.getUrl()).isEqualTo("https://new-child.com"),
@@ -80,7 +78,6 @@ class JdbcTabRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isEqualTo(100L),
                 () -> assertThat(actual.getTitle()).isEqualTo("루트_탭1")
         );
@@ -107,7 +104,6 @@ class JdbcTabRepositoryTest {
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getTabGroupId()).isEqualTo(groupId),
                 () -> assertThat(actual.getTotalCount()).isEqualTo(6)
         );
@@ -205,6 +201,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(103L);
+
         assertThat(actual.getParentId()).isEqualTo(102L);
     }
 
@@ -219,6 +216,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(101L);
+
         assertThat(actual.getParentId()).isEqualTo(102L);
     }
 
@@ -252,6 +250,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(101L);
+
         assertThat(actual.parentId()).isSameAs(TabId.EMPTY_TAB_ID);
     }
 
@@ -266,6 +265,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(101L);
+
         assertThat(actual.getPosition()).isEqualTo(10);
     }
 
@@ -280,6 +280,7 @@ class JdbcTabRepositoryTest {
 
         // then
         Tab actual = jdbcTabRepository.findTab(100L);
+
         assertAll(
                 () -> assertThat(actual.getTitle()).isEqualTo("수정된 제목"),
                 () -> assertThat(actual.getUrl()).isEqualTo("https://updated.com")
@@ -298,6 +299,7 @@ class JdbcTabRepositoryTest {
 
         // then
         TabTree actual = jdbcTabRepository.findTabTree(TabGroupId.create(1L));
+
         assertThat(actual.getTotalCount()).isLessThan(beforeCount);
     }
 

@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/insert-jdbc-tab-content-repository-test-data.sql"})
+@Sql(scripts = {"classpath:sql/schema.sql", "classpath:sql/jdbc/tab-content-repository-test-data.sql"})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 class JdbcTabContentRepositoryTest {
@@ -103,6 +103,7 @@ class JdbcTabContentRepositoryTest {
 
         // then
         TabContent actual = jdbcTabContentRepository.findById(1L);
+
         assertThat(actual.getContent()).isEqualTo("수정된 내용");
     }
 
@@ -117,6 +118,7 @@ class JdbcTabContentRepositoryTest {
 
         // then
         TabContent actual = jdbcTabContentRepository.findById(1L);
+
         assertThat(actual.getId()).isEqualTo(1L);
     }
 
