@@ -22,7 +22,6 @@ public class Content {
     }
 
     private Content(String value) {
-        validateValue(value);
         this.value = value;
     }
 }
