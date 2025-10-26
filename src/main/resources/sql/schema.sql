@@ -2,6 +2,14 @@ DROP TABLE IF EXISTS tab_contents;
 DROP TABLE IF EXISTS tab_tree_paths;
 DROP TABLE IF EXISTS tabs;
 DROP TABLE IF EXISTS tab_groups;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    nickname VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
 
 CREATE TABLE tab_groups (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -17,8 +25,8 @@ CREATE TABLE tabs (
     title VARCHAR(500) NOT NULL,
     url TEXT,
     position INT NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
 
     CONSTRAINT fk_tabs_group FOREIGN KEY (group_id) REFERENCES tab_groups(id) ON DELETE CASCADE,
     CONSTRAINT fk_tabs_parent FOREIGN KEY (parent_id) REFERENCES tabs(id) ON DELETE CASCADE
