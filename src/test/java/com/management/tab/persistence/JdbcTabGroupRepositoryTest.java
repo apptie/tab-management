@@ -68,7 +68,7 @@ class JdbcTabGroupRepositoryTest {
     @Test
     void 탭_그룹을_저장할_수_있다() {
         // given
-        TabGroup tabGroup = TabGroup.create("새 그룹");
+        TabGroup tabGroup = TabGroup.create(1L, "새 그룹");
 
         // when
         TabGroup actual = jdbcTabGroupRepository.save(tabGroup);
@@ -113,7 +113,7 @@ class JdbcTabGroupRepositoryTest {
     @Test
     void 탭_그룹을_삭제할_수_있다() {
         // given
-        TabGroup tabGroup = TabGroup.create("삭제할 그룹");
+        TabGroup tabGroup = TabGroup.create(1L, "삭제할 그룹");
         TabGroup saved = jdbcTabGroupRepository.save(tabGroup);
         Long groupId = saved.getId();
 

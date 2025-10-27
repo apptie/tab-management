@@ -58,7 +58,7 @@ class TabGroupDaoTest {
     @Test
     void 새로운_탭_그룹을_저장할_수_있다() {
         // when
-        Long actual = tabGroupDao.save("새 탭 그룹", LocalDateTime.now(), LocalDateTime.now());
+        Long actual = tabGroupDao.save("새 탭 그룹", 1L, LocalDateTime.now(), LocalDateTime.now());
 
         // then
         assertAll(

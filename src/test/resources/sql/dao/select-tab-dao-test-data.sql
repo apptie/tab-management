@@ -1,8 +1,13 @@
--- 그룹 생성
-INSERT INTO tab_groups (id, name, created_at, updated_at)
+-- 사용자 생성
+INSERT INTO users (id, nickname, created_at, updated_at)
 VALUES
-    (1, '조회 테스트 그룹 1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (2, '조회 테스트 그룹 2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (1, '테스트 사용자1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- 탭 그룹 생성
+INSERT INTO tab_groups (id, creator_id, name, created_at, updated_at)
+VALUES
+    (1, 1, '조회 테스트 그룹 1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 1, '조회 테스트 그룹 2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 테스트용 트리 구조 (그룹 1)
 -- 구조:

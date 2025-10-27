@@ -19,7 +19,7 @@ public class UserId {
 
     private static void validateValue(Long value) {
         if (value == null || value <= 0) {
-            throw new IllegalArgumentException("UserId는 양수여야 합니다.");
+            throw new IllegalArgumentException("사용자 ID는 양수여야 합니다.");
         }
     }
 

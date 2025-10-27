@@ -34,7 +34,7 @@ class UserIdTest {
         // when & then
         assertThatThrownBy(() -> UserId.create(id))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("UserId는 양수여야 합니다.");
+                .hasMessage("사용자 ID는 양수여야 합니다.");
     }
 
     @Test

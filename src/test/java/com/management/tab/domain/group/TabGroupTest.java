@@ -16,12 +16,13 @@ class TabGroupTest {
     @Test
     void TabGroup을_초기화할_수_있다() {
         // when
-        TabGroup actual = TabGroup.create("테스트 그룹");
+        TabGroup actual = TabGroup.create(1L, "테스트 그룹");
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNull(),
                 () -> assertThat(actual.getName()).isEqualTo("테스트 그룹"),
+                () -> assertThat(actual.getCreatorId()).isEqualTo(1L),
                 () -> assertThat(actual.getCreatedAt()).isNotNull(),
                 () -> assertThat(actual.getUpdatedAt()).isNotNull()
         );
@@ -34,7 +35,7 @@ class TabGroupTest {
         LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 2, 15, 30);
 
         // when
-        TabGroup actual = TabGroup.create(100L, "테스트 그룹", createdAt, updatedAt);
+        TabGroup actual = TabGroup.create(100L, 1L, "테스트 그룹", createdAt, updatedAt);
 
         // then
         assertAll(
@@ -49,7 +50,7 @@ class TabGroupTest {
     @Test
     void id를_전달하지_않으면_초기화된_TabGroup은_id가_할당되지_않는다() {
         // when
-        TabGroup actual = TabGroup.create("테스트 그룹");
+        TabGroup actual = TabGroup.create(1L, "테스트 그룹");
 
         // then
         assertThat(actual.getId()).isNull();
@@ -58,14 +59,13 @@ class TabGroupTest {
     @Test
     void 기존_TabGroup에_id를_할당할_수_있다() {
         // given
-        TabGroup existingTabGroup = TabGroup.create("기존 그룹");
+        TabGroup existingTabGroup = TabGroup.create(1L, "기존 그룹");
 
         // when
-        TabGroup actual = TabGroup.createWithAssignedId(100L, existingTabGroup);
+        TabGroup actual = existingTabGroup.updateAssignedId(100L);
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getId()).isEqualTo(100L),
                 () -> assertThat(actual.getName()).isEqualTo("기존 그룹")
@@ -75,7 +75,7 @@ class TabGroupTest {
     @Test
     void TabGroup의_이름을_변경할_수_있다() {
         // given
-        TabGroup tabGroup = TabGroup.create("원래 이름");
+        TabGroup tabGroup = TabGroup.create(1L, "원래 이름");
 
         // when
         TabGroup actual = tabGroup.rename("변경된 이름");
@@ -89,6 +89,7 @@ class TabGroupTest {
         // given
         TabGroup tabGroup = TabGroup.create(
                 100L,
+                1L,
                 "원래 이름",
                 LocalDateTime.now(),
                 LocalDateTime.now()
