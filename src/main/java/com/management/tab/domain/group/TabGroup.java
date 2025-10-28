@@ -46,6 +46,14 @@ public class TabGroup {
         return new TabGroup(this.id, this.creator, TabGroupName.create(newName), this.timestamps);
     }
 
+    public boolean isWriter(Long writerId) {
+        return id.isEqualId(writerId);
+    }
+
+    public boolean isNotWriter(Long writerId) {
+        return !isWriter(writerId);
+    }
+
     public Long getId() {
         return id.getValue();
     }

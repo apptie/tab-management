@@ -6,6 +6,7 @@ import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.domain.tab.vo.TabPosition;
 import com.management.tab.domain.tab.vo.TabTitle;
 import com.management.tab.domain.tab.vo.TabUrl;
+import com.management.tab.domain.user.vo.UserId;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
@@ -31,12 +33,13 @@ class TabTest {
         AuditTimestamps timestamps = AuditTimestamps.now();
 
         // when
-        Tab actual = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab actual = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         // then
         assertAll(
                 () -> assertThat(actual.id()).isEqualTo(tabId),
                 () -> assertThat(actual.parentId()).isEqualTo(parentId),
+                () -> assertThat(actual.writerId()).isEqualTo(writerId),
                 () -> assertThat(actual.tabGroupId()).isEqualTo(tabGroupId),
                 () -> assertThat(actual.getTitle()).isEqualTo("테스트 탭"),
                 () -> assertThat(actual.getUrl()).isEqualTo("https://example.com"),
@@ -51,12 +54,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.defaultPosition();
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         String newTitleValue = "업데이트된 제목";
         String newUrlValue = "https://updated.com";
@@ -78,12 +82,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         int newPositionValue = 5;
 
@@ -103,12 +108,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         TabId newParentId = TabId.create(20L);
         TabPosition newPosition = TabPosition.create(2);
@@ -130,12 +136,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         TabPosition newPosition = TabPosition.create(3);
 
@@ -154,12 +161,13 @@ class TabTest {
     void 부모가_없다면_루트_Tab이다() {
         // given
         TabId tabId = TabId.create(1L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab rootTab = new Tab(tabId, TabId.EMPTY_TAB_ID, tabGroupId, title, url, position, timestamps);
+        Tab rootTab = new Tab(tabId, TabId.EMPTY_TAB_ID, writerId, tabGroupId, title, url, position, timestamps);
 
         // when
         boolean actual = rootTab.isRoot();
@@ -173,12 +181,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         // when
         boolean actual = tab.isRoot();
@@ -192,16 +201,18 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
 
-        Tab tab1 = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab1 = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
         Tab tab2 = new Tab(
                 tabId,
                 TabId.create(999L),
+                writerId,
                 TabGroupId.create(999L),
                 TabTitle.create("다른 제목"),
                 TabUrl.create("https://different.com"),
@@ -221,12 +232,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         // when
         LocalDateTime actual = tab.getCreatedAt();
@@ -240,12 +252,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         // when
         LocalDateTime actual = tab.getUpdatedAt();
@@ -259,16 +272,24 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
 
-        Tab tab1 = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
-        Tab tab2 = new Tab(tabId, TabId.create(999L), TabGroupId.create(999L),
-                TabTitle.create("다른 제목"), TabUrl.create("https://different.com"),
-                TabPosition.create(999), AuditTimestamps.now());
+        Tab tab1 = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
+        Tab tab2 = new Tab(
+                tabId,
+                TabId.create(999L),
+                writerId,
+                TabGroupId.create(999L),
+                TabTitle.create("다른 제목"),
+                TabUrl.create("https://different.com"),
+                TabPosition.create(999),
+                AuditTimestamps.now()
+        );
 
         // when & then
         assertAll(
@@ -282,6 +303,7 @@ class TabTest {
         // given
         TabId tabId1 = TabId.create(1L);
         TabId tabId2 = TabId.create(2L);
+        UserId writerId = UserId.create(2L);
         TabId parentId = TabId.create(10L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
@@ -289,8 +311,8 @@ class TabTest {
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
 
-        Tab tab1 = new Tab(tabId1, parentId, tabGroupId, title, url, position, timestamps);
-        Tab tab2 = new Tab(tabId2, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab1 = new Tab(tabId1, parentId, writerId, tabGroupId, title, url, position, timestamps);
+        Tab tab2 = new Tab(tabId2, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         // when & then
         assertAll(
@@ -304,12 +326,13 @@ class TabTest {
         // given
         TabId tabId = TabId.create(1L);
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(tabId, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         // when
         boolean actual = tab.isEqualId(tabId);
@@ -322,17 +345,62 @@ class TabTest {
     void 기존_탭에서_ID를_업데이트_할_수_있다() {
         // given
         TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
         TabGroupId tabGroupId = TabGroupId.create(100L);
         TabTitle title = TabTitle.create("테스트 탭");
         TabUrl url = TabUrl.create("https://example.com");
         TabPosition position = TabPosition.create(0);
         AuditTimestamps timestamps = AuditTimestamps.now();
-        Tab tab = new Tab(null, parentId, tabGroupId, title, url, position, timestamps);
+        Tab tab = new Tab(TabId.EMPTY_TAB_ID, parentId, writerId, tabGroupId, title, url, position, timestamps);
 
         // when
         Tab actual = tab.updateAssignedId(1L);
 
         // then
         assertThat(actual.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void 같은_writerId를_가진_사용자는_작성자가_아니다고_판단하지_않는다() {
+        // given
+        TabId tabId = TabId.create(1L);
+        TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
+        TabGroupId tabGroupId = TabGroupId.create(100L);
+        TabTitle title = TabTitle.create("테스트 탭");
+        TabUrl url = TabUrl.create("https://example.com");
+        TabPosition position = TabPosition.create(0);
+        AuditTimestamps timestamps = AuditTimestamps.now();
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
+
+        Long targetWriterId = 2L;
+
+        // when
+        boolean actual = tab.isNotWriterId(targetWriterId);
+
+        // then
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    void 다른_writerId를_가진_사용자는_작성자가_아니다() {
+        // given
+        TabId tabId = TabId.create(1L);
+        TabId parentId = TabId.create(10L);
+        UserId writerId = UserId.create(2L);
+        TabGroupId tabGroupId = TabGroupId.create(100L);
+        TabTitle title = TabTitle.create("테스트 탭");
+        TabUrl url = TabUrl.create("https://example.com");
+        TabPosition position = TabPosition.create(0);
+        AuditTimestamps timestamps = AuditTimestamps.now();
+        Tab tab = new Tab(tabId, parentId, writerId, tabGroupId, title, url, position, timestamps);
+
+        Long differentWriterId = 999L;
+
+        // when
+        boolean actual = tab.isNotWriterId(differentWriterId);
+
+        // then
+        assertThat(actual).isTrue();
     }
 }

@@ -6,12 +6,14 @@ import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.domain.tab.vo.TabPosition;
 import com.management.tab.domain.tab.vo.TabTitle;
 import com.management.tab.domain.tab.vo.TabUrl;
+import com.management.tab.domain.user.vo.UserId;
 import java.util.Objects;
 
 public class TabBuilder {
 
     private TabId id = TabId.EMPTY_TAB_ID;
     private TabId parentId = TabId.EMPTY_TAB_ID;
+    private UserId writerId;
     private TabGroupId tabGroupId;
     private TabTitle title;
     private TabUrl url;
@@ -22,12 +24,13 @@ public class TabBuilder {
         return new TabBuilder();
     }
 
-    public static TabBuilder createRoot(Long groupId, String title, String url, TabPosition position) {
+    public static TabBuilder createRoot(Long groupId, Long writerId, String title, String url, TabPosition position) {
         TabBuilder builder = new TabBuilder();
 
         builder.position = position;
 
         return builder.groupId(groupId)
+                      .writerId(writerId)
                       .title(title)
                       .url(url);
     }
@@ -37,6 +40,7 @@ public class TabBuilder {
 
         builder.tabGroupId = parentTab.tabGroupId();
         builder.parentId = parentTab.id();
+        builder.writerId = parentTab.writerId();
         builder.position = position;
 
         return builder.title(title)
@@ -54,6 +58,12 @@ public class TabBuilder {
 
     public TabBuilder parentId(Long parentId) {
         this.parentId = TabId.create(parentId);
+
+        return this;
+    }
+
+    public TabBuilder writerId(Long writerId) {
+        this.writerId = UserId.create(writerId);
 
         return this;
     }
@@ -86,11 +96,12 @@ public class TabBuilder {
         validateValues();
 
         return new Tab(
-                id,
-                parentId,
-                tabGroupId,
-                title,
-                url,
+                this.id,
+                this.parentId,
+                this.writerId,
+                this.tabGroupId,
+                this.title,
+                this.url,
                 getTabPosition(),
                 getAuditTimestamps()
         );
@@ -100,6 +111,7 @@ public class TabBuilder {
         Objects.requireNonNull(tabGroupId, "그룹 ID는 필수입니다.");
         Objects.requireNonNull(title, "제목은 필수입니다.");
         Objects.requireNonNull(url, "Url은 필수입니다.");
+        Objects.requireNonNull(writerId, "작성자 ID는 필수입니다.");
     }
 
     private TabPosition getTabPosition() {

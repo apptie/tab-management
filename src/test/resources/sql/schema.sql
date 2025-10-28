@@ -14,15 +14,16 @@ CREATE TABLE users (
 CREATE TABLE tab_groups (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    creator_id BIGINT NOT NULL,
+    writer_id BIGINT NOT NULL,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
 
-    CONSTRAINT fk_tab_groups_creator FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE
+    CONSTRAINT fk_tab_groups_writer_id FOREIGN KEY (writer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tabs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    writer_id BIGINT NOT NULL,
     group_id BIGINT NOT NULL,
     parent_id BIGINT,
     title VARCHAR(500) NOT NULL,
@@ -32,7 +33,8 @@ CREATE TABLE tabs (
     updated_at TIMESTAMP,
 
     CONSTRAINT fk_tabs_group FOREIGN KEY (group_id) REFERENCES tab_groups(id) ON DELETE CASCADE,
-    CONSTRAINT fk_tabs_parent FOREIGN KEY (parent_id) REFERENCES tabs(id) ON DELETE CASCADE
+    CONSTRAINT fk_tabs_parent FOREIGN KEY (parent_id) REFERENCES tabs(id) ON DELETE CASCADE,
+    CONSTRAINT fk_tabs_writer_id FOREIGN KEY (writer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tab_tree_paths (

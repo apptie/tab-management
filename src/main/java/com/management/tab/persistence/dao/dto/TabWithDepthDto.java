@@ -11,6 +11,7 @@ public record TabWithDepthDto(
         Long id,
         Long groupId,
         Long parentId,
+        Long writerId,
         String title,
         String url,
         int position,
@@ -22,6 +23,7 @@ public record TabWithDepthDto(
     public TabNode toTabNode() {
         TabBuilder builder = TabBuilder.builder()
                                        .groupId(this.groupId)
+                                       .writerId(writerId)
                                        .title(this.title)
                                        .url(this.url)
                                        .position(this.position);

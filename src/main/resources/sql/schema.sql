@@ -14,12 +14,16 @@ CREATE TABLE users (
 CREATE TABLE tab_groups (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
+    writer_id BIGINT NOT NULL,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP,
+
+    CONSTRAINT fk_tab_groups_writer_id FOREIGN KEY (writer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tabs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    writer_id BIGINT NOT NULL,
     group_id BIGINT NOT NULL,
     parent_id BIGINT,
     title VARCHAR(500) NOT NULL,
@@ -29,12 +33,9 @@ CREATE TABLE tabs (
     updated_at TIMESTAMP,
 
     CONSTRAINT fk_tabs_group FOREIGN KEY (group_id) REFERENCES tab_groups(id) ON DELETE CASCADE,
-    CONSTRAINT fk_tabs_parent FOREIGN KEY (parent_id) REFERENCES tabs(id) ON DELETE CASCADE
+    CONSTRAINT fk_tabs_parent FOREIGN KEY (parent_id) REFERENCES tabs(id) ON DELETE CASCADE,
+    CONSTRAINT fk_tabs_writer_id FOREIGN KEY (writer_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
-CREATE INDEX idx_tabs_group ON tabs(group_id);
-CREATE INDEX idx_tabs_parent ON tabs(parent_id);
-CREATE INDEX idx_tabs_position ON tabs(position);
 
 CREATE TABLE tab_tree_paths (
     ancestor_id BIGINT NOT NULL,
@@ -46,9 +47,6 @@ CREATE TABLE tab_tree_paths (
     CONSTRAINT fk_paths_descendant FOREIGN KEY (descendant_id) REFERENCES tabs(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_paths_descendant ON tab_tree_paths(descendant_id);
-CREATE INDEX idx_paths_depth ON tab_tree_paths(depth);
-
 CREATE TABLE tab_contents (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     tab_id BIGINT NOT NULL,
@@ -58,5 +56,3 @@ CREATE TABLE tab_contents (
 
     CONSTRAINT fk_tab_contents_tab FOREIGN KEY (tab_id) REFERENCES tabs(id) ON DELETE CASCADE
 );
-
-CREATE INDEX idx_tab_contents_tab_id ON tab_contents(tab_id);

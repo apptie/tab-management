@@ -104,4 +104,40 @@ class TabGroupTest {
                 () -> assertThat(actual.getName()).isEqualTo("변경된 이름")
         );
     }
+
+    @Test
+    void 같은_ID를_가진_writerId로_비교하면_해당_탭_그룹의_작성자이다() {
+        // given
+        TabGroup tabGroup = TabGroup.create(
+                100L,
+                1L,
+                "테스트 그룹",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // when
+        boolean result = tabGroup.isWriter(100L);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 다른_ID를_가진_writerId로_비교하면_해당_탭_그룹의_작성자가_아니다() {
+        // given
+        TabGroup tabGroup = TabGroup.create(
+                100L,
+                1L,
+                "테스트 그룹",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // when
+        boolean result = tabGroup.isNotWriter(200L);
+
+        // then
+        assertThat(result).isTrue();
+    }
 }

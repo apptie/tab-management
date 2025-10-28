@@ -68,4 +68,28 @@ class TabGroupIdTest {
                 () -> assertThat(tabGroupId1).doesNotHaveSameHashCodeAs(tabGroupId2)
         );
     }
+
+    @Test
+    void 해당_값과_동일한_id를_가졌다면_참이다() {
+        // given
+        TabGroupId tabGroupId = TabGroupId.create(1L);
+
+        // when
+        boolean result = tabGroupId.isEqualId(1L);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void 해당_값과_다른_id를_가졌다면_참이다() {
+        // given
+        TabGroupId tabGroupId = TabGroupId.create(1L);
+
+        // when
+        boolean result = tabGroupId.isEqualId(2L);
+
+        // then
+        assertThat(result).isFalse();
+    }
 }

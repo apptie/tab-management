@@ -32,6 +32,7 @@ class InsertTabDaoTest {
         // when
         Long tabId = insertTabDao.saveRootTab(
                 1L,
+                1L,
                 "테스트 탭",
                 "http://test.com",
                 0,
@@ -48,6 +49,7 @@ class InsertTabDaoTest {
         // when
         Long tabId = insertTabDao.saveRootTab(
                 1L,
+                1L,
                 "루트 탭",
                 "http://test.com",
                 0,
@@ -63,6 +65,7 @@ class InsertTabDaoTest {
     void 자식_탭을_저장한다() {
         // when
         Long childId = insertTabDao.saveChildTab(
+                1L,
                 1L,
                 "자식",
                 "http://child.com",
@@ -81,6 +84,7 @@ class InsertTabDaoTest {
         // when
         Long childId = insertTabDao.saveChildTab(
                 1L,
+                1L,
                 "자식",
                 "http://child.com",
                 100L,
@@ -98,6 +102,7 @@ class InsertTabDaoTest {
         // when
         insertTabDao.saveChildTab(
                 1L,
+                1L,
                 "자식1",
                 "http://child1.com",
                 100L,
@@ -107,6 +112,7 @@ class InsertTabDaoTest {
         );
         insertTabDao.saveChildTab(
                 1L,
+                1L,
                 "자식2",
                 "http://child2.com",
                 100L,
@@ -115,6 +121,7 @@ class InsertTabDaoTest {
                 LocalDateTime.now()
         );
         insertTabDao.saveChildTab(
+                1L,
                 1L,
                 "자식3",
                 "http://child3.com",
@@ -134,6 +141,7 @@ class InsertTabDaoTest {
         // when
         Long id1 = insertTabDao.saveRootTab(
                 1L,
+                1L,
                 "동일한 제목",
                 "http://test.com",
                 0,
@@ -142,6 +150,7 @@ class InsertTabDaoTest {
         );
         Long id2 = insertTabDao.saveRootTab(
                 2L,
+                1L,
                 "동일한 제목",
                 "http://test.com",
                 0,
@@ -162,6 +171,7 @@ class InsertTabDaoTest {
         // when
         Long rootId = insertTabDao.saveRootTab(
                 1L,
+                1L,
                 "루트",
                 "http://root.com",
                 0,
@@ -169,6 +179,7 @@ class InsertTabDaoTest {
                 LocalDateTime.now()
         );
         Long childId = insertTabDao.saveChildTab(
+                1L,
                 1L,
                 "자식",
                 "http://child.com",
@@ -178,6 +189,7 @@ class InsertTabDaoTest {
                 LocalDateTime.now()
         );
         insertTabDao.saveChildTab(
+                1L,
                 1L,
                 "손자",
                 "http://grandchild.com",
@@ -203,6 +215,7 @@ class InsertTabDaoTest {
         // when
         insertTabDao.saveRootTab(
                 1L,
+                1L,
                 "첫번째",
                 "http://1.com",
                 0,
@@ -211,6 +224,7 @@ class InsertTabDaoTest {
         );
         insertTabDao.saveRootTab(
                 1L,
+                1L,
                 "두번째",
                 "http://2.com",
                 1,
@@ -218,6 +232,7 @@ class InsertTabDaoTest {
                 LocalDateTime.now()
         );
         insertTabDao.saveRootTab(
+                1L,
                 1L,
                 "세번째",
                 "http://3.com",

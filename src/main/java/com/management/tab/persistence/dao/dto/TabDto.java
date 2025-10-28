@@ -8,6 +8,7 @@ public record TabDto(
         Long id,
         Long groupId,
         Long parentId,
+        Long writerId,
         String title,
         String url,
         int position,
@@ -18,6 +19,7 @@ public record TabDto(
     public Tab toTab() {
         TabBuilder builder = TabBuilder.builder()
                                        .groupId(this.groupId)
+                                       .writerId(writerId)
                                        .title(this.title)
                                        .url(this.url)
                                        .position(this.position);

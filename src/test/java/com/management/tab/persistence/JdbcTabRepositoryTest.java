@@ -32,7 +32,7 @@ class JdbcTabRepositoryTest {
     @Test
     void 루트_탭을_저장할_수_있다() {
         // given
-        Tab rootTab = TabBuilder.createRoot(1L, "새 루트 탭", "https://new-root.com", TabPosition.create(10))
+        Tab rootTab = TabBuilder.createRoot(1L, 1L, "새 루트 탭", "https://new-root.com", TabPosition.create(10))
                                 .build();
 
         // when
@@ -41,6 +41,7 @@ class JdbcTabRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(actual.id()).isNotNull(),
+                () -> assertThat(actual.getWriterId()).isEqualTo(1L),
                 () -> assertThat(actual.getTitle()).isEqualTo("새 루트 탭"),
                 () -> assertThat(actual.getUrl()).isEqualTo("https://new-root.com"),
                 () -> assertThat(actual.getPosition()).isEqualTo(10),

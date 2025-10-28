@@ -26,4 +26,8 @@ public class TabGroupId {
     private TabGroupId(Long value) {
         this.value = value;
     }
+
+    public boolean isEqualId(Long id) {
+        return this.value.equals(id);
+    }
 }

@@ -4,16 +4,16 @@ VALUES
     (1, '테스트 사용자1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 탭 그룹 생성
-INSERT INTO tab_groups (id, creator_id, name, created_at, updated_at)
+INSERT INTO tab_groups (id, name, writer_id, created_at, updated_at)
 VALUES
-    (1, 1, '테스트 그룹1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (2, 1, '테스트 그룹2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (1, '테스트 그룹1', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, '테스트 그룹2', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-INSERT INTO tabs (id, group_id, parent_id, title, url, position, created_at, updated_at)
+INSERT INTO tabs (id, writer_id, group_id, parent_id, title, url, position, created_at, updated_at)
 VALUES
-    (1, 1, NULL, '테스트 탭1', 'https://test1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (2, 1, NULL, '테스트 탭2', 'https://test2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (3, 2, NULL, '테스트 탭3', 'https://test3.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (1, 1, 1, NULL, '테스트 탭1', 'https://test1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 1, 1, NULL, '테스트 탭2', 'https://test2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (3, 1, 2, NULL, '테스트 탭3', 'https://test3.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO tab_tree_paths (ancestor_id, descendant_id, depth)
 VALUES
@@ -27,6 +27,7 @@ VALUES
     (2, 1, 'Spring Boot 실습 내용', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (3, 2, 'Java 기초 문법 정리', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+-- H2 시퀀스 리셋
 ALTER TABLE tab_groups ALTER COLUMN id RESTART WITH 3;
 ALTER TABLE tabs ALTER COLUMN id RESTART WITH 4;
 ALTER TABLE tab_contents ALTER COLUMN id RESTART WITH 4;

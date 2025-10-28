@@ -7,6 +7,7 @@ import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.domain.tab.vo.TabPosition;
 import com.management.tab.domain.tab.vo.TabTitle;
 import com.management.tab.domain.tab.vo.TabUrl;
+import com.management.tab.domain.user.vo.UserId;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,7 @@ class TabTreeTest {
         Tab rootTab1 = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭 1"),
                 TabUrl.create("http://test1.com"),
@@ -52,6 +54,7 @@ class TabTreeTest {
         Tab rootTab2 = new Tab(
                 TabId.create(2L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭 2"),
                 TabUrl.create("http://test2.com"),
@@ -94,6 +97,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -105,6 +109,7 @@ class TabTreeTest {
         Tab childTab = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭"),
                 TabUrl.create("http://test.com"),
@@ -129,6 +134,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -140,6 +146,7 @@ class TabTreeTest {
         Tab childTab = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭"),
                 TabUrl.create("http://test.com"),
@@ -151,6 +158,7 @@ class TabTreeTest {
         Tab grandchildTab = new Tab(
                 TabId.create(3L),
                 TabId.create(2L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("손자 탭"),
                 TabUrl.create("http://test.com"),
@@ -177,6 +185,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -196,6 +205,7 @@ class TabTreeTest {
         Tab deepTab = new Tab(
                 TabId.create(1L),
                 TabId.create(99L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("깊은 탭"),
                 TabUrl.create("http://test.com"),
@@ -228,6 +238,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -249,6 +260,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -260,6 +272,7 @@ class TabTreeTest {
         Tab childTab = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭"),
                 TabUrl.create("http://test.com"),
@@ -283,6 +296,7 @@ class TabTreeTest {
         Tab deepTab = new Tab(
                 TabId.create(1L),
                 TabId.create(99L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("깊은 탭"),
                 TabUrl.create("http://test.com"),
@@ -315,6 +329,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -326,6 +341,7 @@ class TabTreeTest {
         Tab childTab = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭"),
                 TabUrl.create("http://test.com"),
@@ -347,6 +363,7 @@ class TabTreeTest {
         Tab deepParentTab = new Tab(
                 TabId.create(1L),
                 TabId.create(99L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("깊은 부모 탭"),
                 TabUrl.create("http://test.com"),
@@ -358,6 +375,7 @@ class TabTreeTest {
         Tab movingTab = new Tab(
                 TabId.create(2L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("이동할 탭"),
                 TabUrl.create("http://test.com"),
@@ -369,6 +387,7 @@ class TabTreeTest {
         Tab childOfMovingTab = new Tab(
                 TabId.create(3L),
                 TabId.create(2L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("이동할 탭의 자식"),
                 TabUrl.create("http://test.com"),
@@ -392,6 +411,7 @@ class TabTreeTest {
         Tab rootTab1 = new Tab(
                 TabId.create(1L),
                 TabId.EMPTY_TAB_ID,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭 1"),
                 TabUrl.create("http://test.com"),
@@ -401,6 +421,7 @@ class TabTreeTest {
         Tab rootTab2 = new Tab(
                 TabId.create(2L),
                 TabId.EMPTY_TAB_ID,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭 2"),
                 TabUrl.create("http://test.com"),
@@ -425,6 +446,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -436,6 +458,7 @@ class TabTreeTest {
         Tab childTab1 = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭 1"),
                 TabUrl.create("http://test.com"),
@@ -445,6 +468,7 @@ class TabTreeTest {
         Tab childTab2 = new Tab(
                 TabId.create(3L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭 2"),
                 TabUrl.create("http://test.com"),
@@ -483,6 +507,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -494,6 +519,7 @@ class TabTreeTest {
         Tab childTab = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭"),
                 TabUrl.create("http://test.com"),
@@ -518,6 +544,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -529,6 +556,7 @@ class TabTreeTest {
         Tab childTab = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭"),
                 TabUrl.create("http://test.com"),
@@ -553,6 +581,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -564,6 +593,7 @@ class TabTreeTest {
         Tab childTab = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭"),
                 TabUrl.create("http://test.com"),
@@ -600,6 +630,7 @@ class TabTreeTest {
         Tab rootTab1 = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭 1"),
                 TabUrl.create("http://test.com"),
@@ -609,6 +640,7 @@ class TabTreeTest {
         Tab rootTab2 = new Tab(
                 TabId.create(2L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭 2"),
                 TabUrl.create("http://test.com"),
@@ -633,6 +665,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -655,6 +688,7 @@ class TabTreeTest {
         Tab rootTab = new Tab(
                 TabId.create(1L),
                 null,
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("루트 탭"),
                 TabUrl.create("http://test.com"),
@@ -666,6 +700,7 @@ class TabTreeTest {
         Tab childTab1 = new Tab(
                 TabId.create(2L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭 1"),
                 TabUrl.create("http://test.com"),
@@ -675,6 +710,7 @@ class TabTreeTest {
         Tab childTab2 = new Tab(
                 TabId.create(3L),
                 TabId.create(1L),
+                UserId.create(2L),
                 TabGroupId.create(1L),
                 TabTitle.create("자식 탭 2"),
                 TabUrl.create("http://test.com"),
