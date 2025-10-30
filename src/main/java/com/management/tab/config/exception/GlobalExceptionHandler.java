@@ -1,9 +1,11 @@
 package com.management.tab.config.exception;
 
+import com.management.tab.application.TabService.TabForbiddenException;
 import com.management.tab.domain.repository.TabContentRepository.TabContentNotFoundException;
 import com.management.tab.domain.repository.TabGroupRepository.TabGroupNotFoundException;
 import com.management.tab.domain.repository.TabRepository.TabNotFoundException;
 import com.management.tab.domain.tab.TabTree.TabNodeNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,6 +41,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(TabNotFoundException.class)
     public ResponseEntity<String> handleTabNotFoundException(TabNotFoundException ex) {
         return ResponseEntity.badRequest()
+                             .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(TabForbiddenException.class)
+    public ResponseEntity<String> handleTabForbiddenException(TabForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                              .body(ex.getMessage());
     }
 }
