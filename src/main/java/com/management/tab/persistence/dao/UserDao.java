@@ -19,6 +19,8 @@ public class UserDao {
     private static final RowMapper<UserDto> userRowMapper = (rs, rowNum) -> new UserDto(
             rs.getLong("id"),
             rs.getString("nickname"),
+            rs.getString("registration_id"),
+            rs.getString("social_id"),
             rs.getTimestamp("created_at").toLocalDateTime(),
             rs.getTimestamp("updated_at").toLocalDateTime()
     );
@@ -45,10 +47,21 @@ public class UserDao {
         }
     }
 
-    public Long save(String nickname, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        String sql = "INSERT INTO users (nickname, created_at, updated_at) VALUES (:nickname, :createdAt, :updatedAt)";
+    public Long save(
+            String nickname,
+            String registrationId,
+            String socialId,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
+        String sql = """
+                INSERT INTO users (nickname, registration_id, social_id, created_at, updated_at)
+                VALUES (:nickname, :registrationId, :socialId, :createdAt, :updatedAt)
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nickname", nickname)
+                .addValue("registrationId", registrationId)
+                .addValue("socialId", socialId)
                 .addValue("createdAt", createdAt)
                 .addValue("updatedAt", updatedAt);
         KeyHolder keyHolder = new GeneratedKeyHolder();

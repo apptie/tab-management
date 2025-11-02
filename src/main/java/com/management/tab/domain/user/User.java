@@ -2,6 +2,8 @@ package com.management.tab.domain.user;
 
 import com.management.tab.domain.common.AuditTimestamps;
 import com.management.tab.domain.user.vo.Nickname;
+import com.management.tab.domain.user.vo.RegistrationId;
+import com.management.tab.domain.user.vo.Social;
 import com.management.tab.domain.user.vo.UserId;
 import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
@@ -11,24 +13,53 @@ public class User {
 
     private final UserId id;
     private final Nickname nickname;
+    private final Social social;
     private final AuditTimestamps timestamps;
 
-    public static User create(String name) {
-        return new User(UserId.EMPTY_USER_ID, Nickname.create(name), AuditTimestamps.now());
+    public static User create(String nickname, String registrationId, String socialId) {
+        RegistrationId userRegistrationId = RegistrationId.findBy(registrationId);
+        Social social = new Social(userRegistrationId, socialId);
+
+        return new User(
+                UserId.EMPTY_USER_ID,
+                Nickname.create(nickname),
+                social,
+                AuditTimestamps.now()
+        );
     }
 
-    private User(UserId id, Nickname nickname, AuditTimestamps timestamps) {
+    public static User create(
+            Long userId,
+            String nickname,
+            String registrationId,
+            String socialId,
+            LocalDateTime createAt,
+            LocalDateTime updatedAt
+    ) {
+        RegistrationId userRegistrationId = RegistrationId.findBy(registrationId);
+        Social social = new Social(userRegistrationId, socialId);
+
+        return new User(
+                UserId.create(userId),
+                Nickname.create(nickname),
+                social,
+                AuditTimestamps.create(createAt, updatedAt)
+        );
+    }
+
+    private User(UserId id, Nickname nickname, Social social, AuditTimestamps timestamps) {
         this.id = id;
         this.nickname = nickname;
+        this.social = social;
         this.timestamps = timestamps;
     }
 
     public User updateAssignedId(Long id) {
-        return new User(UserId.create(id), this.nickname, this.timestamps);
+        return new User(UserId.create(id), this.nickname, this.social, this.timestamps);
     }
 
     public User changeNickname(String changedNickname) {
-        return new User(this.id, Nickname.create(changedNickname), this.timestamps);
+        return new User(this.id, Nickname.create(changedNickname), this.social, this.timestamps);
     }
 
     public UserId id() {
@@ -37,6 +68,14 @@ public class User {
 
     public String getNickname() {
         return nickname.getValue();
+    }
+
+    public String getRegistrationId() {
+        return social.registrationId().name();
+    }
+
+    public String getSocialId() {
+        return social.socialId();
     }
 
     public LocalDateTime getCreatedAt() {

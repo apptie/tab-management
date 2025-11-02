@@ -48,7 +48,13 @@ class UserDaoTest {
     @Test
     void 새로운_사용자를_저장할_수_있다() {
         // when
-        Long actual = userDao.save("새로운 사용자", LocalDateTime.now(), LocalDateTime.now());
+        Long actual = userDao.save(
+                "새로운 사용자",
+                "KAKAO",
+                "kakao12345",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // then
         assertAll(
@@ -60,8 +66,13 @@ class UserDaoTest {
     @Test
     void 저장된_사용자를_조회할_수_있다() {
         // given
-        LocalDateTime now = LocalDateTime.now();
-        Long savedId = userDao.save("저장된 사용자", now, now);
+        Long savedId = userDao.save(
+                "저장된 사용자",
+                "KAKAO",
+                "kakao12345",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         // when
         Optional<UserDto> actual = userDao.findById(savedId);
