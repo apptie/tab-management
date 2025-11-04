@@ -1,8 +1,8 @@
 package com.management.tab.config.auth.security.config;
 
 import com.management.tab.config.auth.security.config.properties.TokenProperties;
-import com.management.tab.config.auth.security.jwt.JwsSignerFinder;
-import com.management.tab.config.auth.security.jwt.JwsVerifierFinder;
+import com.management.tab.infrastructure.jwt.JwsSignerFinder;
+import com.management.tab.infrastructure.jwt.JwsVerifierFinder;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.KeyLengthException;

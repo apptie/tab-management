@@ -1,7 +1,7 @@
-package com.management.tab.config.auth.security.jwt;
+package com.management.tab.infrastructure.jwt;
 
-import com.management.tab.config.auth.security.PrivateClaims;
-import com.management.tab.config.auth.security.TokenDecoder;
+import com.management.tab.domain.auth.PrivateClaims;
+import com.management.tab.domain.auth.TokenDecoder;
 import com.management.tab.config.auth.security.config.properties.TokenProperties;
 import com.management.tab.config.auth.security.enums.TokenType;
 import com.nimbusds.jose.JOSEException;

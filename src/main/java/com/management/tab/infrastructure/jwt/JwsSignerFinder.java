@@ -1,4 +1,4 @@
-package com.management.tab.config.auth.security.jwt;
+package com.management.tab.infrastructure.jwt;
 
 import com.management.tab.config.auth.security.enums.TokenType;
 import com.nimbusds.jose.JWSSigner;

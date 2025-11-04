@@ -1,4 +1,4 @@
-package com.management.tab.config.auth.security;
+package com.management.tab.domain.auth;
 
 import java.time.LocalDateTime;
 

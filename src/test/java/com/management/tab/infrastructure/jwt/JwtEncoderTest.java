@@ -1,4 +1,4 @@
-package com.management.tab.config.auth.security.jwt;
+package com.management.tab.infrastructure.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

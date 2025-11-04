@@ -1,13 +1,13 @@
-package com.management.tab.config.auth.security.jwt;
+package com.management.tab.infrastructure.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.management.tab.config.auth.security.PrivateClaims;
+import com.management.tab.domain.auth.PrivateClaims;
 import com.management.tab.config.auth.security.config.properties.TokenProperties;
 import com.management.tab.config.auth.security.enums.TokenType;
-import com.management.tab.config.auth.security.jwt.JwtDecoder.InvalidTokenException;
+import com.management.tab.infrastructure.jwt.JwtDecoder.InvalidTokenException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEEncrypter;
