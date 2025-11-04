@@ -84,4 +84,28 @@ class UserDaoTest {
                 () -> assertThat(actual.get().nickname()).isEqualTo("저장된 사용자")
         );
     }
+
+    @Test
+    void 소셜_정보로_사용자를_조회할_수_있다() {
+        // when
+        Optional<UserDto> actual = userDao.findBySocialInfo("KAKAO", "kakako12345");
+
+        // then
+        assertAll(
+                () -> assertThat(actual).isPresent(),
+                () -> assertThat(actual.get().id()).isEqualTo(1L),
+                () -> assertThat(actual.get().nickname()).isEqualTo("개발자"),
+                () -> assertThat(actual.get().registrationId()).isEqualTo("KAKAO"),
+                () -> assertThat(actual.get().socialId()).isEqualTo("kakako12345")
+        );
+    }
+
+    @Test
+    void 존재하지_않는_소셜_정보로_조회하면_빈_Optional을_반환한다() {
+        // when
+        Optional<UserDto> actual = userDao.findBySocialInfo("NAVER", "naver99999");
+
+        // then
+        assertThat(actual).isEmpty();
+    }
 }

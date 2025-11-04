@@ -47,6 +47,23 @@ public class UserDao {
         }
     }
 
+    public Optional<UserDto> findBySocialInfo(String registrationId, String socialId) {
+        String sql = "SELECT * FROM users WHERE registration_id = :registrationId AND social_id = :socialId";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("registrationId", registrationId)
+                .addValue("socialId", socialId);
+
+        try {
+            UserDto result = jdbcTemplate.queryForObject(sql, parameters, userRowMapper);
+
+            return Optional.ofNullable(result);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new IllegalArgumentException("조건에 맞는 행이 두 개 이상입니다.");
+        }
+    }
+
     public Long save(
             String nickname,
             String registrationId,

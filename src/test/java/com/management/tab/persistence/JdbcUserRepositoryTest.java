@@ -2,6 +2,8 @@ package com.management.tab.persistence;
 
 import com.management.tab.domain.repository.UserRepository;
 import com.management.tab.domain.user.User;
+import com.management.tab.domain.user.vo.RegistrationId;
+import com.management.tab.domain.user.vo.Social;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -60,5 +62,41 @@ class JdbcUserRepositoryTest {
         assertThatThrownBy(() -> jdbcUserRepository.find(userId))
                 .isInstanceOf(UserRepository.UserNotFoundException.class)
                 .hasMessage("사용자를 찾을 수 없습니다.");
+    }
+
+    @Test
+    void 소셜_정보로_사용자를_조회할_수_있다() {
+        // given
+        Social socialInfo = new Social(
+                RegistrationId.findBy("KAKAO"),
+                "kakao12345"
+        );
+
+        // when
+        var actual = jdbcUserRepository.find(socialInfo);
+
+        // then
+        assertAll(
+                () -> assertThat(actual).isPresent(),
+                () -> assertThat(actual.get().getId()).isEqualTo(1L),
+                () -> assertThat(actual.get().getNickname()).isEqualTo("테스트 사용자1"),
+                () -> assertThat(actual.get().getRegistrationId()).isEqualTo("KAKAO"),
+                () -> assertThat(actual.get().getSocialId()).isEqualTo("kakao12345")
+        );
+    }
+
+    @Test
+    void 존재하지_않는_소셜_정보로_조회하면_빈_Optional을_반환한다() {
+        // given
+        Social socialInfo = new Social(
+                RegistrationId.findBy("KAKAO"),
+                "naver-12345"
+        );
+
+        // when
+        var actual = jdbcUserRepository.find(socialInfo);
+
+        // then
+        assertThat(actual).isEmpty();
     }
 }
