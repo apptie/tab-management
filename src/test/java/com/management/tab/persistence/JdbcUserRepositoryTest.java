@@ -27,7 +27,9 @@ class JdbcUserRepositoryTest {
     @Test
     void 사용자를_저장할_수_있다() {
         // given
-        User user = User.create("새로운 사용자", "KAKAO", "kakao12345");
+        RegistrationId registrationId = RegistrationId.findBy("KAKAO");
+        Social social = new Social(registrationId, "kakao12345");
+        User user = User.create(social);
 
         // when
         User actual = jdbcUserRepository.save(user);
@@ -35,7 +37,6 @@ class JdbcUserRepositoryTest {
         // then
         assertAll(
                 () -> assertThat(actual.id()).isNotNull(),
-                () -> assertThat(actual.getNickname()).isEqualTo("새로운 사용자"),
                 () -> assertThat(actual.getRegistrationId()).isEqualTo("KAKAO"),
                 () -> assertThat(actual.getSocialId()).isEqualTo("kakao12345")
         );

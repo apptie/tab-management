@@ -20,13 +20,6 @@ public class User {
         return new User(UserId.EMPTY_USER_ID, Nickname.EMPTY_NICKNAME, social, AuditTimestamps.now());
     }
 
-    public static User create(String nickname, String registrationId, String socialId) {
-        RegistrationId userRegistrationId = RegistrationId.findBy(registrationId);
-        Social social = new Social(userRegistrationId, socialId);
-
-        return new User(UserId.EMPTY_USER_ID, Nickname.create(nickname), social, AuditTimestamps.now());
-    }
-
     public static User create(
             Long userId,
             String nickname,
