@@ -9,45 +9,45 @@ import java.time.LocalDateTime;
 public class TabGroup {
 
     private final TabGroupId id;
-    private final UserId creator;
+    private final UserId writer;
     private final TabGroupName name;
     private final AuditTimestamps timestamps;
 
-    public static TabGroup create(Long creatorId, String name) {
+    public static TabGroup create(Long writerId, String name) {
         return new TabGroup(
                 TabGroupId.EMPTY_TAB_GROUP_ID,
-                UserId.create(creatorId),
+                UserId.create(writerId),
                 TabGroupName.create(name),
                 AuditTimestamps.now()
         );
     }
 
-    public static TabGroup create(Long groupId, Long creatorId, String name, LocalDateTime createAt, LocalDateTime updatedAt) {
+    public static TabGroup create(Long groupId, Long writerId, String name, LocalDateTime createAt, LocalDateTime updatedAt) {
         return new TabGroup(
                 TabGroupId.create(groupId),
-                UserId.create(creatorId),
+                UserId.create(writerId),
                 TabGroupName.create(name),
                 AuditTimestamps.create(createAt, updatedAt)
         );
     }
 
-    private TabGroup(TabGroupId id, UserId creator, TabGroupName name, AuditTimestamps timestamps) {
+    private TabGroup(TabGroupId id, UserId writer, TabGroupName name, AuditTimestamps timestamps) {
         this.id = id;
-        this.creator = creator;
+        this.writer = writer;
         this.name = name;
         this.timestamps = timestamps;
     }
 
     public TabGroup updateAssignedId(Long id) {
-        return new TabGroup(TabGroupId.create(id), this.creator, this.name, this.timestamps);
+        return new TabGroup(TabGroupId.create(id), this.writer, this.name, this.timestamps);
     }
 
     public TabGroup rename(String newName) {
-        return new TabGroup(this.id, this.creator, TabGroupName.create(newName), this.timestamps);
+        return new TabGroup(this.id, this.writer, TabGroupName.create(newName), this.timestamps);
     }
 
     public boolean isWriter(Long writerId) {
-        return id.isEqualId(writerId);
+        return writer.isEqualId(writerId);
     }
 
     public boolean isNotWriter(Long writerId) {
@@ -58,8 +58,8 @@ public class TabGroup {
         return id.getValue();
     }
 
-    public Long getCreatorId() {
-        return creator.getValue();
+    public Long getWriterId() {
+        return writer.getValue();
     }
 
     public String getName() {
