@@ -82,10 +82,10 @@ public class TabService {
     }
 
     @Transactional
-    public void moveRoot(Long tabId, Long userId) {
+    public void moveRoot(Long tabId, Long moverId) {
         Tab tab = tabRepository.findTab(tabId);
 
-        if (tab.isNotWriterId(userId)) {
+        if (tab.isNotWriterId(moverId)) {
             throw new TabForbiddenException();
         }
 

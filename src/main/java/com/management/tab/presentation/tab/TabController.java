@@ -1,6 +1,8 @@
 package com.management.tab.presentation.tab;
 
 import com.management.tab.application.tab.TabService;
+import com.management.tab.config.auth.resolver.CurrentUser;
+import com.management.tab.config.auth.resolver.CurrentUserId;
 import com.management.tab.domain.tab.TabTree;
 import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.presentation.common.ResponseVoidConst;
@@ -35,10 +37,10 @@ public class TabController {
     @PostMapping("/groups/{groupId}/root")
     public ResponseEntity<CreateRootTabResponse> createRootTab(
             @PathVariable Long groupId,
-            @RequestBody CreateRootTabRequest request
+            @RequestBody CreateRootTabRequest request,
+            @CurrentUser CurrentUserId currentUserId
     ) {
-        // TODO : 실제 userId 전달
-        TabId tabId = tabService.createRootTab(groupId, -999L, request.title(), request.url());
+        TabId tabId = tabService.createRootTab(groupId, currentUserId.userId(), request.title(), request.url());
         CreateRootTabResponse response = new CreateRootTabResponse(tabId.getValue());
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -48,10 +50,10 @@ public class TabController {
     @PostMapping("/{parentId}/children")
     public ResponseEntity<CreateChildTabResponse> createChildTab(
             @PathVariable Long parentId,
-            @RequestBody CreateChildTabRequest request
+            @RequestBody CreateChildTabRequest request,
+            @CurrentUser CurrentUserId currentUserId
     ) {
-        // TODO : 실제 userId로 변경
-        TabId childTabId = tabService.createChildTab(parentId, -999L, request.title(), request.url());
+        TabId childTabId = tabService.createChildTab(parentId, currentUserId.userId(), request.title(), request.url());
         CreateChildTabResponse response = new CreateChildTabResponse(childTabId.getValue());
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -61,67 +63,65 @@ public class TabController {
     @DeleteMapping("/{tabId}")
     public ResponseEntity<Void> deleteTab(
             @PathVariable Long tabId,
-            @RequestParam(defaultValue = "true") boolean withSubtree
+            @RequestParam(defaultValue = "true") boolean withSubtree,
+            @CurrentUser CurrentUserId currentUserId
     ) {
         if (withSubtree) {
-            // TODO : 실제 userId로 변경
-            tabService.deleteTabWithSubtree(-999L, tabId);
+            tabService.deleteTabWithSubtree(tabId, currentUserId.userId());
             return ResponseVoidConst.NO_CONTENT;
         }
 
-        // TODO : 실제 userId로 변경
-        tabService.deleteTab(tabId, -999L);
+        tabService.deleteTab(tabId, currentUserId.userId());
         return ResponseVoidConst.NO_CONTENT;
     }
 
     @PutMapping("/{tabId}/move/root")
     public ResponseEntity<Void> moveTabToRoot(
             @PathVariable Long tabId,
-            @RequestParam(defaultValue = "true") boolean withSubtree
+            @RequestParam(defaultValue = "true") boolean withSubtree,
+            @CurrentUser CurrentUserId currentUserId
     ) {
         if (withSubtree) {
-            // TODO : 실제 userId로 변경
-            tabService.moveRootWithSubtree(tabId, -999L);
+            tabService.moveRootWithSubtree(tabId, currentUserId.userId());
             return ResponseVoidConst.NO_CONTENT;
         }
-        // TODO : 실제 userId로 변경
-        tabService.moveRoot(tabId, -999L);
+
+        tabService.moveRoot(tabId, currentUserId.userId());
         return ResponseVoidConst.NO_CONTENT;
     }
 
     @PutMapping("/{tabId}/move")
     public ResponseEntity<Void> moveTab(
             @PathVariable Long tabId,
-            @RequestBody MoveTabRequest request
+            @RequestBody MoveTabRequest request,
+            @CurrentUser CurrentUserId currentUserId
     ) {
         if (request.withSubtree()) {
-            // TODO : 실제 userId로 변경
-            tabService.moveWithSubtree(tabId, request.newParentId(), -999L);
+            tabService.moveWithSubtree(tabId, request.newParentId(), currentUserId.userId());
             return ResponseVoidConst.OK;
         }
 
-        // TODO : 실제 userId로 변경
-        tabService.move(tabId, request.newParentId(), -999L);
+        tabService.move(tabId, request.newParentId(), currentUserId.userId());
         return ResponseVoidConst.OK;
     }
 
     @PutMapping("/{tabId}/reorder")
     public ResponseEntity<Void> reorderTab(
             @PathVariable Long tabId,
-            @RequestBody ReorderTabRequest request
+            @RequestBody ReorderTabRequest request,
+            @CurrentUser CurrentUserId currentUserId
     ) {
-        // TODO : 실제 userId로 변경
-        tabService.reorderTab(tabId, request.targetTabId(), -999L, request.after());
+        tabService.reorderTab(tabId, request.targetTabId(), currentUserId.userId(), request.after());
         return ResponseVoidConst.OK;
     }
 
     @PutMapping("/{tabId}")
     public ResponseEntity<Void> updateTab(
             @PathVariable Long tabId,
-            @RequestBody UpdateTabRequest request
+            @RequestBody UpdateTabRequest request,
+            @CurrentUser CurrentUserId currentUserId
     ) {
-        // TODO : 실제 userId로 변경
-        tabService.updateTab(tabId, -999L, request.title(), request.url());
+        tabService.updateTab(tabId, currentUserId.userId(), request.title(), request.url());
         return ResponseVoidConst.OK;
     }
 
@@ -132,5 +132,4 @@ public class TabController {
 
         return ResponseEntity.ok(response);
     }
-
 }

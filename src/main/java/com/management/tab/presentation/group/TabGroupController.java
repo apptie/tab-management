@@ -1,6 +1,8 @@
 package com.management.tab.presentation.group;
 
 import com.management.tab.application.tab.TabGroupService;
+import com.management.tab.config.auth.resolver.CurrentUser;
+import com.management.tab.config.auth.resolver.CurrentUserId;
 import com.management.tab.domain.group.TabGroup;
 import com.management.tab.presentation.common.ResponseVoidConst;
 import com.management.tab.presentation.group.dto.request.CreateTabGroupRequest;
@@ -44,15 +46,21 @@ public class TabGroupController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateTabGroupResponse> createGroup(@RequestBody CreateTabGroupRequest request) {
-        Long tabGroupId = tabGroupService.createGroup(request.creatorId(), request.name());
+    public ResponseEntity<CreateTabGroupResponse> createGroup(
+            @RequestBody CreateTabGroupRequest request,
+            @CurrentUser CurrentUserId currentUserId
+    ) {
+        Long tabGroupId = tabGroupService.createGroup(currentUserId.userId(), request.name());
         CreateTabGroupResponse response = new CreateTabGroupResponse(tabGroupId);
 
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateGroup(@PathVariable Long id, @RequestBody UpdateTabGroupRequest request) {
+    public ResponseEntity<Void> updateGroup(
+            @PathVariable Long id,
+            @RequestBody UpdateTabGroupRequest request
+    ) {
         tabGroupService.updateGroup(id, request.name());
         return ResponseVoidConst.OK;
     }
