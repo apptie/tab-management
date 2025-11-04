@@ -1,7 +1,7 @@
 package com.management.tab.infrastructure.jwt;
 
 import com.management.tab.domain.auth.TokenEncoder;
-import com.management.tab.config.auth.security.config.properties.TokenProperties;
+import com.management.tab.config.properties.TokenProperties;
 import com.management.tab.config.auth.security.enums.TokenType;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;

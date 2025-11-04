@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.management.tab.domain.auth.PrivateClaims;
-import com.management.tab.config.auth.security.config.properties.TokenProperties;
+import com.management.tab.config.properties.TokenProperties;
 import com.management.tab.config.auth.security.enums.TokenType;
 import com.management.tab.infrastructure.jwt.JwtDecoder.InvalidTokenException;
 import com.nimbusds.jose.JOSEException;

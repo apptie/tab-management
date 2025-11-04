@@ -1,6 +1,6 @@
-package com.management.tab.config.auth.security.config;
+package com.management.tab.config;
 
-import com.management.tab.config.auth.security.config.properties.TokenProperties;
+import com.management.tab.config.properties.TokenProperties;
 import com.management.tab.domain.auth.TokenDecoder;
 import com.management.tab.domain.auth.TokenEncoder;
 import com.management.tab.infrastructure.jwt.JwsSignerFinder;

@@ -1,4 +1,4 @@
-package com.management.tab.config.auth.security.config.properties;
+package com.management.tab.config.properties;
 
 import com.management.tab.config.auth.security.enums.TokenType;
 import org.springframework.boot.context.properties.ConfigurationProperties;

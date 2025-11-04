@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.management.tab.application.auth.GenerateTokenService;
 import com.management.tab.application.auth.LoginService;
 import com.management.tab.application.auth.dto.LoggedInUserDto;
-import com.management.tab.config.auth.security.config.properties.TokenProperties;
+import com.management.tab.config.properties.TokenProperties;
 import com.management.tab.application.auth.dto.TokenDto;
 import com.management.tab.config.auth.security.dto.response.LoginResponse;
 import jakarta.servlet.http.Cookie;
