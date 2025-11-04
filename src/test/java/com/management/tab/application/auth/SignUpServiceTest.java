@@ -33,7 +33,7 @@ class SignUpServiceTest {
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getNickname()).isEmpty(),
+                () -> assertThat(actual.getNickname()).isEqualTo("익명"),
                 () -> assertThat(actual.getRegistrationId()).isEqualTo("KAKAO"),
                 () -> assertThat(actual.getSocialId()).isEqualTo("kakao12345")
         );

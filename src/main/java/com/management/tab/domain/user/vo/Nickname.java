@@ -7,7 +7,7 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class Nickname {
 
-    public static final Nickname EMPTY_NICKNAME = new Nickname("");
+    public static final Nickname EMPTY_NICKNAME = new Nickname("익명");
     private static final int MAX_LENGTH = 10;
 
     private final String value;
