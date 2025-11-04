@@ -56,7 +56,7 @@ class TabGroupServiceTest {
     @Test
     void 탭_그룹_이름을_변경한다() {
         // when
-        tabGroupService.updateGroup(1L, "변경된 이름");
+        tabGroupService.updateGroup(1L, "변경된 이름", 1L);
 
         // then
         TabGroup actual = tabGroupService.getGroup(1L);
@@ -67,7 +67,7 @@ class TabGroupServiceTest {
     @Test
     void 탭_그룹을_삭제한다() {
         // when
-        tabGroupService.delete(2L);
+        tabGroupService.delete(2L, 1L);
 
         // then
         List<TabGroup> actual = tabGroupService.getAllGroups();

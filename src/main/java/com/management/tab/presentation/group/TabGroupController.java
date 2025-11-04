@@ -56,18 +56,19 @@ public class TabGroupController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{tabGroupId}")
     public ResponseEntity<Void> updateGroup(
-            @PathVariable Long id,
-            @RequestBody UpdateTabGroupRequest request
+            @PathVariable Long tabGroupId,
+            @RequestBody UpdateTabGroupRequest request,
+            @CurrentUser CurrentUserId currentUserId
     ) {
-        tabGroupService.updateGroup(id, request.name());
+        tabGroupService.updateGroup(tabGroupId, request.name(), currentUserId.userId());
         return ResponseVoidConst.OK;
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGroup(@PathVariable Long id) {
-        tabGroupService.delete(id);
+    @DeleteMapping("/{tabGroupId}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable Long tabGroupId, @CurrentUser CurrentUserId currentUserId) {
+        tabGroupService.delete(tabGroupId, currentUserId.userId());
         return ResponseVoidConst.OK;
     }
 }

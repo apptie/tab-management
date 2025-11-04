@@ -30,19 +30,37 @@ public class TabGroupService {
     }
 
     @Transactional
-    public void updateGroup(Long id, String name) {
+    public void updateGroup(Long id, String name, Long updaterId) {
         TabGroup tabGroup = tabGroupRepository.findById(id);
+
+        if (tabGroup.isNotWriter(updaterId)) {
+            throw new TabGroupForbiddenException();
+        }
+
         TabGroup renamedTabGroup = tabGroup.rename(name);
 
         tabGroupRepository.updateRenamed(renamedTabGroup);
     }
 
     @Transactional
-    public void delete(Long id) {
-        tabGroupRepository.delete(id);
+    public void delete(Long id, Long deleterId) {
+        TabGroup tabGroup = tabGroupRepository.findById(id);
+
+        if (tabGroup.isNotWriter(deleterId)) {
+            throw new TabGroupForbiddenException();
+        }
+
+        tabGroupRepository.delete(tabGroup);
     }
 
     public int countTabs(Long id) {
         return tabGroupRepository.countTabs(id);
+    }
+
+    public static class TabGroupForbiddenException extends IllegalArgumentException {
+
+        public TabGroupForbiddenException() {
+            super("탭 그룹 작성자가 아닙니다.");
+        }
     }
 }

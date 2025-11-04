@@ -33,7 +33,7 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     public TabGroup save(TabGroup tabGroup) {
         Long tabGroupId = tabGroupDao.save(
                 tabGroup.getName(),
-                tabGroup.getCreatorId(),
+                tabGroup.getWriterId(),
                 tabGroup.getCreatedAt(),
                 tabGroup.getUpdatedAt()
         );
@@ -47,8 +47,8 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     }
 
     @Override
-    public void delete(Long id) {
-        tabGroupDao.delete(id);
+    public void delete(TabGroup tabGroup) {
+        tabGroupDao.delete(tabGroup.getId());
     }
 
     @Override

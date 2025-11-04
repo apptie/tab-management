@@ -114,14 +114,13 @@ class JdbcTabGroupRepositoryTest {
     void 탭_그룹을_삭제할_수_있다() {
         // given
         TabGroup tabGroup = TabGroup.create(1L, "삭제할 그룹");
-        TabGroup saved = jdbcTabGroupRepository.save(tabGroup);
-        Long groupId = saved.getId();
+        TabGroup savedTabGroup = jdbcTabGroupRepository.save(tabGroup);
 
         // when
-        jdbcTabGroupRepository.delete(groupId);
+        jdbcTabGroupRepository.delete(savedTabGroup);
 
         // then
-        assertThatThrownBy(() -> jdbcTabGroupRepository.findById(groupId))
+        assertThatThrownBy(() -> jdbcTabGroupRepository.findById(savedTabGroup.getId()))
                 .isInstanceOf(TabGroupNotFoundException.class)
                 .hasMessage("탭 그룹을 찾을 수 없습니다.");
     }
