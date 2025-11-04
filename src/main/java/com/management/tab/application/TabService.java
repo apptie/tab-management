@@ -1,6 +1,8 @@
 package com.management.tab.application;
 
+import com.management.tab.domain.group.TabGroup;
 import com.management.tab.domain.group.vo.TabGroupId;
+import com.management.tab.domain.repository.TabGroupRepository;
 import com.management.tab.domain.repository.TabRepository;
 import com.management.tab.domain.tab.Tab;
 import com.management.tab.domain.tab.TabBuilder;
@@ -19,11 +21,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class TabService {
 
     private final TabRepository tabRepository;
+    private final TabGroupRepository tabGroupRepository;
 
     @Transactional
-    public TabId createRootTab(Long groupId, String title, String url) {
+    public TabId createRootTab(Long groupId, Long writerId, String title, String url) {
+        TabGroup tabGroup = tabGroupRepository.findById(groupId);
+
+        if (tabGroup.isNotWriter(writerId)) {
+            throw new TabForbiddenException();
+        }
+
         TabPosition lastRootPosition = tabRepository.findLastRootPosition(groupId);
-        Tab rootTab = TabBuilder.createRoot(groupId, title, url, lastRootPosition.next())
+        Tab rootTab = TabBuilder.createRoot(groupId, writerId, title, url, lastRootPosition.next())
                                 .build();
 
         return tabRepository.saveRoot(rootTab)
@@ -31,8 +40,13 @@ public class TabService {
     }
 
     @Transactional
-    public TabId createChildTab(Long parentId, String title, String url) {
+    public TabId createChildTab(Long parentId, Long writerId, String title, String url) {
         Tab parentTab = tabRepository.findTab(parentId);
+
+        if (parentTab.isNotWriterId(writerId)) {
+            throw new TabForbiddenException();
+        }
+
         TabTree tabTree = tabRepository.findTabTree(parentTab.tabGroupId());
 
         tabTree.validateAddChildDepth(parentTab.id());
@@ -46,22 +60,35 @@ public class TabService {
     }
 
     @Transactional
-    public void deleteTab(Long tabId) {
+    public void deleteTab(Long tabId, Long deleterId) {
         Tab tab = tabRepository.findTab(tabId);
+
+        if (tab.isNotWriterId(deleterId)) {
+            throw new TabForbiddenException();
+        }
 
         tabRepository.deleteTab(tab);
     }
 
     @Transactional
-    public void deleteTabWithSubtree(Long tabId) {
+    public void deleteTabWithSubtree(Long tabId, Long deleterId) {
         Tab tab = tabRepository.findTab(tabId);
+
+        if (tab.isNotWriterId(deleterId)) {
+            throw new TabForbiddenException();
+        }
 
         tabRepository.deleteTabWithSubtree(tab);
     }
 
     @Transactional
-    public void moveRoot(Long tabId) {
+    public void moveRoot(Long tabId, Long userId) {
         Tab tab = tabRepository.findTab(tabId);
+
+        if (tab.isNotWriterId(userId)) {
+            throw new TabForbiddenException();
+        }
+
         TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
         TabPosition nextRootPosition = tabTree.getNextRootPosition();
         Tab movedTab = tab.moveToRoot(nextRootPosition);
@@ -70,8 +97,13 @@ public class TabService {
     }
 
     @Transactional
-    public void moveRootWithSubtree(Long tabId) {
+    public void moveRootWithSubtree(Long tabId, Long moverId) {
         Tab tab = tabRepository.findTab(tabId);
+
+        if (tab.isNotWriterId(moverId)) {
+            throw new TabForbiddenException();
+        }
+
         TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
         TabPosition nextRootPosition = tabTree.getNextRootPosition();
         Tab movedTab = tab.moveToRoot(nextRootPosition);
@@ -80,8 +112,13 @@ public class TabService {
     }
 
     @Transactional
-    public void move(Long tabId, Long newParentId) {
+    public void move(Long tabId, Long newParentId, Long moverId) {
         Tab tab = tabRepository.findTab(tabId);
+
+        if (tab.isNotWriterId(moverId)) {
+            throw new TabForbiddenException();
+        }
+
         TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
 
         tabTree.validateMove(tab.id(), TabId.create(newParentId));
@@ -94,8 +131,13 @@ public class TabService {
     }
 
     @Transactional
-    public void moveWithSubtree(Long tabId, Long newParentId) {
+    public void moveWithSubtree(Long tabId, Long newParentId, Long moverId) {
         Tab tab = tabRepository.findTab(tabId);
+
+        if (tab.isNotWriterId(moverId)) {
+            throw new TabForbiddenException();
+        }
+
         TabTree tabTree = tabRepository.findTabTree(tab.tabGroupId());
 
         tabTree.validateMove(tab.id(), TabId.create(newParentId));
@@ -108,13 +150,18 @@ public class TabService {
     }
 
     @Transactional
-    public void reorderTab(Long tabId, Long targetTabId, boolean after) {
+    public void reorderTab(Long tabId, Long targetTabId, Long reordererId, boolean after) {
         TabId movingParentId = tabRepository.findParentId(tabId);
         TabId targetParentId = tabRepository.findParentId(targetTabId);
 
         validateReorderTab(movingParentId, targetParentId);
 
         Tab movingTab = tabRepository.findTab(tabId);
+
+        if (movingTab.isNotWriterId(reordererId)) {
+            throw new TabForbiddenException();
+        }
+
         List<Tab> siblings = findMovingSiblings(movingParentId, movingTab);
         int targetIndex = findTabIndexInDomain(siblings, TabId.create(targetTabId));
         int insertIndex = after ? targetIndex + 1 : targetIndex;
@@ -161,8 +208,13 @@ public class TabService {
     }
 
     @Transactional
-    public void updateTab(Long tabId, String title, String url) {
+    public void updateTab(Long tabId, Long writerId, String title, String url) {
         Tab tab = tabRepository.findTab(tabId);
+
+        if (tab.isNotWriterId(writerId)) {
+            throw new TabForbiddenException();
+        }
+
         Tab updatedTab = tab.updateInfo(title, url);
 
         tabRepository.updateTabInfo(updatedTab);
@@ -170,5 +222,12 @@ public class TabService {
 
     public TabTree getTabTree(Long groupId) {
         return tabRepository.findTabTree(TabGroupId.create(groupId));
+    }
+
+    public static class TabForbiddenException extends IllegalArgumentException {
+
+        public TabForbiddenException() {
+            super("탭 작성자가 아닙니다.");
+        }
     }
 }

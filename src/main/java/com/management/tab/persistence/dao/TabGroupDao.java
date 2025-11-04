@@ -19,6 +19,7 @@ public class TabGroupDao {
 
     private static final RowMapper<TabGroupDto> tabGroupRowMapper = (rs, rowNum) -> new TabGroupDto(
             rs.getLong("id"),
+            rs.getLong("writer_id"),
             rs.getString("name"),
             rs.getTimestamp("created_at").toLocalDateTime(),
             rs.getTimestamp("updated_at").toLocalDateTime()
@@ -52,10 +53,14 @@ public class TabGroupDao {
         }
     }
 
-    public Long save(String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        String sql = "INSERT INTO tab_groups (name, created_at, updated_at) VALUES (:name, :createdAt, :updatedAt)";
+    public Long save(String name, Long writerId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        String sql = """
+                INSERT INTO tab_groups (name, writer_id, created_at, updated_at)
+                VALUES (:name, :writerId, :createdAt, :updatedAt)
+            """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", name)
+                .addValue("writerId", writerId)
                 .addValue("createdAt", createdAt)
                 .addValue("updatedAt", updatedAt);
         KeyHolder keyHolder = new GeneratedKeyHolder();

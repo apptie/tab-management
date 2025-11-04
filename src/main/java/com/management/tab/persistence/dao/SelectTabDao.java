@@ -19,6 +19,7 @@ public class SelectTabDao {
             rs.getLong("id"),
             rs.getLong("group_id"),
             rs.getObject("parent_id", Long.class),
+            rs.getLong("writer_id"),
             rs.getString("title"),
             rs.getString("url"),
             rs.getInt("position"),
@@ -30,6 +31,7 @@ public class SelectTabDao {
             rs.getLong("id"),
             rs.getLong("group_id"),
             rs.getObject("parent_id", Long.class),
+            rs.getLong("writer_id"),
             rs.getString("title"),
             rs.getString("url"),
             rs.getInt("position"),
@@ -62,7 +64,7 @@ public class SelectTabDao {
 
     public List<TabWithDepthDto> findTreeByGroup(Long groupId) {
         String sql = """
-                    SELECT DISTINCT t.id, t.group_id, t.parent_id, t.title, t.url, t.position,
+                    SELECT DISTINCT t.id, t.group_id, t.parent_id, t.writer_id, t.title, t.url, t.position,
                            t.created_at, t.updated_at,
                            (SELECT MAX(depth)
                             FROM tab_tree_paths

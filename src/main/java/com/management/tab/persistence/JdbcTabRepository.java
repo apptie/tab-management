@@ -33,6 +33,7 @@ public class JdbcTabRepository implements TabRepository {
     public Tab saveRoot(Tab rootTab) {
         Long rootTabId = insertTabDao.saveRootTab(
                 rootTab.getTabGroupId(),
+                rootTab.getWriterId(),
                 rootTab.getTitle(),
                 rootTab.getUrl(),
                 rootTab.getPosition(),
@@ -47,6 +48,7 @@ public class JdbcTabRepository implements TabRepository {
     public Tab saveChild(Tab childTab) {
         Long childTabId = insertTabDao.saveChildTab(
                 childTab.getTabGroupId(),
+                childTab.getWriterId(),
                 childTab.getTitle(),
                 childTab.getUrl(),
                 childTab.getParentId(),

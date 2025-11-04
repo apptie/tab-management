@@ -31,9 +31,14 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
 
     @Override
     public TabGroup save(TabGroup tabGroup) {
-        Long tabGroupId = tabGroupDao.save(tabGroup.getName(), tabGroup.getCreatedAt(), tabGroup.getUpdatedAt());
+        Long tabGroupId = tabGroupDao.save(
+                tabGroup.getName(),
+                tabGroup.getCreatorId(),
+                tabGroup.getCreatedAt(),
+                tabGroup.getUpdatedAt()
+        );
 
-        return TabGroup.createWithAssignedId(tabGroupId, tabGroup);
+        return tabGroup.updateAssignedId(tabGroupId);
     }
 
     @Override

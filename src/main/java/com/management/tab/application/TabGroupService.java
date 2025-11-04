@@ -22,8 +22,8 @@ public class TabGroupService {
     }
 
     @Transactional
-    public Long createGroup(String name) {
-        TabGroup tabGroup = TabGroup.create(name);
+    public Long createGroup(Long creatorId, String name) {
+        TabGroup tabGroup = TabGroup.create(creatorId, name);
 
         return tabGroupRepository.save(tabGroup)
                                  .getId();

@@ -19,13 +19,14 @@ public class InsertTabDao {
 
     public Long saveRootTab(
             Long groupId,
+            Long writerId,
             String title,
             String url,
             int position,
             LocalDateTime createdAt,
             LocalDateTime updatedAt
     ) {
-        Long tabId = saveTab(groupId, title, url, null, position, createdAt, updatedAt);
+        Long tabId = saveTab(groupId, writerId, title, url, null, position, createdAt, updatedAt);
 
         insertSelfPath(tabId);
         return tabId;
@@ -58,6 +59,7 @@ public class InsertTabDao {
 
     private Long saveTab(
             Long groupId,
+            Long writerId,
             String title,
             String url,
             Long parentId,
@@ -66,12 +68,13 @@ public class InsertTabDao {
             LocalDateTime updatedAt
     ) {
         String sql = """
-                INSERT INTO tabs (group_id, parent_id, title, url, position, created_at, updated_at)
-                VALUES (:groupId, :parentId, :title, :url, :position, :createdAt, :updatedAt)
+                INSERT INTO tabs (group_id, parent_id, writer_id, title, url, position, created_at, updated_at)
+                VALUES (:groupId, :parentId, :writerId, :title, :url, :position, :createdAt, :updatedAt)
                 """;
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("groupId", groupId)
                 .addValue("parentId", parentId)
+                .addValue("writerId", writerId)
                 .addValue("title", title)
                 .addValue("url", url)
                 .addValue("position", position)
@@ -85,6 +88,7 @@ public class InsertTabDao {
 
     public Long saveChildTab(
             Long groupId,
+            Long writerId,
             String title,
             String url,
             Long parentId,
@@ -92,7 +96,7 @@ public class InsertTabDao {
             LocalDateTime createdAt,
             LocalDateTime updatedAt
     ) {
-        Long childId = saveTab(groupId, title, url, parentId, position, createdAt, updatedAt);
+        Long childId = saveTab(groupId, writerId, title, url, parentId, position, createdAt, updatedAt);
 
         insertParentPaths(childId, parentId);
         insertSelfPath(childId);

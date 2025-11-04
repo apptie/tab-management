@@ -1,56 +1,44 @@
--- 탭 그룹 생성
-INSERT INTO tab_groups (id, name, created_at, updated_at)
+-- 사용자 생성
+INSERT INTO users (id, nickname, created_at, updated_at)
 VALUES
-    (1, 'TabService 테스트 그룹', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (1, '테스트 사용자1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, '테스트 사용자2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- 테스트용 트리 구조
--- 구조:
--- 100 (루트1, depth 0)
---   ├─ 101 (자식1, depth 1)
---   │   ├─ 103 (손자1, depth 2)
---   │   └─ 104 (손자2, depth 2)
---   └─ 102 (자식2, depth 1)
---       └─ 105 (손자3, depth 2)
---           └─ 106 (증손자1, depth 3)
---               └─ 107 (고손자1, depth 4)
---                   └─ 108 (5대손, depth 5)
---                       └─ 109 (6대손, depth 6)
---                           └─ 110 (7대손, depth 7)
---                               └─ 111 (8대손, depth 8)
---                                   └─ 112 (9대손, depth 9)
--- 200 (루트2, depth 0)
--- 300 (루트3, depth 0)
+-- 탭 그룹 생성
+INSERT INTO tab_groups (id, name, writer_id, created_at, updated_at)
+VALUES
+    (1, 'TabService 테스트 그룹', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 루트 탭
-INSERT INTO tabs (id, group_id, parent_id, title, url, position, created_at, updated_at)
+INSERT INTO tabs (id, writer_id, group_id, parent_id, title, url, position, created_at, updated_at)
 VALUES
-    (100, 1, NULL, '루트_탭1', 'https://root1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (200, 1, NULL, '루트_탭2', 'https://root2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (300, 1, NULL, '루트_탭3', 'https://root3.com', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (100, 1, 1, NULL, '루트_탭1', 'https://root1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (200, 1, 1, NULL, '루트_탭2', 'https://root2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (300, 1, 1, NULL, '루트_탭3', 'https://root3.com', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- depth 1
-INSERT INTO tabs (id, group_id, parent_id, title, url, position, created_at, updated_at)
+INSERT INTO tabs (id, writer_id, group_id, parent_id, title, url, position, created_at, updated_at)
 VALUES
-    (101, 1, 100, '자식_탭1', 'https://child1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (102, 1, 100, '자식_탭2', 'https://child2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (101, 1, 1, 100, '자식_탭1', 'https://child1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (102, 1, 1, 100, '자식_탭2', 'https://child2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- depth 2
-INSERT INTO tabs (id, group_id, parent_id, title, url, position, created_at, updated_at)
+INSERT INTO tabs (id, writer_id, group_id, parent_id, title, url, position, created_at, updated_at)
 VALUES
-    (103, 1, 101, '손자_탭1', 'https://grandchild1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (104, 1, 101, '손자_탭2', 'https://grandchild2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (105, 1, 102, '손자_탭3', 'https://grandchild3.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (103, 1, 1, 101, '손자_탭1', 'https://grandchild1.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (104, 1, 1, 101, '손자_탭2', 'https://grandchild2.com', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (105, 1, 1, 102, '손자_탭3', 'https://grandchild3.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- depth 3-9 (깊이 테스트용)
-INSERT INTO tabs (id, group_id, parent_id, title, url, position, created_at, updated_at)
+INSERT INTO tabs (id, writer_id, group_id, parent_id, title, url, position, created_at, updated_at)
 VALUES
-    (106, 1, 105, '증손자_탭1', 'https://depth3.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (107, 1, 106, '고손자_탭1', 'https://depth4.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (108, 1, 107, 'depth5_탭', 'https://depth5.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (109, 1, 108, 'depth6_탭', 'https://depth6.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (110, 1, 109, 'depth7_탭', 'https://depth7.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (111, 1, 110, 'depth8_탭', 'https://depth8.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (112, 1, 111, 'depth9_탭', 'https://depth9.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (106, 1, 1, 105, '증손자_탭1', 'https://depth3.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (107, 1, 1, 106, '고손자_탭1', 'https://depth4.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (108, 1, 1, 107, 'depth5_탭', 'https://depth5.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (109, 1, 1, 108, 'depth6_탭', 'https://depth6.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (110, 1, 1, 109, 'depth7_탭', 'https://depth7.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (111, 1, 1, 110, 'depth8_탭', 'https://depth8.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (112, 1, 1, 111, 'depth9_탭', 'https://depth9.com', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Closure Table 경로 생성
 -- 100 (루트1)

@@ -6,6 +6,7 @@ import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.domain.tab.vo.TabPosition;
 import com.management.tab.domain.tab.vo.TabTitle;
 import com.management.tab.domain.tab.vo.TabUrl;
+import com.management.tab.domain.user.vo.UserId;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public class Tab {
 
     private final TabId id;
     private final TabId parentId;
+    private final UserId writerId;
     private final TabGroupId tabGroupId;
     private final TabTitle title;
     private final TabUrl url;
@@ -24,6 +26,7 @@ public class Tab {
     Tab(
             TabId id,
             TabId parentId,
+            UserId writerId,
             TabGroupId tabGroupId,
             TabTitle title,
             TabUrl url,
@@ -32,6 +35,7 @@ public class Tab {
     ) {
         this.id = id;
         this.parentId = parentId;
+        this.writerId = writerId;
         this.tabGroupId = tabGroupId;
         this.title = title;
         this.url = url;
@@ -43,6 +47,7 @@ public class Tab {
         return new Tab(
                 TabId.create(tabId),
                 this.parentId,
+                this.writerId,
                 this.tabGroupId,
                 this.title,
                 this.url,
@@ -55,6 +60,7 @@ public class Tab {
         return new Tab(
                 this.id,
                 this.parentId,
+                this.writerId,
                 this.tabGroupId,
                 TabTitle.create(newTitle),
                 TabUrl.create(newUrl),
@@ -67,6 +73,7 @@ public class Tab {
         return new Tab(
                 this.id,
                 this.parentId,
+                this.writerId,
                 this.tabGroupId,
                 this.title,
                 this.url,
@@ -79,6 +86,7 @@ public class Tab {
         return new Tab(
                 this.id,
                 newParentId,
+                this.writerId,
                 this.tabGroupId,
                 this.title,
                 this.url,
@@ -91,6 +99,7 @@ public class Tab {
         return new Tab(
                 this.id,
                 TabId.EMPTY_TAB_ID,
+                this.writerId,
                 this.tabGroupId,
                 this.title,
                 this.url,
@@ -103,6 +112,14 @@ public class Tab {
         return parentId.isRoot();
     }
 
+    public boolean isWriterId(Long writerId) {
+        return this.writerId.isEqualId(writerId);
+    }
+
+    public boolean isNotWriterId(Long writerId) {
+        return !isWriterId(writerId);
+    }
+
     public boolean isEqualId(Tab other) {
         return this.id.equals(other.id);
     }
@@ -112,50 +129,58 @@ public class Tab {
     }
 
     public TabId id() {
-        return id;
+        return this.id;
     }
 
     public TabPosition position() {
-        return position;
+        return this.position;
     }
 
     public TabGroupId tabGroupId() {
-        return tabGroupId;
+        return this.tabGroupId;
     }
 
     public TabId parentId() {
-        return parentId;
+        return this.parentId;
+    }
+
+    public UserId writerId() {
+        return this.writerId;
     }
 
     public Long getId() {
-        return id.getValue();
+        return this.id.getValue();
     }
 
     public Long getParentId() {
-        return parentId.getValue();
+        return this.parentId.getValue();
+    }
+
+    public Long getWriterId() {
+        return this.writerId.getValue();
     }
 
     public Long getTabGroupId() {
-        return tabGroupId.getValue();
+        return this.tabGroupId.getValue();
     }
 
     public String getTitle() {
-        return title.getValue();
+        return this.title.getValue();
     }
 
     public String getUrl() {
-        return url.getValue();
+        return this.url.getValue();
     }
 
     public int getPosition() {
-        return position.getValue();
+        return this.position.getValue();
     }
 
     public LocalDateTime getCreatedAt() {
-        return timestamps.getCreatedAt();
+        return this.timestamps.getCreatedAt();
     }
 
     public LocalDateTime getUpdatedAt() {
-        return timestamps.getUpdatedAt();
+        return this.timestamps.getUpdatedAt();
     }
 }

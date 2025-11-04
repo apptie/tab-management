@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -45,7 +47,7 @@ class TabGroupServiceTest {
     @Test
     void 새로운_탭_그룹을_초기화한다() {
         // when
-        Long actual = tabGroupService.createGroup("새로운 그룹");
+        Long actual = tabGroupService.createGroup(1L, "새로운 그룹");
 
         // then
         assertThat(actual).isNotNull();
@@ -87,13 +89,23 @@ class TabGroupServiceTest {
         assertThat(actual).isEqualTo(6);
     }
 
-    @ParameterizedTest(name = "{0}일 때 탭 그룹을 초기화할 수 없다")
+    @ParameterizedTest(name = "탭 이름이 {0}일 때 탭 그룹을 초기화할 수 없다")
     @NullAndEmptySource
     void 빈_이름으로_탭_그룹을_초기화할_수_없다(String name) {
         // when & then
-        assertThatThrownBy(() -> tabGroupService.createGroup(name))
+        assertThatThrownBy(() -> tabGroupService.createGroup(1L, name))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("탭 그룹 이름은 비어있을 수 없습니다.");
+    }
+
+    @ParameterizedTest(name = "회원 ID가 {0}일 때 탭 그룹을 초기화할 수 없다")
+    @NullSource
+    @ValueSource(longs = {0, -1})
+    void 비어_있거나_0이거나_음수인_회원_I로_탭_그룹을_초기화할_수_없다(Long creatorId) {
+        // when & then
+        assertThatThrownBy(() -> tabGroupService.createGroup(creatorId, "탭 그룹 이름"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("사용자 ID는 양수여야 합니다.");
     }
 }
 

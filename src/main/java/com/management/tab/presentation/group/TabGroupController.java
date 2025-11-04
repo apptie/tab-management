@@ -45,7 +45,7 @@ public class TabGroupController {
 
     @PostMapping
     public ResponseEntity<CreateTabGroupResponse> createGroup(@RequestBody CreateTabGroupRequest request) {
-        Long tabGroupId = tabGroupService.createGroup(request.name());
+        Long tabGroupId = tabGroupService.createGroup(request.creatorId(), request.name());
         CreateTabGroupResponse response = new CreateTabGroupResponse(tabGroupId);
 
         return ResponseEntity.ok(response);

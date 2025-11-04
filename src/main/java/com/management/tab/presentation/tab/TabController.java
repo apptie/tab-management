@@ -37,7 +37,8 @@ public class TabController {
             @PathVariable Long groupId,
             @RequestBody CreateRootTabRequest request
     ) {
-        TabId tabId = tabService.createRootTab(groupId, request.title(), request.url());
+        // TODO : 실제 userId 전달
+        TabId tabId = tabService.createRootTab(groupId, -999L, request.title(), request.url());
         CreateRootTabResponse response = new CreateRootTabResponse(tabId.getValue());
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -49,7 +50,8 @@ public class TabController {
             @PathVariable Long parentId,
             @RequestBody CreateChildTabRequest request
     ) {
-        TabId childTabId = tabService.createChildTab(parentId, request.title(), request.url());
+        // TODO : 실제 userId로 변경
+        TabId childTabId = tabService.createChildTab(parentId, -999L, request.title(), request.url());
         CreateChildTabResponse response = new CreateChildTabResponse(childTabId.getValue());
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -62,11 +64,13 @@ public class TabController {
             @RequestParam(defaultValue = "true") boolean withSubtree
     ) {
         if (withSubtree) {
-            tabService.deleteTabWithSubtree(tabId);
+            // TODO : 실제 userId로 변경
+            tabService.deleteTabWithSubtree(-999L, tabId);
             return ResponseVoidConst.NO_CONTENT;
         }
 
-        tabService.deleteTab(tabId);
+        // TODO : 실제 userId로 변경
+        tabService.deleteTab(tabId, -999L);
         return ResponseVoidConst.NO_CONTENT;
     }
 
@@ -76,11 +80,12 @@ public class TabController {
             @RequestParam(defaultValue = "true") boolean withSubtree
     ) {
         if (withSubtree) {
-            tabService.moveRootWithSubtree(tabId);
+            // TODO : 실제 userId로 변경
+            tabService.moveRootWithSubtree(tabId, -999L);
             return ResponseVoidConst.NO_CONTENT;
         }
-
-        tabService.moveRoot(tabId);
+        // TODO : 실제 userId로 변경
+        tabService.moveRoot(tabId, -999L);
         return ResponseVoidConst.NO_CONTENT;
     }
 
@@ -90,11 +95,13 @@ public class TabController {
             @RequestBody MoveTabRequest request
     ) {
         if (request.withSubtree()) {
-            tabService.moveWithSubtree(tabId, request.newParentId());
+            // TODO : 실제 userId로 변경
+            tabService.moveWithSubtree(tabId, request.newParentId(), -999L);
             return ResponseVoidConst.OK;
         }
 
-        tabService.move(tabId, request.newParentId());
+        // TODO : 실제 userId로 변경
+        tabService.move(tabId, request.newParentId(), -999L);
         return ResponseVoidConst.OK;
     }
 
@@ -103,7 +110,8 @@ public class TabController {
             @PathVariable Long tabId,
             @RequestBody ReorderTabRequest request
     ) {
-        tabService.reorderTab(tabId, request.targetTabId(), request.after());
+        // TODO : 실제 userId로 변경
+        tabService.reorderTab(tabId, request.targetTabId(), -999L, request.after());
         return ResponseVoidConst.OK;
     }
 
@@ -112,7 +120,8 @@ public class TabController {
             @PathVariable Long tabId,
             @RequestBody UpdateTabRequest request
     ) {
-        tabService.updateTab(tabId, request.title(), request.url());
+        // TODO : 실제 userId로 변경
+        tabService.updateTab(tabId, -999L, request.title(), request.url());
         return ResponseVoidConst.OK;
     }
 

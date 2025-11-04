@@ -1,29 +1,29 @@
-package com.management.tab.domain.group.vo;
+package com.management.tab.domain.user.vo;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode
-public class TabGroupId {
+public class UserId {
 
-    public static final TabGroupId EMPTY_TAB_GROUP_ID = new TabGroupId(null);
+    public static final UserId EMPTY_USER_ID = new UserId(null);
 
     private final Long value;
 
-    public static TabGroupId create(Long value) {
+    public static UserId create(Long value) {
         validateValue(value);
 
-        return new TabGroupId(value);
+        return new UserId(value);
     }
 
     private static void validateValue(Long value) {
         if (value == null || value <= 0) {
-            throw new IllegalArgumentException("GroupId는 양수여야 합니다");
+            throw new IllegalArgumentException("사용자 ID는 양수여야 합니다.");
         }
     }
 
-    private TabGroupId(Long value) {
+    private UserId(Long value) {
         this.value = value;
     }
 
