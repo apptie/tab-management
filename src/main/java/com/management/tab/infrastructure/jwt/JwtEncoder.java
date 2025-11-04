@@ -34,9 +34,9 @@ public class JwtEncoder implements TokenEncoder {
     private final TokenProperties tokenProperties;
 
     @Override
-    public String encode(LocalDateTime publishTime, TokenType tokenType, Long accountId, String roleName) {
+    public String encode(LocalDateTime publishTime, TokenType tokenType, Long userId) {
         try {
-            return serializeToken(publishTime, tokenType, accountId, roleName);
+            return serializeToken(publishTime, tokenType, userId);
         } catch (KeyLengthException e) {
             throw new FailedEncodeTokenException("키 길이를 지원하지 않는 환경입니다.", e);
         } catch (JOSEException e) {
@@ -44,10 +44,9 @@ public class JwtEncoder implements TokenEncoder {
         }
     }
 
-    private String serializeToken(LocalDateTime publishTime, TokenType tokenType, Long accountId, String roleName)
-            throws JOSEException {
+    private String serializeToken(LocalDateTime publishTime, TokenType tokenType, Long userId) throws JOSEException {
         JWEHeader header = createJweHeader();
-        JWTClaimsSet claims = createJwtPayload(tokenType, accountId, roleName, publishTime);
+        JWTClaimsSet claims = createJwtPayload(tokenType, userId, publishTime);
         SignedJWT signedJwt = setupSignedJwt(claims, tokenType);
         JWEObject jweObject = setupJweObject(header, signedJwt);
 
@@ -60,20 +59,14 @@ public class JwtEncoder implements TokenEncoder {
                 .build();
     }
 
-    private JWTClaimsSet createJwtPayload(
-            TokenType tokenType,
-            Long accountId,
-            String roleName,
-            LocalDateTime publishTime
-    ) {
+    private JWTClaimsSet createJwtPayload(TokenType tokenType, Long userId, LocalDateTime publishTime) {
         Date issuedTime = convertDate(publishTime);
 
         return new JWTClaimsSet.Builder()
                 .issuer(tokenProperties.issuer())
                 .issueTime(issuedTime)
                 .expirationTime(calculateExpirationTime(issuedTime, tokenType))
-                .claim(CLAIM_ID, accountId)
-                .claim(CLAIM_ROLE, roleName)
+                .claim(CLAIM_ID, userId)
                 .build();
     }
 

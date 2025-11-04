@@ -92,8 +92,7 @@ class JwtDecoderTest {
         String token = jwtEncoder.encode(
                 LocalDateTime.of(2022, 2, 2, 13, 13),
                 tokenType,
-                1L,
-                "ROLE_USER"
+                1L
         );
 
         // when
@@ -126,7 +125,7 @@ class JwtDecoderTest {
     void 유효한_토큰을_디코딩_한다(TokenType tokenType) {
         // given
         LocalDateTime publishTime = LocalDateTime.now();
-        String token = jwtEncoder.encode(publishTime, tokenType, 1L, "ROLE_USER");
+        String token = jwtEncoder.encode(publishTime, tokenType, 1L);
 
         // when
         Optional<PrivateClaims> actual = jwtDecoder.decode(tokenType, token);
@@ -135,7 +134,6 @@ class JwtDecoderTest {
         assertAll(
                 () -> assertThat(actual).isNotEmpty(),
                 () -> assertThat(actual.get().accountId()).isEqualTo(1L),
-                () -> assertThat(actual.get().roleName()).isEqualTo("ROLE_USER"),
                 () -> assertThat(actual.get().issuedAt()).isEqualTo(publishTime.truncatedTo(ChronoUnit.SECONDS))
         );
     }
@@ -154,7 +152,7 @@ class JwtDecoderTest {
                 259200000L
         );
         JwtEncoder otherServiceJwtEncoder = new JwtEncoder(jweEncrypter, jwsSignerFinder, otherIssuerTokenProperties);
-        String token = otherServiceJwtEncoder.encode(LocalDateTime.now(), tokenType, 1L, "ROLE_USER");
+        String token = otherServiceJwtEncoder.encode(LocalDateTime.now(), tokenType, 1L);
 
         // when & then
         assertThatThrownBy(() -> jwtDecoder.decode(tokenType, token))

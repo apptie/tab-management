@@ -1,14 +1,25 @@
 package com.management.tab.config.auth.security.config;
 
 import com.management.tab.config.auth.security.config.properties.TokenProperties;
+import com.management.tab.domain.auth.TokenDecoder;
+import com.management.tab.domain.auth.TokenEncoder;
 import com.management.tab.infrastructure.jwt.JwsSignerFinder;
 import com.management.tab.infrastructure.jwt.JwsVerifierFinder;
+import com.management.tab.infrastructure.jwt.JwtDecoder;
+import com.management.tab.infrastructure.jwt.JwtEncoder;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEDecrypter;
+import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.KeyLengthException;
+import com.nimbusds.jose.crypto.AESDecrypter;
+import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.time.Clock;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +30,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(TokenProperties.class)
-public class SecurityConfig {
+public class TokenConfig {
 
     private static final String HMAC_SHA_256 = "HmacSHA256";
 
+    private final Clock clock;
     private final TokenProperties tokenProperties;
+
+    @Bean
+    public TokenEncoder tokenEncoder(JWEEncrypter jweEncrypter, JwsSignerFinder jwsSignerFinder) {
+        return new JwtEncoder(jweEncrypter, jwsSignerFinder, tokenProperties);
+    }
+
+    @Bean
+    public TokenDecoder tokenDecoder(JWEDecrypter jweDecrypter, JwsVerifierFinder jwsVerifierFinder) {
+        return new JwtDecoder(clock, jweDecrypter, jwsVerifierFinder, tokenProperties);
+    }
 
     @Bean
     public JwsVerifierFinder jwsVerifierFinder(
@@ -59,5 +81,23 @@ public class SecurityConfig {
         byte[] refreshTokenKeyBytes = tokenProperties.refreshKey().getBytes(StandardCharsets.UTF_8);
 
         return new SecretKeySpec(refreshTokenKeyBytes, HMAC_SHA_256);
+    }
+
+    @Bean
+    public JWEDecrypter jweDecrypter(SecretKey gcmAesSecretKey) throws KeyLengthException {
+        return new AESDecrypter(gcmAesSecretKey);
+    }
+
+    @Bean
+    public JWEEncrypter jweEncrypter(SecretKey gcmAesSecretKey) throws KeyLengthException {
+        return new AESEncrypter(gcmAesSecretKey);
+    }
+
+    @Bean
+    public SecretKey gcmAesSecretKey() throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(256);
+
+        return keyGenerator.generateKey();
     }
 }
