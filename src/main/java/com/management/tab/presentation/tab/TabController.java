@@ -1,6 +1,6 @@
 package com.management.tab.presentation.tab;
 
-import com.management.tab.application.TabService;
+import com.management.tab.application.tab.TabService;
 import com.management.tab.domain.tab.TabTree;
 import com.management.tab.domain.tab.vo.TabId;
 import com.management.tab.presentation.common.ResponseVoidConst;

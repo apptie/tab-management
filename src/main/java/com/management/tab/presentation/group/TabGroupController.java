@@ -1,6 +1,6 @@
 package com.management.tab.presentation.group;
 
-import com.management.tab.application.TabGroupService;
+import com.management.tab.application.tab.TabGroupService;
 import com.management.tab.domain.group.TabGroup;
 import com.management.tab.presentation.common.ResponseVoidConst;
 import com.management.tab.presentation.group.dto.request.CreateTabGroupRequest;

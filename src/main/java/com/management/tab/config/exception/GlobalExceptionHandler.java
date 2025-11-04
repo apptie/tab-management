@@ -1,6 +1,6 @@
 package com.management.tab.config.exception;
 
-import com.management.tab.application.TabService.TabForbiddenException;
+import com.management.tab.application.tab.TabService.TabForbiddenException;
 import com.management.tab.domain.repository.TabContentRepository.TabContentNotFoundException;
 import com.management.tab.domain.repository.TabGroupRepository.TabGroupNotFoundException;
 import com.management.tab.domain.repository.TabRepository.TabNotFoundException;

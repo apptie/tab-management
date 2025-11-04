@@ -1,4 +1,4 @@
-package com.management.tab.application;
+package com.management.tab.application.tab;
 
 import com.management.tab.domain.content.TabContent;
 import com.management.tab.domain.repository.TabContentRepository;
