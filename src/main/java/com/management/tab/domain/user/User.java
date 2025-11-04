@@ -66,6 +66,10 @@ public class User {
         return this.id;
     }
 
+    public Long getId() {
+        return this.id.getValue();
+    }
+
     public String getNickname() {
         return nickname.getValue();
     }
