@@ -1,6 +1,6 @@
-package com.management.tab.config.auth.security.service;
+package com.management.tab.application.auth;
 
-import com.management.tab.config.auth.security.service.dto.LoggedInUserDto;
+import com.management.tab.application.auth.dto.LoggedInUserDto;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

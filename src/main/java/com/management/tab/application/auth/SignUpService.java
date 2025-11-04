@@ -1,4 +1,4 @@
-package com.management.tab.config.auth.security.service;
+package com.management.tab.application.auth;
 
 import com.management.tab.config.auth.security.repository.UserSocialRepository;
 import com.management.tab.domain.user.User;
