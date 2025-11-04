@@ -36,4 +36,13 @@ class RegistrationIdTest {
         // then
         assertThat(actual).isTrue();
     }
+
+    @Test
+    void RegistrationId에_포함되지_않은_이름인지_확인할_수_있다() {
+        // when
+        boolean actual = RegistrationId.notContains("youtube");
+
+        // then
+        assertThat(actual).isTrue();
+    }
 }

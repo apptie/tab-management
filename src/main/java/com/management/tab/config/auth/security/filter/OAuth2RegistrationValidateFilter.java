@@ -36,7 +36,7 @@ public class OAuth2RegistrationValidateFilter extends OncePerRequestFilter {
             String[] splitRequestUri = requestURI.split(REQUEST_DELIMITER);
             String registrationId = splitRequestUri[splitRequestUri.length - 1];
 
-            if (RegistrationId.contains(registrationId)) {
+            if (RegistrationId.notContains(registrationId)) {
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding(StandardCharsets.UTF_8.name());
                 response.setStatus(HttpStatus.BAD_REQUEST.value());

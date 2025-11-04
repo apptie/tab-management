@@ -23,4 +23,8 @@ public enum RegistrationId {
         return Arrays.stream(RegistrationId.values())
                      .anyMatch(registrationId -> registrationId.name.equalsIgnoreCase(name));
     }
+
+    public static boolean notContains(String name) {
+        return !contains(name);
+    }
 }
