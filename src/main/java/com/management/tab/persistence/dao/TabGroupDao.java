@@ -37,6 +37,14 @@ public class TabGroupDao {
         return jdbcTemplate.query(sql, tabGroupRowMapper);
     }
 
+    public List<TabGroupDto> findAllByWriterId(Long writerId) {
+        String sql = "SELECT * FROM tab_groups WHERE writer_id = :writerId ORDER BY id";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("writerId", writerId);
+
+        return jdbcTemplate.query(sql, parameters, tabGroupRowMapper);
+    }
+
     public Optional<TabGroupDto> findById(Long id) {
         String sql = "SELECT * FROM tab_groups WHERE id = :id";
         MapSqlParameterSource parameters = new MapSqlParameterSource()

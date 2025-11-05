@@ -22,7 +22,7 @@ class TabGroupTest {
         assertAll(
                 () -> assertThat(actual.getId()).isNull(),
                 () -> assertThat(actual.getName()).isEqualTo("테스트 그룹"),
-                () -> assertThat(actual.getCreatorId()).isEqualTo(1L),
+                () -> assertThat(actual.getWriterId()).isEqualTo(1L),
                 () -> assertThat(actual.getCreatedAt()).isNotNull(),
                 () -> assertThat(actual.getUpdatedAt()).isNotNull()
         );
@@ -117,7 +117,7 @@ class TabGroupTest {
         );
 
         // when
-        boolean result = tabGroup.isWriter(100L);
+        boolean result = tabGroup.isWriter(1L);
 
         // then
         assertThat(result).isTrue();

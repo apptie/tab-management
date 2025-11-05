@@ -7,13 +7,15 @@ public interface TabGroupRepository {
 
     List<TabGroup> findAll();
 
+    List<TabGroup> findAllByWriterId(Long userId);
+
     TabGroup findById(Long id);
 
     TabGroup save(TabGroup tabGroup);
 
     void updateRenamed(TabGroup renamedTabGroup);
 
-    void delete(Long id);
+    void delete(TabGroup tabGroup);
 
     int countTabs(Long id);
 

@@ -23,17 +23,25 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     }
 
     @Override
+    public List<TabGroup> findAllByWriterId(Long writerId) {
+        return tabGroupDao.findAllByWriterId(writerId)
+                          .stream()
+                          .map(TabGroupDto::toTabGroup)
+                          .toList();
+    }
+
+    @Override
     public TabGroup findById(Long id) {
         return tabGroupDao.findById(id)
-                .map(TabGroupDto::toTabGroup)
-                .orElseThrow(TabGroupNotFoundException::new);
+                          .map(TabGroupDto::toTabGroup)
+                          .orElseThrow(TabGroupNotFoundException::new);
     }
 
     @Override
     public TabGroup save(TabGroup tabGroup) {
         Long tabGroupId = tabGroupDao.save(
                 tabGroup.getName(),
-                tabGroup.getCreatorId(),
+                tabGroup.getWriterId(),
                 tabGroup.getCreatedAt(),
                 tabGroup.getUpdatedAt()
         );
@@ -47,8 +55,8 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     }
 
     @Override
-    public void delete(Long id) {
-        tabGroupDao.delete(id);
+    public void delete(TabGroup tabGroup) {
+        tabGroupDao.delete(tabGroup.getId());
     }
 
     @Override

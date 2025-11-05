@@ -1,4 +1,4 @@
-package com.management.tab.application;
+package com.management.tab.application.tab;
 
 import com.management.tab.domain.group.TabGroup;
 import java.util.List;
@@ -56,7 +56,7 @@ class TabGroupServiceTest {
     @Test
     void 탭_그룹_이름을_변경한다() {
         // when
-        tabGroupService.updateGroup(1L, "변경된 이름");
+        tabGroupService.updateGroup(1L, "변경된 이름", 1L);
 
         // then
         TabGroup actual = tabGroupService.getGroup(1L);
@@ -67,7 +67,7 @@ class TabGroupServiceTest {
     @Test
     void 탭_그룹을_삭제한다() {
         // when
-        tabGroupService.delete(2L);
+        tabGroupService.delete(2L, 1L);
 
         // then
         List<TabGroup> actual = tabGroupService.getAllGroups();
@@ -101,11 +101,21 @@ class TabGroupServiceTest {
     @ParameterizedTest(name = "회원 ID가 {0}일 때 탭 그룹을 초기화할 수 없다")
     @NullSource
     @ValueSource(longs = {0, -1})
-    void 비어_있거나_0이거나_음수인_회원_I로_탭_그룹을_초기화할_수_없다(Long creatorId) {
+    void 비어_있거나_0이거나_음수인_회원_ID로_탭_그룹을_초기화할_수_없다(Long creatorId) {
         // when & then
         assertThatThrownBy(() -> tabGroupService.createGroup(creatorId, "탭 그룹 이름"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("사용자 ID는 양수여야 합니다.");
     }
+
+    @Test
+    void 특정_작성자의_모든_탭_그룹을_조회한다() {
+        // when
+        List<TabGroup> actual = tabGroupService.getAllWriterGroups(1L);
+
+        // then
+        assertThat(actual).hasSize(2);
+    }
+
 }
 

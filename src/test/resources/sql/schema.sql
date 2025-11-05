@@ -7,6 +7,8 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     nickname VARCHAR(255) NOT NULL,
+    registration_id VARCHAR(255) NOT NULL,
+    social_id VARCHAR(255) NOT NULL,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );

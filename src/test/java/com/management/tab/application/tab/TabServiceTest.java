@@ -1,4 +1,4 @@
-package com.management.tab.application;
+package com.management.tab.application.tab;
 
 import com.management.tab.domain.tab.TabTree;
 import com.management.tab.domain.tab.vo.TabId;

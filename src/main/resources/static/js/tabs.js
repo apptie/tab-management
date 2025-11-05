@@ -10,11 +10,31 @@ class TabManager {
         this.lockStates = new Map();
         this.allTabs = [];
 
-        // 탭 내용 관련 변수
         this.currentSelectedTabId = null;
         this.currentSelectedContentId = null;
 
         this.init();
+    }
+
+    // ============ 쿠키 유틸리티 ============
+    getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return decodeURIComponent(parts.pop().split(';').shift());
+        }
+        return null;
+    }
+
+    getAuthHeaders() {
+        const accessToken = this.getCookie('accessToken');
+        const headers = { 'Content-Type': 'application/json' };
+
+        if (accessToken) {
+            headers['Authorization'] = `Bearer ${accessToken}`;
+        }
+
+        return headers;
     }
 
     getGroupIdFromUrl() {
@@ -51,7 +71,6 @@ class TabManager {
     }
 
     setupEventListeners() {
-        // 탭 관련 이벤트 리스너
         document.getElementById('addRootTabBtn').addEventListener('click', () => {
             this.showAddModal(null);
         });
@@ -189,13 +208,11 @@ class TabManager {
             </div>
         `;
 
-        // 탭 클릭으로 컨텐츠 패널 열기
         div.querySelector('.tab-info').addEventListener('click', (e) => {
             e.stopPropagation();
             this.onTabClick(tab.id, tab.title, div);
         });
 
-        // URL 열기 버튼
         div.querySelector('.btn-open-url').addEventListener('click', (e) => {
             e.stopPropagation();
             window.open(tab.url, '_blank', 'noopener,noreferrer');
@@ -403,13 +420,13 @@ class TabManager {
             if (parentId) {
                 response = await fetch(`${this.API_BASE_URL}/${parentId}/children`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: this.getAuthHeaders(),
                     body: JSON.stringify({ title, url })
                 });
             } else {
                 response = await fetch(`${this.API_BASE_URL}/groups/${this.currentGroupId}/root`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: this.getAuthHeaders(),
                     body: JSON.stringify({ title, url })
                 });
             }
@@ -433,14 +450,14 @@ class TabManager {
         const url = document.getElementById('editTabUrl').value.trim();
 
         if (!title || !url) {
-            alert('제목과 URL을 모두 입력해주세여.');
+            alert('제목과 URL을 모두 입력해주세요.');
             return;
         }
 
         try {
             const response = await fetch(`${this.API_BASE_URL}/${tabId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: this.getAuthHeaders(),
                 body: JSON.stringify({ title, url })
             });
 
@@ -460,7 +477,8 @@ class TabManager {
     async deleteTab(tabId, withSubtree) {
         try {
             const response = await fetch(`${this.API_BASE_URL}/${tabId}?withSubtree=${withSubtree}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: this.getAuthHeaders()
             });
 
             if (!response.ok) {
@@ -479,7 +497,8 @@ class TabManager {
     async moveTab(tabId, newParentId, withSubtree) {
         if (newParentId === null || newParentId === undefined || newParentId === '') {
             const response = await fetch(`${this.API_BASE_URL}/${tabId}/move/root?withSubtree=${withSubtree}`, {
-                method: 'PUT'
+                method: 'PUT',
+                headers: this.getAuthHeaders()
             });
 
             if (!response.ok) {
@@ -489,7 +508,7 @@ class TabManager {
         } else {
             const response = await fetch(`${this.API_BASE_URL}/${tabId}/move`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: this.getAuthHeaders(),
                 body: JSON.stringify({
                     newParentId: newParentId,
                     withSubtree: withSubtree
@@ -506,7 +525,7 @@ class TabManager {
     async reorderTab(tabId, targetTabId, after) {
         const response = await fetch(`${this.API_BASE_URL}/${tabId}/reorder`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getAuthHeaders(),
             body: JSON.stringify({
                 targetTabId: targetTabId,
                 after: after
@@ -518,8 +537,6 @@ class TabManager {
             throw new Error(error || '순서 변경에 실패했습니다.');
         }
     }
-
-    // ===== 탭 내용 관련 메서드 =====
 
     async onTabClick(tabId, tabTitle, element) {
         document.querySelectorAll('.tab-item').forEach(item => {
@@ -560,7 +577,8 @@ class TabManager {
 
         try {
             await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: this.getAuthHeaders()
             });
 
             await this.loadTabContents(this.currentSelectedTabId);
@@ -574,7 +592,6 @@ class TabManager {
         const contentPanel = document.getElementById('contentPanel');
 
         if (contents === null) {
-            // 다시 로드
             this.loadTabContents(this.currentSelectedTabId);
             return;
         }
@@ -677,13 +694,13 @@ class TabManager {
             if (contentId) {
                 await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: this.getAuthHeaders(),
                     body: JSON.stringify({ content })
                 });
             } else {
                 await fetch(`${this.CONTENT_API_BASE_URL}/tabs/${tabId}/contents`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: this.getAuthHeaders(),
                     body: JSON.stringify({ content })
                 });
             }
@@ -701,7 +718,8 @@ class TabManager {
 
         try {
             await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: this.getAuthHeaders()
             });
 
             await this.loadTabContents(this.currentSelectedTabId);

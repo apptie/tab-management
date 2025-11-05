@@ -114,14 +114,13 @@ class JdbcTabGroupRepositoryTest {
     void 탭_그룹을_삭제할_수_있다() {
         // given
         TabGroup tabGroup = TabGroup.create(1L, "삭제할 그룹");
-        TabGroup saved = jdbcTabGroupRepository.save(tabGroup);
-        Long groupId = saved.getId();
+        TabGroup savedTabGroup = jdbcTabGroupRepository.save(tabGroup);
 
         // when
-        jdbcTabGroupRepository.delete(groupId);
+        jdbcTabGroupRepository.delete(savedTabGroup);
 
         // then
-        assertThatThrownBy(() -> jdbcTabGroupRepository.findById(groupId))
+        assertThatThrownBy(() -> jdbcTabGroupRepository.findById(savedTabGroup.getId()))
                 .isInstanceOf(TabGroupNotFoundException.class)
                 .hasMessage("탭 그룹을 찾을 수 없습니다.");
     }
@@ -136,5 +135,14 @@ class JdbcTabGroupRepositoryTest {
 
         // then
         assertThat(actual).isEqualTo(1);
+    }
+
+    @Test
+    void 특정_작성자의_모든_탭_그룹을_조회할_수_있다() {
+        // when
+        List<TabGroup> actual = jdbcTabGroupRepository.findAllByWriterId(1L);
+
+        // then
+        assertThat(actual).hasSize(2);
     }
 }

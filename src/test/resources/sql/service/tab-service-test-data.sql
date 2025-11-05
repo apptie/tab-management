@@ -1,8 +1,8 @@
 -- 사용자 생성
-INSERT INTO users (id, nickname, created_at, updated_at)
+INSERT INTO users (id, nickname, registration_id, social_id, created_at, updated_at)
 VALUES
-    (1, '테스트 사용자1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (2, '테스트 사용자2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+    (1, '테스트 사용자1', 'KAKAO', 'kakako12345', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, '테스트 사용자2', 'KAKAO', 'kakako54321', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 탭 그룹 생성
 INSERT INTO tab_groups (id, name, writer_id, created_at, updated_at)

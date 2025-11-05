@@ -19,6 +19,8 @@ public class UserDao {
     private static final RowMapper<UserDto> userRowMapper = (rs, rowNum) -> new UserDto(
             rs.getLong("id"),
             rs.getString("nickname"),
+            rs.getString("registration_id"),
+            rs.getString("social_id"),
             rs.getTimestamp("created_at").toLocalDateTime(),
             rs.getTimestamp("updated_at").toLocalDateTime()
     );
@@ -45,10 +47,38 @@ public class UserDao {
         }
     }
 
-    public Long save(String nickname, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        String sql = "INSERT INTO users (nickname, created_at, updated_at) VALUES (:nickname, :createdAt, :updatedAt)";
+    public Optional<UserDto> findBySocialInfo(String registrationId, String socialId) {
+        String sql = "SELECT * FROM users WHERE registration_id = :registrationId AND social_id = :socialId";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("registrationId", registrationId)
+                .addValue("socialId", socialId);
+
+        try {
+            UserDto result = jdbcTemplate.queryForObject(sql, parameters, userRowMapper);
+
+            return Optional.ofNullable(result);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new IllegalArgumentException("조건에 맞는 행이 두 개 이상입니다.");
+        }
+    }
+
+    public Long save(
+            String nickname,
+            String registrationId,
+            String socialId,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
+        String sql = """
+                INSERT INTO users (nickname, registration_id, social_id, created_at, updated_at)
+                VALUES (:nickname, :registrationId, :socialId, :createdAt, :updatedAt)
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nickname", nickname)
+                .addValue("registrationId", registrationId)
+                .addValue("socialId", socialId)
                 .addValue("createdAt", createdAt)
                 .addValue("updatedAt", updatedAt);
         KeyHolder keyHolder = new GeneratedKeyHolder();

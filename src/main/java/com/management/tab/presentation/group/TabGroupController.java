@@ -1,6 +1,8 @@
 package com.management.tab.presentation.group;
 
-import com.management.tab.application.TabGroupService;
+import com.management.tab.application.tab.TabGroupService;
+import com.management.tab.config.auth.resolver.CurrentUser;
+import com.management.tab.config.auth.resolver.CurrentUserId;
 import com.management.tab.domain.group.TabGroup;
 import com.management.tab.presentation.common.ResponseVoidConst;
 import com.management.tab.presentation.group.dto.request.CreateTabGroupRequest;
@@ -35,6 +37,14 @@ public class TabGroupController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<TabGroupCollectionResponse> getAllWriterGroups(@CurrentUser CurrentUserId currentUserId) {
+        List<TabGroup> tabGroups = tabGroupService.getAllWriterGroups(currentUserId.userId());
+        TabGroupCollectionResponse response = TabGroupCollectionResponse.from(tabGroups);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TabGroupResponse> getGroup(@PathVariable Long id) {
         TabGroup tabGroup = tabGroupService.getGroup(id);
@@ -44,22 +54,29 @@ public class TabGroupController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateTabGroupResponse> createGroup(@RequestBody CreateTabGroupRequest request) {
-        Long tabGroupId = tabGroupService.createGroup(request.creatorId(), request.name());
+    public ResponseEntity<CreateTabGroupResponse> createGroup(
+            @RequestBody CreateTabGroupRequest request,
+            @CurrentUser CurrentUserId currentUserId
+    ) {
+        Long tabGroupId = tabGroupService.createGroup(currentUserId.userId(), request.name());
         CreateTabGroupResponse response = new CreateTabGroupResponse(tabGroupId);
 
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateGroup(@PathVariable Long id, @RequestBody UpdateTabGroupRequest request) {
-        tabGroupService.updateGroup(id, request.name());
+    @PutMapping("/{tabGroupId}")
+    public ResponseEntity<Void> updateGroup(
+            @PathVariable Long tabGroupId,
+            @RequestBody UpdateTabGroupRequest request,
+            @CurrentUser CurrentUserId currentUserId
+    ) {
+        tabGroupService.updateGroup(tabGroupId, request.name(), currentUserId.userId());
         return ResponseVoidConst.OK;
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGroup(@PathVariable Long id) {
-        tabGroupService.delete(id);
+    @DeleteMapping("/{tabGroupId}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable Long tabGroupId, @CurrentUser CurrentUserId currentUserId) {
+        tabGroupService.delete(tabGroupId, currentUserId.userId());
         return ResponseVoidConst.OK;
     }
 }

@@ -3,18 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="_csrf" content="">
+  <meta name="_csrf_header" content="X-CSRF-Token">
   <title>Tab Groups</title>
-  <link rel="stylesheet" href="groups.css">
+  <link rel="stylesheet" href="css/groups.css">
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>📁 Tab Groups</h1>
-    <button id="addGroupBtn" class="btn-primary">+ 새 그룹 추가</button>
+    <div class="header-top">
+      <h1>📁 Tab Groups</h1>
+      <div class="btn-group">
+        <button id="kakaoLoginBtn" class="btn-kakao">
+          <span class="kakao-icon">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 1.5c-3.722 0-6.75 2.486-6.75 5.552 0 1.85 1.177 3.482 2.97 4.501-0.049 0.459-0.241 0.855-0.482 1.368-0.034 0.088-0.069 0.18-0.105 0.271-0.075 0.193-0.15 0.385-0.215 0.577-0.022 0.062-0.038 0.117-0.055 0.172-0.078 0.239-0.147 0.476-0.197 0.708 2.215-0.065 3.921-1.267 4.777-1.988 0.47 0.072 0.958 0.11 1.456 0.11 3.722 0 6.75-2.486 6.75-5.552s-3.027-5.552-6.75-5.552z"/>
+            </svg>
+          </span>
+          <span class="kakao-text">카카오로 로그인</span>
+        </button>
+        <button id="addGroupBtn" class="btn-primary" style="display: none;">+ 새 그룹 추가</button>
+      </div>
+    </div>
   </header>
 
-  <div id="groupList" class="group-list">
-    <!-- JavaScript로 채워짐 -->
+  <!-- 탭 네비게이션 -->
+  <div class="tab-navigation" id="tabNavigation" style="display: none;">
+    <button class="tab-button active" data-tab="my-groups">내 그룹</button>
+    <button class="tab-button" data-tab="all-groups">전체 그룹</button>
+  </div>
+
+  <!-- 내 그룹 탭 -->
+  <div id="my-groups" class="tab-content active">
+    <div id="groupList" class="group-list">
+      <!-- JavaScript로 채워짐 -->
+    </div>
+  </div>
+
+  <!-- 전체 그룹 탭 -->
+  <div id="all-groups" class="tab-content">
+    <div id="allGroupList" class="group-list">
+      <!-- JavaScript로 채워짐 -->
+    </div>
   </div>
 </div>
 
@@ -49,6 +79,6 @@
   </div>
 </div>
 
-<script src="groups.js"></script>
+<script src="js/groups.js"></script>
 </body>
 </html>

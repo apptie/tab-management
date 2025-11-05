@@ -1,4 +1,4 @@
-package com.management.tab.application;
+package com.management.tab.application.tab;
 
 import com.management.tab.domain.group.TabGroup;
 import com.management.tab.domain.group.vo.TabGroupId;
@@ -82,10 +82,10 @@ public class TabService {
     }
 
     @Transactional
-    public void moveRoot(Long tabId, Long userId) {
+    public void moveRoot(Long tabId, Long moverId) {
         Tab tab = tabRepository.findTab(tabId);
 
-        if (tab.isNotWriterId(userId)) {
+        if (tab.isNotWriterId(moverId)) {
             throw new TabForbiddenException();
         }
 

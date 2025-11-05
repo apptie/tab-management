@@ -1,6 +1,9 @@
 package com.management.tab.domain.user;
 
+import com.management.tab.domain.user.vo.RegistrationId;
+import com.management.tab.domain.user.vo.Social;
 import com.management.tab.domain.user.vo.UserId;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -13,21 +16,53 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class UserTest {
 
     @Test
-    void User를_이름으로_초기화할_수_있다() {
+    void User를_소셜_로그인_정보로_초기화할_수_있다() {
+        // given
+        RegistrationId registrationId = RegistrationId.findBy("KAKAO");
+        Social social = new Social(registrationId, "kakao12345");
+
         // when
-        User actual = User.create("테스트 사용자");
+        User actual = User.create(social);
 
         // then
         assertAll(
                 () -> assertThat(actual.id()).isEqualTo(UserId.EMPTY_USER_ID),
-                () -> assertThat(actual.getNickname()).isEqualTo("테스트 사용자")
+                () -> assertThat(actual.getRegistrationId()).isEqualTo("KAKAO"),
+                () -> assertThat(actual.getSocialId()).isEqualTo("kakao12345")
         );
     }
 
     @Test
+    void 모든_필드를_포함한_User를_초기화할_수_있다() {
+        // given
+        Long userId = 100L;
+        String nickname = "테스트 사용자";
+        String registrationId = "KAKAO";
+        String socialId = "kakao12345";
+        LocalDateTime createdAt = LocalDateTime.of(2024, 1, 1, 10, 0, 0);
+        LocalDateTime updatedAt = LocalDateTime.of(2024, 1, 1, 10, 0, 0);
+
+        // when
+        User actual = User.create(userId, nickname, registrationId, socialId, createdAt, updatedAt);
+
+        // then
+        assertAll(
+                () -> assertThat(actual.id()).isEqualTo(UserId.create(userId)),
+                () -> assertThat(actual.getNickname()).isEqualTo(nickname),
+                () -> assertThat(actual.getRegistrationId()).isEqualTo(registrationId),
+                () -> assertThat(actual.getSocialId()).isEqualTo(socialId),
+                () -> assertThat(actual.getCreatedAt()).isEqualTo(createdAt),
+                () -> assertThat(actual.getUpdatedAt()).isEqualTo(updatedAt)
+        );
+    }
+
+
+    @Test
     void 기존_User에_id를_할당할_수_있다() {
         // given
-        User existingUser = User.create("기존 사용자");
+        RegistrationId registrationId = RegistrationId.findBy("KAKAO");
+        Social social = new Social(registrationId, "kakao12345");
+        User existingUser = User.create(social);
 
         // when
         User actual = existingUser.updateAssignedId(100L);
@@ -39,7 +74,9 @@ class UserTest {
     @Test
     void User의_닉네임을_변경할_수_있다() {
         // given
-        User user = User.create("원래 닉네임");
+        RegistrationId registrationId = RegistrationId.findBy("KAKAO");
+        Social social = new Social(registrationId, "kakao12345");
+        User user = User.create(social);
 
         // when
         User actual = user.changeNickname("변경된 닉네임");
