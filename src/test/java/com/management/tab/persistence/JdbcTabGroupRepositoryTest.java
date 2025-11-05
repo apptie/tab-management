@@ -136,4 +136,13 @@ class JdbcTabGroupRepositoryTest {
         // then
         assertThat(actual).isEqualTo(1);
     }
+
+    @Test
+    void 특정_작성자의_모든_탭_그룹을_조회할_수_있다() {
+        // when
+        List<TabGroup> actual = jdbcTabGroupRepository.findAllByWriterId(1L);
+
+        // then
+        assertThat(actual).hasSize(2);
+    }
 }

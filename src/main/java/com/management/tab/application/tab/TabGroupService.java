@@ -17,6 +17,10 @@ public class TabGroupService {
         return tabGroupRepository.findAll();
     }
 
+    public List<TabGroup> getAllWriterGroups(Long writerId) {
+        return tabGroupRepository.findAllByWriterId(writerId);
+    }
+
     public TabGroup getGroup(Long id) {
         return tabGroupRepository.findById(id);
     }

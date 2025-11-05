@@ -7,6 +7,8 @@ public interface TabGroupRepository {
 
     List<TabGroup> findAll();
 
+    List<TabGroup> findAllByWriterId(Long userId);
+
     TabGroup findById(Long id);
 
     TabGroup save(TabGroup tabGroup);

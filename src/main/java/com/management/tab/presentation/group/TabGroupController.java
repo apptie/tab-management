@@ -37,6 +37,14 @@ public class TabGroupController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<TabGroupCollectionResponse> getAllWriterGroups(@CurrentUser CurrentUserId currentUserId) {
+        List<TabGroup> tabGroups = tabGroupService.getAllWriterGroups(currentUserId.userId());
+        TabGroupCollectionResponse response = TabGroupCollectionResponse.from(tabGroups);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TabGroupResponse> getGroup(@PathVariable Long id) {
         TabGroup tabGroup = tabGroupService.getGroup(id);

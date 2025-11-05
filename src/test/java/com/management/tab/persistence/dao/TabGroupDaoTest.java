@@ -130,4 +130,13 @@ class TabGroupDaoTest {
                 () -> assertThat(actual.get(2).id()).isEqualTo(3L)
         );
     }
+
+    @Test
+    void 특정_사용자의_모든_탭_그룹을_조회할_수_있다() {
+        // when
+        List<TabGroupDto> actual = tabGroupDao.findAllByWriterId(1L);
+
+        // then
+        assertThat(actual).hasSize(3);
+    }
 }

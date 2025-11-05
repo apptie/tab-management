@@ -23,10 +23,18 @@ public class JdbcTabGroupRepository implements TabGroupRepository {
     }
 
     @Override
+    public List<TabGroup> findAllByWriterId(Long writerId) {
+        return tabGroupDao.findAllByWriterId(writerId)
+                          .stream()
+                          .map(TabGroupDto::toTabGroup)
+                          .toList();
+    }
+
+    @Override
     public TabGroup findById(Long id) {
         return tabGroupDao.findById(id)
-                .map(TabGroupDto::toTabGroup)
-                .orElseThrow(TabGroupNotFoundException::new);
+                          .map(TabGroupDto::toTabGroup)
+                          .orElseThrow(TabGroupNotFoundException::new);
     }
 
     @Override

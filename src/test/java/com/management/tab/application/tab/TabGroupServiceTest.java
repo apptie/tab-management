@@ -101,11 +101,21 @@ class TabGroupServiceTest {
     @ParameterizedTest(name = "회원 ID가 {0}일 때 탭 그룹을 초기화할 수 없다")
     @NullSource
     @ValueSource(longs = {0, -1})
-    void 비어_있거나_0이거나_음수인_회원_I로_탭_그룹을_초기화할_수_없다(Long creatorId) {
+    void 비어_있거나_0이거나_음수인_회원_ID로_탭_그룹을_초기화할_수_없다(Long creatorId) {
         // when & then
         assertThatThrownBy(() -> tabGroupService.createGroup(creatorId, "탭 그룹 이름"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("사용자 ID는 양수여야 합니다.");
     }
+
+    @Test
+    void 특정_작성자의_모든_탭_그룹을_조회한다() {
+        // when
+        List<TabGroup> actual = tabGroupService.getAllWriterGroups(1L);
+
+        // then
+        assertThat(actual).hasSize(2);
+    }
+
 }
 
