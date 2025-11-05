@@ -49,6 +49,6 @@ public class AppConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/oauth2/**", "/api/groups/**", "/api/tabs/groups/{groupId}/tree");
+                .excludePathPatterns("*.html", "/oauth2/**", "/login/**");
     }
 }

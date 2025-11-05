@@ -3,6 +3,7 @@ const KAKAO_LOGIN_URL = '/oauth2/authorization/kakao';
 
 // DOM Elements
 const groupList = document.getElementById('groupList');
+const allGroupList = document.getElementById('allGroupList');
 const addGroupBtn = document.getElementById('addGroupBtn');
 const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
 const addGroupModal = document.getElementById('addGroupModal');
@@ -12,17 +13,29 @@ const editGroupForm = document.getElementById('editGroupForm');
 const groupNameInput = document.getElementById('groupName');
 const editGroupIdInput = document.getElementById('editGroupId');
 const editGroupNameInput = document.getElementById('editGroupName');
+const tabNavigation = document.getElementById('tabNavigation');
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabContents = document.querySelectorAll('.tab-content');
 
 const closeButtons = document.querySelectorAll('.close');
 
-// ============ 쿠키 확인 ============
-function hasAccessToken() {
-    const name = 'accessToken=';
-    const decodedCookie = decodeURIComponent(document.cookie);
-    return decodedCookie.indexOf(name) > -1;
+// ============ 쿠키 유틸리티 ============
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        const cookieValue = parts.pop().split(';').shift();
+        return decodeURIComponent(cookieValue);  // ← 추가!
+    }
+    return null;
 }
 
-// ============ CSRF 토큰 처리 ============
+function hasAccessToken() {
+    const token = getCookie('accessToken');
+    console.log('AccessToken 존재?:', !!token);
+    return !!token;
+}
+
 function getCsrfToken() {
     const name = '_csrf=';
     const decodedCookie = decodeURIComponent(document.cookie);
@@ -47,9 +60,141 @@ function getCsrfHeaders() {
     return {};
 }
 
-// ============ 로그인 UI 업데이트 (간단함) ============
-async function updateLoginUI() {
-    const isLoggedIn = hasAccessToken();  // 쿠키만 확인
+// ============ API 요청 헬퍼 (Authorization 헤더 추가) ============
+async function apiCall(url, options = {}) {
+    const accessToken = getCookie('accessToken');
+
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers,
+        ...getCsrfHeaders()
+    };
+
+    // accessToken이 있으면 Authorization 헤더에 추가
+    if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+        console.log('Authorization 헤더 추가됨');
+    } else {
+        console.log('AccessToken 없음 - Authorization 헤더 미추가');
+    }
+
+    const finalOptions = {
+        ...options,
+        headers,
+        credentials: 'include'
+    };
+
+    console.log('API 요청:', url, finalOptions);
+
+    return fetch(url, finalOptions);
+}
+
+function deleteCookie(name) {
+    console.log(`${name} 쿠키 삭제 시도`);
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    document.cookie = `${name}=; max-age=0; path=/;`;
+    console.log(`${name} 쿠키 삭제 완료`);
+}
+
+function debugCookies() {
+    console.log('=== 현재 쿠키 상태 ===');
+    const accessToken = getCookie('accessToken');
+    const refreshToken = getCookie('refreshToken');
+    console.log('AccessToken:', accessToken ? accessToken.substring(0, 20) + '...' : 'None');
+    console.log('RefreshToken:', refreshToken ? refreshToken.substring(0, 20) + '...' : 'None');
+}
+
+// ============ 로그아웃 처리 ============
+async function handleLogout() {
+    console.log('=== 로그아웃 시작 ===');
+    debugCookies();
+
+    try {
+        console.log('서버 로그아웃 요청...');
+        const response = await apiCall('/logout', {
+            method: 'POST'
+        });
+
+        console.log('로그아웃 응답:', response.status);
+
+    } catch (error) {
+        console.error('로그아웃 요청 실패:', error);
+    } finally {
+        console.log('클라이언트 쿠키 삭제 시작...');
+        deleteCookie('accessToken');
+        deleteCookie('refreshToken');
+
+        setTimeout(() => {
+            console.log('로그아웃 후 쿠키 상태:');
+            debugCookies();
+            updateLoginButtonUI(false);
+            location.href = '/groups.html';
+        }, 500);
+    }
+}
+
+function handleKakaoLogin() {
+    console.log('=== 카카오 로그인 시작 ===');
+    const width = 500;
+    const height = 600;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+
+    const popup = window.open(
+        KAKAO_LOGIN_URL,
+        'kakao_login',
+        `width=${width},height=${height},left=${left},top=${top},resizable=no`
+    );
+
+    if (!popup) {
+        console.log('팝업 차단됨 - 새 탭으로 열기');
+        window.location.href = KAKAO_LOGIN_URL;
+        return;
+    }
+
+    console.log('팝업 정상 열림');
+
+    // 팝업이 리다이렉트될 때까지 대기
+    let checkCount = 0;
+    const checkInterval = setInterval(() => {
+        try {
+            if (popup.closed) {
+                clearInterval(checkInterval);
+                console.log('팝업 종료 - 쿠키 확인 중...');
+
+                setTimeout(() => {
+                    debugCookies();
+                    if (hasAccessToken()) {
+                        console.log('AccessToken 확인됨');
+                        location.href = '/groups.html';
+                    } else {
+                        console.log('AccessToken 미확인');
+                    }
+                }, 1000);
+            }
+        } catch (e) {
+            console.error('팝업 체크 실패:', e);
+        }
+
+        checkCount++;
+        if (checkCount > 60) {  // 60초 타임아웃
+            clearInterval(checkInterval);
+            if (!popup.closed) {
+                popup.close();
+            }
+        }
+    }, 500);
+
+    // 팝업이 메인 페이지로 리다이렉트될 때 자동 종료
+    popup.onbeforeunload = function() {
+        popup.close();
+        console.log('팝업 자동 종료');
+    };
+}
+
+// ============ 로그인 UI 업데이트 ============
+function updateLoginButtonUI(isLoggedIn) {
+    console.log('로그인 UI 업데이트:', isLoggedIn ? '로그인' : '미로그인');
 
     if (isLoggedIn) {
         kakaoLoginBtn.innerHTML = `
@@ -60,8 +205,9 @@ async function updateLoginUI() {
             </span>
             로그아웃
         `;
-        kakaoLoginBtn.onclick = handleLogout;
-        return true;
+        kakaoLoginBtn.dataset.action = 'logout';
+        addGroupBtn.style.display = 'block';
+        tabNavigation.style.display = 'flex';
     } else {
         kakaoLoginBtn.innerHTML = `
             <span class="kakao-icon">
@@ -71,72 +217,24 @@ async function updateLoginUI() {
             </span>
             카카오로 로그인
         `;
-        kakaoLoginBtn.onclick = handleKakaoLogin;
-        return false;
+        kakaoLoginBtn.dataset.action = 'login';
+        addGroupBtn.style.display = 'none';
+        tabNavigation.style.display = 'none';
     }
 }
 
-// ============ 카카오 로그인 ============
-function handleKakaoLogin() {
-    const width = 500;
-    const height = 600;
-    const left = (window.innerWidth - width) / 2;
-    const top = (window.innerHeight - height) / 2;
+// ============ 탭 전환 ============
+function switchTab(tabName) {
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
 
-    // postMessage 리스너 등록
-    const handleLoginMessage = (event) => {
-        console.log('메시지 수신:', event.data);
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    document.getElementById(tabName).classList.add('active');
 
-        if (event.data && event.data.type === 'LOGIN_SUCCESS') {
-            console.log('로그인 성공 신호 수신 - 새로고침');
-            window.removeEventListener('message', handleLoginMessage);
-            location.reload();
-        }
-    };
-
-    window.addEventListener('message', handleLoginMessage);
-
-    const popup = window.open(
-        KAKAO_LOGIN_URL,
-        'kakao_login',
-        `width=${width},height=${height},left=${left},top=${top},resizable=no`
-    );
-
-    if (!popup) {
-        console.log('팝업 차단됨 - 새 탭으로 열기');
-        window.open(KAKAO_LOGIN_URL, '_blank');
-
-        setTimeout(() => {
-            window.removeEventListener('message', handleLoginMessage);
-        }, 30000);
-
-        return;
-    }
-
-    console.log('팝업 정상 열림');
-
-    setTimeout(() => {
-        window.removeEventListener('message', handleLoginMessage);
-    }, 30000);
-}
-
-// ============ 로그아웃 ============
-async function handleLogout() {
-    try {
-        const response = await fetch('/logout', {
-            method: 'POST',
-            headers: {
-                ...getCsrfHeaders()
-            },
-            credentials: 'include'
-        });
-
-        if (response.ok) {
-            updateLoginUI();
-            groupList.innerHTML = '<p style="text-align: center; color: #999;">로그인이 필요합니다.</p>';
-        }
-    } catch (error) {
-        console.error('로그아웃 실패:', error);
+    if (tabName === 'all-groups') {
+        loadAllGroups();
+    } else if (tabName === 'my-groups') {
+        loadMyGroups();
     }
 }
 
@@ -152,39 +250,60 @@ function formatDateTime(dateTimeString) {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
-// ============ 그룹 목록 조회 ============
-async function loadGroups() {
-    const isLoggedIn = await updateLoginUI();
-
-    if (!isLoggedIn) {
-        groupList.innerHTML = '<p style="text-align: center; color: #999;">로그인이 필요합니다.</p>';
-        return;
-    }
-
+// ============ 내 그룹 조회 ============
+async function loadMyGroups() {
+    console.log('내 그룹 조회 시작');
     try {
-        const response = await fetch(API_BASE_URL, {
-            credentials: 'include'
+        const response = await apiCall(`${API_BASE_URL}/my`, {
+            method: 'GET'
         });
+
+        console.log('내 그룹 조회 응답:', response.status);
 
         if (response.status === 401) {
             groupList.innerHTML = '<p style="text-align: center; color: #999;">로그인이 필요합니다.</p>';
+            console.log('401 - 로그인 필요');
             return;
         }
 
         if (response.ok) {
             const data = await response.json();
-            displayGroups(data.groups);
+            console.log('내 그룹 데이터:', data);
+            displayMyGroups(data.groups);
         } else {
-            throw new Error('그룹 목록 조회 실패');
+            throw new Error('내 그룹 조회 실패');
         }
     } catch (error) {
-        console.error('그룹 목록 조회 실패:', error);
-        alert('그룹 목록을 불러오는데 실패했습니다.');
+        console.error('내 그룹 조회 실패:', error);
+        groupList.innerHTML = '<p style="text-align: center; color: #999;">그룹을 불러오는데 실패했습니다.</p>';
     }
 }
 
-// ============ 그룹 목록 표시 ============
-function displayGroups(groups) {
+// ============ 모든 그룹 조회 ============
+async function loadAllGroups() {
+    console.log('전체 그룹 조회 시작');
+    try {
+        const response = await apiCall(API_BASE_URL, {
+            method: 'GET'
+        });
+
+        console.log('전체 그룹 조회 응답:', response.status);
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('전체 그룹 데이터:', data);
+            displayAllGroups(data.groups);
+        } else {
+            throw new Error('전체 그룹 조회 실패');
+        }
+    } catch (error) {
+        console.error('전체 그룹 조회 실패:', error);
+        allGroupList.innerHTML = '<p style="text-align: center; color: #999;">그룹을 불러오는데 실패했습니다.</p>';
+    }
+}
+
+// ============ 내 그룹 표시 ============
+function displayMyGroups(groups) {
     if (groups.length === 0) {
         groupList.innerHTML = '<p style="text-align: center; color: #999;">등록된 그룹이 없습니다.</p>';
         return;
@@ -206,7 +325,36 @@ function displayGroups(groups) {
         </div>
     `).join('');
 
-    document.querySelectorAll('.group-card').forEach(card => {
+    document.querySelectorAll('#my-groups .group-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') return;
+            const groupId = card.dataset.id;
+            window.location.href = `/tabs.html?groupId=${groupId}`;
+        });
+    });
+}
+
+// ============ 전체 그룹 표시 ============
+function displayAllGroups(groups) {
+    if (groups.length === 0) {
+        allGroupList.innerHTML = '<p style="text-align: center; color: #999;">등록된 그룹이 없습니다.</p>';
+        return;
+    }
+
+    allGroupList.innerHTML = groups.map(group => `
+        <div class="group-card" data-id="${group.id}">
+            <div class="group-card-header">
+                <h2 class="group-card-title">${escapeHtml(group.name)}</h2>
+                <div class="group-card-actions"></div>
+            </div>
+            <div class="group-card-info">
+                <div class="group-card-date">생성일: ${formatDateTime(group.createdAt)}</div>
+                <div class="group-card-date">수정일: ${formatDateTime(group.updatedAt)}</div>
+            </div>
+        </div>
+    `).join('');
+
+    document.querySelectorAll('#all-groups .group-card').forEach(card => {
         card.addEventListener('click', (e) => {
             if (e.target.tagName === 'BUTTON') return;
             const groupId = card.dataset.id;
@@ -238,13 +386,8 @@ addGroupForm.addEventListener('submit', async (e) => {
     }
 
     try {
-        const response = await fetch(API_BASE_URL, {
+        const response = await apiCall(API_BASE_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...getCsrfHeaders()
-            },
-            credentials: 'include',
             body: JSON.stringify({ name })
         });
 
@@ -254,7 +397,7 @@ addGroupForm.addEventListener('submit', async (e) => {
 
             closeModal(addGroupModal);
             addGroupForm.reset();
-            loadGroups();
+            loadMyGroups();
         } else if (response.status === 401) {
             alert('로그인이 필요합니다.');
         } else {
@@ -285,19 +428,14 @@ editGroupForm.addEventListener('submit', async (e) => {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/${id}`, {
+        const response = await apiCall(`${API_BASE_URL}/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                ...getCsrfHeaders()
-            },
-            credentials: 'include',
             body: JSON.stringify({ name })
         });
 
         if (response.ok) {
             closeModal(editGroupModal);
-            loadGroups();
+            loadMyGroups();
         } else if (response.status === 401) {
             alert('로그인이 필요합니다.');
         } else {
@@ -316,16 +454,12 @@ async function deleteGroup(id) {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/${id}`, {
-            method: 'DELETE',
-            headers: {
-                ...getCsrfHeaders()
-            },
-            credentials: 'include'
+        const response = await apiCall(`${API_BASE_URL}/${id}`, {
+            method: 'DELETE'
         });
 
         if (response.ok) {
-            loadGroups();
+            loadMyGroups();
         } else if (response.status === 401) {
             alert('로그인이 필요합니다.');
         } else {
@@ -346,21 +480,76 @@ function closeModal(modal) {
     modal.classList.remove('show');
 }
 
-// ============ 이벤트 리스너 ============
-addGroupBtn.addEventListener('click', () => openModal(addGroupModal));
-kakaoLoginBtn.addEventListener('click', handleKakaoLogin);
+// ============ 카카오 로그인 버튼 클릭 핸들러 ============
+function handleKakaoLoginButtonClick() {
+    const action = kakaoLoginBtn.dataset.action;
+    console.log('로그인 버튼 클릭 - Action:', action);
 
-closeButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-        closeModal(this.closest('.modal'));
+    if (action === 'logout') {
+        handleLogout();
+    } else {
+        handleKakaoLogin();
+    }
+}
+
+// ============ 탭 버튼 클릭 핸들러 ============
+function handleTabButtonClick(e) {
+    const tabName = e.target.dataset.tab;
+    console.log('탭 버튼 클릭:', tabName);
+    switchTab(tabName);
+}
+
+// ============ 이벤트 리스너 등록 ============
+function setupEventListeners() {
+    console.log('이벤트 리스너 등록 중...');
+
+    kakaoLoginBtn.removeEventListener('click', handleKakaoLoginButtonClick);
+    kakaoLoginBtn.addEventListener('click', handleKakaoLoginButtonClick);
+
+    addGroupBtn.removeEventListener('click', () => openModal(addGroupModal));
+    addGroupBtn.addEventListener('click', () => openModal(addGroupModal));
+
+    tabButtons.forEach(btn => {
+        btn.removeEventListener('click', handleTabButtonClick);
+        btn.addEventListener('click', handleTabButtonClick);
     });
-});
 
-window.addEventListener('click', (e) => {
+    closeButtons.forEach(btn => {
+        btn.removeEventListener('click', function() {
+            closeModal(this.closest('.modal'));
+        });
+        btn.addEventListener('click', function() {
+            closeModal(this.closest('.modal'));
+        });
+    });
+
+    window.removeEventListener('click', handleModalBackgroundClick);
+    window.addEventListener('click', handleModalBackgroundClick);
+}
+
+function handleModalBackgroundClick(e) {
     if (e.target.classList.contains('modal')) {
         closeModal(e.target);
     }
-});
+}
 
 // ============ 페이지 로드시 ============
-document.addEventListener('DOMContentLoaded', loadGroups);
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('=== 페이지 로드 ===');
+    debugCookies();
+
+    setupEventListeners();
+
+    const isLoggedIn = hasAccessToken();
+    console.log('초기 로그인 상태:', isLoggedIn);
+
+    updateLoginButtonUI(isLoggedIn);
+
+    if (isLoggedIn) {
+        console.log('로그인 상태: 내 그룹 로드');
+        loadMyGroups();
+    } else {
+        console.log('미로그인 상태: 전체 그룹 로드');
+        loadAllGroups();
+    }
+});

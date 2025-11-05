@@ -22,13 +22,29 @@
           </span>
           <span class="kakao-text">카카오로 로그인</span>
         </button>
-        <button id="addGroupBtn" class="btn-primary">+ 새 그룹 추가</button>
+        <button id="addGroupBtn" class="btn-primary" style="display: none;">+ 새 그룹 추가</button>
       </div>
     </div>
   </header>
 
-  <div id="groupList" class="group-list">
-    <!-- JavaScript로 채워짐 -->
+  <!-- 탭 네비게이션 -->
+  <div class="tab-navigation" id="tabNavigation" style="display: none;">
+    <button class="tab-button active" data-tab="my-groups">내 그룹</button>
+    <button class="tab-button" data-tab="all-groups">전체 그룹</button>
+  </div>
+
+  <!-- 내 그룹 탭 -->
+  <div id="my-groups" class="tab-content active">
+    <div id="groupList" class="group-list">
+      <!-- JavaScript로 채워짐 -->
+    </div>
+  </div>
+
+  <!-- 전체 그룹 탭 -->
+  <div id="all-groups" class="tab-content">
+    <div id="allGroupList" class="group-list">
+      <!-- JavaScript로 채워짐 -->
+    </div>
   </div>
 </div>
 
