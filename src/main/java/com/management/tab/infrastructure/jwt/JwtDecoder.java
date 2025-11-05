@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class JwtDecoder implements TokenDecoder {
 
     private static final String CLAIM_ID = "id";
-    private static final String CLAIM_ROLE = "role";
 
     private final Clock clock;
     private final JWEDecrypter jweDecrypter;
@@ -122,7 +121,6 @@ public class JwtDecoder implements TokenDecoder {
         try {
             return new PrivateClaims(
                     claims.getLongClaim(CLAIM_ID),
-                    claims.getStringClaim(CLAIM_ROLE),
                     LocalDateTime.ofInstant(issueTime.toInstant(), ZoneId.systemDefault())
             );
         } catch (ParseException e) {

@@ -23,8 +23,8 @@ public class OAuth2UserDetailsService implements UserDetailsService {
 
     private OAuth2UserDetails convert(PrivateClaims privateClaims) {
         return new OAuth2UserDetails(
-                privateClaims.accountId(),
-                Set.of(new SimpleGrantedAuthority(privateClaims.roleName()))
+                privateClaims.userId(),
+                Set.of(new SimpleGrantedAuthority(String.valueOf(privateClaims.userId())))
         );
     }
 }
