@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.management.tab.config.auth.security.dto.response.ExceptionResponse;
 import com.management.tab.domain.user.vo.RegistrationId;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,28 +26,29 @@ public class OAuth2RegistrationValidateFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return super.shouldNotFilter(request) || !request.getRequestURI().contains(AUTHORIZE_URI);
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws IOException {
-        String requestURI = request.getRequestURI();
+        String[] splitRequestUri = request.getRequestURI().split(REQUEST_DELIMITER);
+        String registrationId = splitRequestUri[splitRequestUri.length - 1];
 
-        if (requestURI.contains(AUTHORIZE_URI)) {
-            String[] splitRequestUri = requestURI.split(REQUEST_DELIMITER);
-            String registrationId = splitRequestUri[splitRequestUri.length - 1];
+        if (RegistrationId.notContains(registrationId)) {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
 
-            if (RegistrationId.notContains(registrationId)) {
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-                response.setStatus(HttpStatus.BAD_REQUEST.value());
+            PrintWriter writer = response.getWriter();
+            ExceptionResponse exceptionResponse = new ExceptionResponse("지원하지 않는 소셜 로그인 방식입니다.");
 
-                PrintWriter writer = response.getWriter();
-                ExceptionResponse exceptionResponse = new ExceptionResponse("지원하지 않는 소셜 로그인 방식입니다.");
-
-                writer.println(objectMapper.writeValueAsString(exceptionResponse));
-                return;
-            }
+            writer.println(objectMapper.writeValueAsString(exceptionResponse));
+            return;
         }
 
         try {
