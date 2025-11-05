@@ -1,12 +1,10 @@
 package com.management.tab.config.auth.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.management.tab.application.auth.GenerateTokenService;
 import com.management.tab.application.auth.LoginService;
 import com.management.tab.application.auth.dto.LoggedInUserDto;
 import com.management.tab.config.properties.TokenProperties;
 import com.management.tab.application.auth.dto.TokenDto;
-import com.management.tab.config.auth.security.dto.response.LoginResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,8 +27,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     public static final String DOMAIN = "/";
     public static final String REFRESH_TOKEN_KEY = "refreshToken";
+    public static final String ACCESS_TOKEN_KEY = "accessToken";
 
-    private final ObjectMapper objectMapper;
     private final TokenProperties tokenProperties;
     private final LoginService loginService;
     private final GenerateTokenService generateTokenService;
@@ -48,20 +46,32 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         LoggedInUserDto loggedInUserDto = loginService.login(registrationId, socialId);
         TokenDto tokenDto = generateTokenService.generate(loggedInUserDto.id());
 
-        writeResponse(response, tokenDto, loggedInUserDto.isSignUp());
         createRefreshTokenCookie(response, tokenDto.refreshToken());
+        createAccessTokenCookie(response, tokenDto.accessToken());
+        writeResponse(response);
     }
 
-    private void writeResponse(HttpServletResponse response, TokenDto tokenDto, boolean isSignUp) {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    private void writeResponse(HttpServletResponse response) {
+        response.setContentType(MediaType.TEXT_HTML_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(HttpStatus.CREATED.value());
 
         try {
             PrintWriter writer = response.getWriter();
-            LoginResponse loginResponse = new LoginResponse(tokenDto.accessToken(), tokenDto.tokenScheme(), isSignUp);
-
-            writer.println(objectMapper.writeValueAsString(loginResponse));
+            response.getWriter().write(
+                    "<!DOCTYPE html>" +
+                            "<html>" +
+                            "<head><meta charset='UTF-8'></head>" +
+                            "<body>" +
+                            "<script>" +
+                            "  if (window.opener) {" +
+                            "    window.opener.postMessage({type: 'LOGIN_SUCCESS'}, '*');" +
+                            "  }" +
+                            "  window.close();" +
+                            "</script>" +
+                            "</body>" +
+                            "</html>"
+            );
             writer.flush();
         } catch (IOException e) {
             throw new InvalidResponseWriteException(e);
@@ -71,11 +81,21 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private void createRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         Cookie cookie = new Cookie(REFRESH_TOKEN_KEY, URLEncoder.encode(refreshToken, StandardCharsets.UTF_8));
 
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(tokenProperties.refreshExpiredSeconds());
+        cookie.setSecure(false);
+        cookie.setMaxAge(tokenProperties.accessExpiredSeconds());
         cookie.setPath(DOMAIN);
-        cookie.setAttribute("SameSite", "None");
+        cookie.setAttribute("SameSite", "Lax");
+
+        response.addCookie(cookie);
+    }
+
+    private void createAccessTokenCookie(HttpServletResponse response, String accessToken) {
+        Cookie cookie = new Cookie(ACCESS_TOKEN_KEY, URLEncoder.encode(accessToken, StandardCharsets.UTF_8));
+
+        cookie.setSecure(false);
+        cookie.setMaxAge(tokenProperties.accessExpiredSeconds());
+        cookie.setPath(DOMAIN);
+        cookie.setAttribute("SameSite", "Lax");
 
         response.addCookie(cookie);
     }

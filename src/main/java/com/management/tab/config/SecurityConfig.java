@@ -54,7 +54,6 @@ public class SecurityConfig {
                     .accessDeniedHandler(oAuth2AccessDeniedHandler())
             )
             .oauth2Login(oauth -> oauth
-                    .authorizationEndpoint(endPoint -> endPoint.baseUri("/login"))
                     .successHandler(oAuth2SuccessHandler())
                     .failureHandler(oAuth2AuthenticationFailureHandler())
             )
@@ -76,7 +75,7 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2SuccessHandler oAuth2SuccessHandler() {
-        return new OAuth2SuccessHandler(objectMapper, tokenProperties, loginService, generateTokenService);
+        return new OAuth2SuccessHandler(tokenProperties, loginService, generateTokenService);
     }
 
     @Bean
