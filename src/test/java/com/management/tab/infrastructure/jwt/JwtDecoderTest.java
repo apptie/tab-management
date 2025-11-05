@@ -13,18 +13,17 @@ import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +39,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 class JwtDecoderTest {
 
     TokenProperties tokenProperties = new TokenProperties(
-            "thisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortest",
-            "thisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortest",
+            "thisIsA32ByteAccessTokenKeyForHS",
+            "thisIsA32ByteRefreshTokenKeyForH",
+            "thisIsA32ByteEncryptionKeyForAES",
             "issuer",
             43200,
             259200,
@@ -54,27 +54,32 @@ class JwtDecoderTest {
     JwsSignerFinder jwsSignerFinder;
 
     @BeforeEach
-    void beforeEach() throws NoSuchAlgorithmException, JOSEException {
+    void beforeEach() throws JOSEException {
         Clock clock = Clock.systemDefaultZone();
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(256);
-        SecretKey secretKey = keyGenerator.generateKey();
-        JWEDecrypter jweDecrypter =  new AESDecrypter(secretKey);
+
+        byte[] encryptionKeyBytes = "24ByteEncryptionKeyForJWE".getBytes(StandardCharsets.UTF_8);
+        SecretKey encryptionSecretKey = new SecretKeySpec(encryptionKeyBytes, 0, 24, "AES");
+
+        JWEDecrypter jweDecrypter = new AESDecrypter(encryptionSecretKey);
+        jweEncrypter = new AESEncrypter(encryptionSecretKey);
+
         byte[] accessTokenKeyBytes = tokenProperties.accessKey().getBytes(StandardCharsets.UTF_8);
         SecretKey accessTokenSecretKey = new SecretKeySpec(accessTokenKeyBytes, "HmacSHA256");
         JWSVerifier accessTokenJwsVerifier = new MACVerifier(accessTokenSecretKey);
-        byte[] refreshTokenKeyBytes = tokenProperties.accessKey().getBytes(StandardCharsets.UTF_8);
+        JWSSigner accessTokenJwsSigner = new MACSigner(accessTokenSecretKey);
+
+        byte[] refreshTokenKeyBytes = tokenProperties.refreshKey().getBytes(StandardCharsets.UTF_8);
         SecretKey refreshTokenSecretKey = new SecretKeySpec(refreshTokenKeyBytes, "HmacSHA256");
         JWSVerifier refreshTokenJwsVerifier = new MACVerifier(refreshTokenSecretKey);
-        JwsVerifierFinder jwsVerifierFinder = new JwsVerifierFinder(accessTokenJwsVerifier, refreshTokenJwsVerifier);
-        jweEncrypter =  new AESEncrypter(secretKey);
-        JWSSigner accessTokenJwsSigner = new MACSigner(accessTokenSecretKey);
         JWSSigner refreshTokenJwsSigner = new MACSigner(refreshTokenSecretKey);
-        jwsSignerFinder = new JwsSignerFinder(accessTokenJwsSigner, refreshTokenJwsSigner);
 
-        jwtDecoder =  new JwtDecoder(clock, jweDecrypter, jwsVerifierFinder, tokenProperties);
+        JwsVerifierFinder jwsVerifierFinder = new JwsVerifierFinder(accessTokenJwsVerifier, refreshTokenJwsVerifier);
+
+        jwsSignerFinder = new JwsSignerFinder(accessTokenJwsSigner, refreshTokenJwsSigner);
+        jwtDecoder = new JwtDecoder(clock, jweDecrypter, jwsVerifierFinder, tokenProperties);
         jwtEncoder = new JwtEncoder(jweEncrypter, jwsSignerFinder, tokenProperties);
     }
+
 
     @ParameterizedTest
     @EnumSource(value = TokenType.class)
@@ -140,18 +145,26 @@ class JwtDecoderTest {
 
     @ParameterizedTest
     @EnumSource(value = TokenType.class)
-    void 토큰_발급자가_다른_토큰은_디코딩_할_수_없다(TokenType tokenType) {
+    void 토큰_발급자가_다른_토큰은_디코딩_할_수_없다(TokenType tokenType) throws KeyLengthException {
         // given
         TokenProperties otherIssuerTokenProperties = new TokenProperties(
-                "thisistoolargeaccesstokenkeyfordummykeydatafortest",
-                "thisistoolargerefreshtokenkeyfordummykeydatafortest",
+                "thisIsA32ByteAccessTokenKeyForHS",
+                "thisIsA32ByteRefreshTokenKeyForH",
+                "thisIsA32ByteEncryptionKeyForAES",
                 "other-issuer",
                 43200,
                 259200,
                 43200000L,
                 259200000L
         );
-        JwtEncoder otherServiceJwtEncoder = new JwtEncoder(jweEncrypter, jwsSignerFinder, otherIssuerTokenProperties);
+        byte[] encryptionKeyBytes = "24ByteEncryptionKeyForJWE".getBytes(StandardCharsets.UTF_8);
+        SecretKey encryptionSecretKey = new SecretKeySpec(encryptionKeyBytes, 0, 24, "AES");
+        JWEEncrypter otherServiceJweEncrypter = new AESEncrypter(encryptionSecretKey);
+        JwtEncoder otherServiceJwtEncoder = new JwtEncoder(
+                otherServiceJweEncrypter,
+                jwsSignerFinder,
+                otherIssuerTokenProperties
+        );
         String token = otherServiceJwtEncoder.encode(LocalDateTime.now(), tokenType, 1L);
 
         // when & then

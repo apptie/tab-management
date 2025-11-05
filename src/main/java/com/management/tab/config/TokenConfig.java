@@ -17,9 +17,8 @@ import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
-import javax.crypto.KeyGenerator;
+import java.util.Base64;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 public class TokenConfig {
 
     private static final String HMAC_SHA_256 = "HmacSHA256";
+    private static final String AES = "AES";
 
     private final Clock clock;
     private final TokenProperties tokenProperties;
@@ -94,10 +94,17 @@ public class TokenConfig {
     }
 
     @Bean
-    public SecretKey gcmAesSecretKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(256);
+    public SecretKeySpec gcmAesSecretKey() {
+        return new SecretKeySpec(decodeKey(), 0, 24, AES);
+    }
 
-        return keyGenerator.generateKey();
+    private byte[] decodeKey() {
+        String encryptionKey = tokenProperties.encryptionKey();
+
+        try {
+            return Base64.getDecoder().decode(encryptionKey);
+        } catch (IllegalArgumentException e) {
+            return encryptionKey.getBytes(StandardCharsets.UTF_8);
+        }
     }
 }

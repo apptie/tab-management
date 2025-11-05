@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record TokenProperties(
         String accessKey,
         String refreshKey,
+        String encryptionKey,
         String issuer,
         int accessExpiredSeconds,
         int refreshExpiredSeconds,

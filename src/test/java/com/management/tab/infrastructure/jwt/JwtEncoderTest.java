@@ -4,14 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.management.tab.config.properties.TokenProperties;
 import com.management.tab.config.auth.security.enums.TokenType;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEEncrypter;
-import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +23,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 class JwtEncoderTest {
 
     TokenProperties tokenProperties = new TokenProperties(
-            "thisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortestthisistoolargeaccesstokenkeyfordummykeydatafortest",
-            "thisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortestthisistoolargerefreshtokenkeyfordummykeydatafortest",
+            "thisIsA32ByteAccessTokenKeyForHS",
+            "thisIsA32ByteRefreshTokenKeyForH",
+            "thisIsA32ByteEncryptionKeyForAES",
             "issuer",
             43200,
             259200,
@@ -37,21 +36,24 @@ class JwtEncoderTest {
     JwtEncoder jwtEncoder;
 
     @BeforeEach
-    void beforeEach() throws NoSuchAlgorithmException, KeyLengthException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(256);
-        SecretKey secretKey = keyGenerator.generateKey();
-        JWEEncrypter jweEncrypter = new AESEncrypter(secretKey);
+    void beforeEach() throws JOSEException {
+        byte[] encryptionKeyBytes = "24ByteEncryptionKeyForJWE".getBytes(StandardCharsets.UTF_8);
+        SecretKey encryptionSecretKey = new SecretKeySpec(encryptionKeyBytes, 0, 24, "AES");
+        JWEEncrypter jweEncrypter = new AESEncrypter(encryptionSecretKey);
+
         byte[] accessTokenKeyBytes = tokenProperties.accessKey().getBytes(StandardCharsets.UTF_8);
         SecretKey accessTokenSecretKey = new SecretKeySpec(accessTokenKeyBytes, "HmacSHA256");
         MACSigner accessTokenSigner = new MACSigner(accessTokenSecretKey);
-        byte[] refreshTokenKeyBytes = tokenProperties.accessKey().getBytes(StandardCharsets.UTF_8);
+
+        byte[] refreshTokenKeyBytes = tokenProperties.refreshKey().getBytes(StandardCharsets.UTF_8);
         SecretKey refreshTokenSecretKey = new SecretKeySpec(refreshTokenKeyBytes, "HmacSHA256");
         MACSigner refreshTokenSigner = new MACSigner(refreshTokenSecretKey);
+
         JwsSignerFinder jwsSignerFinder = new JwsSignerFinder(accessTokenSigner, refreshTokenSigner);
 
         jwtEncoder = new JwtEncoder(jweEncrypter, jwsSignerFinder, tokenProperties);
     }
+
 
     @ParameterizedTest
     @EnumSource(value = TokenType.class)

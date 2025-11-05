@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 public class JwtEncoder implements TokenEncoder {
 
     private static final String CLAIM_ID = "id";
-    private static final String CLAIM_ROLE = "role";
     private static final String TOKEN_CONTENT_TYPE = "JWT";
 
     private final JWEEncrypter jweEncrypter;
@@ -54,7 +53,7 @@ public class JwtEncoder implements TokenEncoder {
     }
 
     private JWEHeader createJweHeader() {
-        return new JWEHeader.Builder(JWEAlgorithm.A256KW, EncryptionMethod.A256GCM)
+        return new JWEHeader.Builder(JWEAlgorithm.A192KW, EncryptionMethod.A256GCM)
                 .contentType(TOKEN_CONTENT_TYPE)
                 .build();
     }
