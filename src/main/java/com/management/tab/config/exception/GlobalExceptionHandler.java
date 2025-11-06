@@ -21,73 +21,83 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> handleException(Exception ex) {
+        log.warn("Exception : ", ex);
+
+        return ResponseEntity.internalServerError()
+                             .body(new ExceptionResponse("EXCEPTION", "서버에 문제가 발생했습니다."));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<ExceptionResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.badRequest()
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("ILLEGAL_ARGUMENT", ex.getMessage()));
     }
 
     @ExceptionHandler(TabNodeNotFoundException.class)
-    public ResponseEntity<String> handleTabNodeNotFoundException(TabNodeNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> handleTabNodeNotFoundException(TabNodeNotFoundException ex) {
         return ResponseEntity.badRequest()
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("TAB_NOT_NOT_FOUND", ex.getMessage()));
     }
 
     @ExceptionHandler(TabContentNotFoundException.class)
-    public ResponseEntity<String> handleTabContentNotFoundException(TabContentNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> handleTabContentNotFoundException(TabContentNotFoundException ex) {
         return ResponseEntity.badRequest()
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("TAB_CONTENT_NOT_FOUDN", ex.getMessage()));
     }
 
     @ExceptionHandler(TabGroupNotFoundException.class)
-    public ResponseEntity<String> handleTabGroupNotFoundException(TabGroupNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> handleTabGroupNotFoundException(TabGroupNotFoundException ex) {
         return ResponseEntity.badRequest()
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("TAB_GROUP_NOT_FOUND", ex.getMessage()));
     }
 
     @ExceptionHandler(TabNotFoundException.class)
-    public ResponseEntity<String> handleTabNotFoundException(TabNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> handleTabNotFoundException(TabNotFoundException ex) {
         return ResponseEntity.badRequest()
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("TAB_NOT_FOUDN", ex.getMessage()));
     }
 
     @ExceptionHandler(TabForbiddenException.class)
-    public ResponseEntity<String> handleTabForbiddenException(TabForbiddenException ex) {
+    public ResponseEntity<ExceptionResponse> handleTabForbiddenException(TabForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("TAB_FORBIDDEN", ex.getMessage()));
     }
 
     @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<String> handleDataAccessException(DataAccessException ex) {
+    public ResponseEntity<ExceptionResponse> handleDataAccessException(DataAccessException ex) {
         log.warn("DataAccessException : ", ex);
 
         return ResponseEntity.internalServerError()
-                             .body("서버에 문제가 발생했습니다.");
+                             .body(new ExceptionResponse("EXCEPTION", "서버에 문제가 발생했습니다."));
     }
 
     @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<String> handleInvalidTokenException(InvalidTokenException ex) {
-        log.info("InvalidTokenException : ", ex);
-
+    public ResponseEntity<ExceptionResponse> handleInvalidTokenException(InvalidTokenException ex) {
         return ResponseEntity.badRequest()
-                             .body("유효한 토큰이 아닙니다.");
+                             .body(new ExceptionResponse("INVALID_TOKEN", "유효한 토큰이 아닙니다."));
     }
 
     @ExceptionHandler(FailedEncodeTokenException.class)
-    public ResponseEntity<String> handleFailedEncodeTokenException(FailedEncodeTokenException ex) {
+    public ResponseEntity<ExceptionResponse> handleFailedEncodeTokenException(FailedEncodeTokenException ex) {
+        log.warn("FailedEncodeTokenException : ", ex);
+
         return ResponseEntity.internalServerError()
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("EXCEPTION", "서버에 문제가 발생했습니다."));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException ex) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedException(UnauthorizedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("UNAUTHORIZED", "권한이 없습니다."));
     }
 
     @ExceptionHandler(ExpiredTokenException.class)
-    public ResponseEntity<String> handleExpiredTokenException(ExpiredTokenException ex) {
+    public ResponseEntity<ExceptionResponse> handleExpiredTokenException(ExpiredTokenException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                             .body(ex.getMessage());
+                             .body(new ExceptionResponse("EXPIRED_TOKEN", "만료된 토큰입니다."));
     }
+
+    public record ExceptionResponse(String code, String message) { }
 }
