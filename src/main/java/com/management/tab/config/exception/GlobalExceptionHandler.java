@@ -6,6 +6,7 @@ import com.management.tab.domain.repository.TabContentRepository.TabContentNotFo
 import com.management.tab.domain.repository.TabGroupRepository.TabGroupNotFoundException;
 import com.management.tab.domain.repository.TabRepository.TabNotFoundException;
 import com.management.tab.domain.tab.TabTree.TabNodeNotFoundException;
+import com.management.tab.infrastructure.jwt.JwtDecoder.ExpiredTokenException;
 import com.management.tab.infrastructure.jwt.JwtDecoder.InvalidTokenException;
 import com.management.tab.infrastructure.jwt.JwtEncoder.FailedEncodeTokenException;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                             .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<String> handleExpiredTokenException(ExpiredTokenException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                              .body(ex.getMessage());
     }

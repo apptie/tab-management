@@ -16,9 +16,9 @@ public class OAuth2UserDetailsService implements UserDetailsService {
 
     @Override
     public OAuth2UserDetails loadUserByUsername(String token) throws UsernameNotFoundException {
-        return tokenDecoder.decode(TokenType.ACCESS, token)
-                           .map(this::convert)
-                           .orElse(null);
+        PrivateClaims privateClaims = tokenDecoder.decode(TokenType.ACCESS, token);
+
+        return convert(privateClaims);
     }
 
     private OAuth2UserDetails convert(PrivateClaims privateClaims) {

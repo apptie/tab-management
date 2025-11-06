@@ -15,7 +15,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,11 +28,12 @@ public class JwtDecoder implements TokenDecoder {
     private final TokenProperties tokenProperties;
 
     @Override
-    public Optional<PrivateClaims> decode(TokenType tokenType, String token) {
+    public PrivateClaims decode(TokenType tokenType, String token) {
         validateToken(token);
 
-        return this.parse(tokenType, token)
-                   .map(this::convert);
+        JWTClaimsSet claimsSet = parse(tokenType, token);
+
+        return convert(claimsSet);
     }
 
     private void validateToken(String token) {
@@ -42,7 +42,7 @@ public class JwtDecoder implements TokenDecoder {
         }
     }
 
-    private Optional<JWTClaimsSet> parse(TokenType tokenType, String token) {
+    private JWTClaimsSet parse(TokenType tokenType, String token) {
         try {
             return extractClaimsSet(tokenType, token);
         } catch (JOSEException e) {
@@ -52,14 +52,21 @@ public class JwtDecoder implements TokenDecoder {
         }
     }
 
-    private Optional<JWTClaimsSet> extractClaimsSet(
+    private JWTClaimsSet extractClaimsSet(
             TokenType tokenType, String token
     ) throws ParseException, JOSEException {
         JWTClaimsSet claimsSet = findJWTClaimsSet(tokenType, token);
 
         validateIssuer(claimsSet);
+        validateExpired(claimsSet);
 
-        return findClaimsSet(claimsSet);
+        return claimsSet;
+    }
+
+    private void validateExpired(JWTClaimsSet claimsSet) {
+        if (isExpiredToken(claimsSet.getExpirationTime())) {
+            throw new ExpiredTokenException();
+        }
     }
 
     private JWTClaimsSet findJWTClaimsSet(TokenType tokenType, String token) throws ParseException, JOSEException {
@@ -107,14 +114,6 @@ public class JwtDecoder implements TokenDecoder {
         }
     }
 
-    private Optional<JWTClaimsSet> findClaimsSet(JWTClaimsSet claimsSet) {
-        if (isExpiredToken(claimsSet.getExpirationTime())) {
-            return Optional.empty();
-        }
-
-        return Optional.of(claimsSet);
-    }
-
     private PrivateClaims convert(JWTClaimsSet claims) {
         Date issueTime = claims.getIssueTime();
 
@@ -136,6 +135,13 @@ public class JwtDecoder implements TokenDecoder {
 
         public InvalidTokenException(String message, Throwable cause) {
             super(message, cause);
+        }
+    }
+
+    public static class ExpiredTokenException extends IllegalArgumentException {
+
+        public ExpiredTokenException() {
+            super("토큰이 만료되었습니다.");
         }
     }
 }
