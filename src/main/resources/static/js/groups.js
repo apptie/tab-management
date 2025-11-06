@@ -1,5 +1,6 @@
 const API_BASE_URL = '/api/groups';
 const KAKAO_LOGIN_URL = '/oauth2/authorization/kakao';
+const REFRESH_TOKEN_URL = '/refresh-token';
 
 // DOM Elements
 const groupList = document.getElementById('groupList');
@@ -16,7 +17,6 @@ const editGroupNameInput = document.getElementById('editGroupName');
 const tabNavigation = document.getElementById('tabNavigation');
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
-
 const closeButtons = document.querySelectorAll('.close');
 
 // ============ 쿠키 유틸리티 ============
@@ -25,7 +25,7 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
         const cookieValue = parts.pop().split(';').shift();
-        return decodeURIComponent(cookieValue);  // ← 추가!
+        return decodeURIComponent(cookieValue);
     }
     return null;
 }
@@ -60,8 +60,33 @@ function getCsrfHeaders() {
     return {};
 }
 
-// ============ API 요청 헬퍼 (Authorization 헤더 추가) ============
-async function apiCall(url, options = {}) {
+// ============ 토큰 리프레시 ============
+async function refreshAccessToken() {
+    console.log('토큰 갱신 시도...');
+    try {
+        const response = await fetch(REFRESH_TOKEN_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                ...getCsrfHeaders()
+            }
+        });
+
+        if (response.ok) {
+            console.log('토큰 갱신 성공');
+            return true;
+        } else {
+            console.log('토큰 갱신 실패:', response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error('토큰 갱신 오류:', error);
+        return false;
+    }
+}
+
+// ============ API 요청 헬퍼 (토큰 리프레시 포함) ============
+async function apiCall(url, options = {}, isRetry = false) {
     const accessToken = getCookie('accessToken');
 
     const headers = {
@@ -70,7 +95,6 @@ async function apiCall(url, options = {}) {
         ...getCsrfHeaders()
     };
 
-    // accessToken이 있으면 Authorization 헤더에 추가
     if (accessToken) {
         headers['Authorization'] = `Bearer ${accessToken}`;
         console.log('Authorization 헤더 추가됨');
@@ -86,7 +110,35 @@ async function apiCall(url, options = {}) {
 
     console.log('API 요청:', url, finalOptions);
 
-    return fetch(url, finalOptions);
+    const response = await fetch(url, finalOptions);
+
+    // 401 에러 처리
+    if (response.status === 401 && !isRetry) {
+        try {
+            const errorData = await response.json();
+            console.log('401 에러 상세:', errorData);
+
+            // EXPIRED_TOKEN인 경우 토큰 갱신 시도
+            if (errorData.code === 'EXPIRED_TOKEN') {
+                console.log('만료된 토큰 감지 - 갱신 시도');
+                const refreshed = await refreshAccessToken();
+
+                if (refreshed) {
+                    console.log('토큰 갱신 성공 - 요청 재시도');
+                    // 재귀 호출로 원래 요청 재시도 (isRetry=true로 무한 루프 방지)
+                    return await apiCall(url, options, true);
+                } else {
+                    console.log('토큰 갱신 실패 - 로그인 필요');
+                    alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
+                    handleLogout();
+                }
+            }
+        } catch (e) {
+            console.error('401 에러 파싱 실패:', e);
+        }
+    }
+
+    return response;
 }
 
 function deleteCookie(name) {
@@ -154,7 +206,6 @@ function handleKakaoLogin() {
 
     console.log('팝업 정상 열림');
 
-    // 팝업이 리다이렉트될 때까지 대기
     let checkCount = 0;
     const checkInterval = setInterval(() => {
         try {
@@ -177,7 +228,7 @@ function handleKakaoLogin() {
         }
 
         checkCount++;
-        if (checkCount > 60) {  // 60초 타임아웃
+        if (checkCount > 60) {
             clearInterval(checkInterval);
             if (!popup.closed) {
                 popup.close();
@@ -185,7 +236,6 @@ function handleKakaoLogin() {
         }
     }, 500);
 
-    // 팝업이 메인 페이지로 리다이렉트될 때 자동 종료
     popup.onbeforeunload = function() {
         popup.close();
         console.log('팝업 자동 종료');
