@@ -3,6 +3,8 @@ package com.management.tab.application.auth;
 import com.management.tab.application.auth.dto.TokenDto;
 import com.management.tab.config.auth.security.enums.TokenScheme;
 import com.management.tab.config.auth.security.enums.TokenType;
+import com.management.tab.domain.auth.PrivateClaims;
+import com.management.tab.domain.auth.TokenDecoder;
 import com.management.tab.domain.auth.TokenEncoder;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class GenerateTokenService {
 
     private final Clock clock;
+    private final TokenDecoder tokenDecoder;
     private final TokenEncoder tokenEncoder;
 
     public TokenDto generate(Long userId) {
@@ -21,5 +24,11 @@ public class GenerateTokenService {
         String refreshToken = tokenEncoder.encode(LocalDateTime.now(clock), TokenType.REFRESH, userId);
 
         return new TokenDto(accessToken, refreshToken, TokenScheme.BEARER.name());
+    }
+
+    public TokenDto refreshToken(String refreshToken) {
+        PrivateClaims privateClaims = tokenDecoder.decode(TokenType.REFRESH, refreshToken);
+
+        return generate(privateClaims.userId());
     }
 }
