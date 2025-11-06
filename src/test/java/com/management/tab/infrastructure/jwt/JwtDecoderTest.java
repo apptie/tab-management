@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.management.tab.domain.auth.PrivateClaims;
 import com.management.tab.config.properties.TokenProperties;
 import com.management.tab.config.auth.security.enums.TokenType;
+import com.management.tab.infrastructure.jwt.JwtDecoder.ExpiredTokenException;
 import com.management.tab.infrastructure.jwt.JwtDecoder.InvalidTokenException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEDecrypter;
@@ -22,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import java.util.stream.Stream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -92,7 +92,7 @@ class JwtDecoderTest {
 
     @ParameterizedTest
     @EnumSource(value = TokenType.class)
-    void 만료된_토큰을_디코딩_하면_빈_claim을_반환한다(TokenType tokenType) {
+    void 만료된_토큰은_디코딩_할_수_없다(TokenType tokenType) {
         // given
         String token = jwtEncoder.encode(
                 LocalDateTime.of(2022, 2, 2, 13, 13),
@@ -100,11 +100,10 @@ class JwtDecoderTest {
                 1L
         );
 
-        // when
-        Optional<PrivateClaims> actual = jwtDecoder.decode(tokenType, token);
-
-        // then
-        assertThat(actual).isEmpty();
+        // when & then
+        assertThatThrownBy(() -> jwtDecoder.decode(tokenType, token))
+                .isInstanceOf(ExpiredTokenException.class)
+                .hasMessage("토큰이 만료되었습니다.");
     }
 
     private static Stream<Arguments> encodeTestWithTokenTypeAndInvalidToken() {
@@ -133,13 +132,12 @@ class JwtDecoderTest {
         String token = jwtEncoder.encode(publishTime, tokenType, 1L);
 
         // when
-        Optional<PrivateClaims> actual = jwtDecoder.decode(tokenType, token);
+        PrivateClaims actual = jwtDecoder.decode(tokenType, token);
 
         // then
         assertAll(
-                () -> assertThat(actual).isNotEmpty(),
-                () -> assertThat(actual.get().userId()).isEqualTo(1L),
-                () -> assertThat(actual.get().issuedAt()).isEqualTo(publishTime.truncatedTo(ChronoUnit.SECONDS))
+                () -> assertThat(actual.userId()).isEqualTo(1L),
+                () -> assertThat(actual.issuedAt()).isEqualTo(publishTime.truncatedTo(ChronoUnit.SECONDS))
         );
     }
 
