@@ -147,6 +147,22 @@ public class TabTree {
         return calculateNextChildPosition(parentNode);
     }
 
+    public int findDepth(TabId tabId) {
+        return findNode(tabId).map(TabNode::getDepth)
+                              .orElseThrow(TabNodeNotFoundException::new);
+    }
+
+    public void validateCreateDepth(int requestTreeMaxDepth, int currentDepth) {
+        int totalDepth = requestTreeMaxDepth + currentDepth;
+
+        if (totalDepth > MAX_DEPTH) {
+            throw new IllegalArgumentException(
+                    "요청의 최대 깊이(%d)와 현재 깊이(%d)를 합하면 최대 허용 깊이(%d)를 초과합니다."
+                            .formatted(requestTreeMaxDepth, currentDepth, MAX_DEPTH)
+            );
+        }
+    }
+
     private Optional<TabNode> findNode(TabId tabId) {
         return Optional.ofNullable(tabNodeMap.get(tabId));
     }
