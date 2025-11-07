@@ -13,7 +13,10 @@
       <a href="groups.html" class="btn-back">← 그룹 목록</a>
       <h1 id="groupTitle">Loading...</h1>
     </div>
-    <button id="addRootTabBtn" class="btn-primary">+ 최상위 탭 추가</button>
+    <div>
+      <button id="addRootTabBtn" class="btn-primary">+ 최상위 탭 추가</button>
+      <button id="addBulkRootTabBtn" class="btn-primary" style="margin-left: 8px;">+ 최상위 탭 일괄 추가</button>
+    </div>
   </header>
 
   <div class="main-layout">
@@ -29,7 +32,7 @@
   </div>
 </div>
 
-<!-- 탭 추가 모달 -->
+<!-- 기존 탭 추가 모달 -->
 <div id="addTabModal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
@@ -82,6 +85,37 @@
         <textarea id="contentText" rows="10" required></textarea>
       </div>
       <button type="submit" class="btn-primary">저장</button>
+    </form>
+  </div>
+</div>
+
+<!-- 벌크 탭 추가 모달 (새로 추가) -->
+<div id="bulkAddTabModal" class="modal">
+  <div class="modal-content bulk-modal-content">
+    <div class="bulk-modal-header">
+      <h2>탭 일괄 추가</h2>
+      <span class="close">&times;</span>
+    </div>
+    <form id="bulkAddTabForm">
+      <input type="hidden" id="bulkParentId">
+      <div id="bulkTabsContainer" class="bulk-tabs-container">
+        <div class="bulk-tab-item" data-tab-id="0">
+          <div class="bulk-tab-inputs">
+            <input type="text" class="bulk-tab-title" placeholder="탭 제목" required>
+            <input type="url" class="bulk-tab-url" placeholder="URL" required>
+            <div class="bulk-tab-actions">
+              <button type="button" class="btn-add-child" title="자식 탭 추가">자식 추가</button>
+              <button type="button" class="btn-add-sibling" title="형제 탭 추가">형제 추가</button>
+              <button type="button" class="btn-remove-tab" title="탭 제거">제거</button>
+            </div>
+          </div>
+          <div class="bulk-tab-children"></div>
+        </div>
+      </div>
+      <div class="bulk-modal-actions">
+        <button type="submit" class="btn-primary">저장</button>
+        <button type="button" class="btn-secondary" id="bulkCancelBtn">취소</button>
+      </div>
     </form>
   </div>
 </div>
