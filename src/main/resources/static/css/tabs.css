@@ -210,6 +210,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: auto;
 }
 
 .modal-content {
@@ -218,6 +219,7 @@ main {
     border-radius: 8px;
     width: 90%;
     max-width: 500px;
+    max-height: min(90vh, 85vh);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
@@ -530,4 +532,176 @@ textarea:focus {
 .btn-open-url::before {
     content: '🔗';
     font-size: 14px;
+}
+
+/* 벌크 모달 스타일 */
+.bulk-modal-content {
+    width: 90%;
+    max-width: 900px;
+    max-height: min(90vh, 85vh);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.bulk-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #dadce0;
+    flex-shrink: 0;
+}
+
+.bulk-modal-header h2 {
+    margin: 0;
+    color: #202124;
+    font-size: 20px;
+}
+
+.bulk-modal-header .close {
+    float: none;
+    color: #5f6368;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.bulk-tabs-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    max-height: 100%;
+}
+
+.bulk-tab-item {
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    padding: 12px;
+    background: #f8f9fa;
+    flex-shrink: 0;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.bulk-tab-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.bulk-tab-title {
+    flex: 0 0 150px;
+    padding: 8px 12px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.bulk-tab-url {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.bulk-tab-title:focus,
+.bulk-tab-url:focus {
+    outline: none;
+    border-color: #1a73e8;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
+}
+
+.bulk-tab-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-add-child,
+.btn-add-sibling,
+.btn-remove-tab {
+    padding: 6px 12px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-add-child {
+    background: #1a73e8;
+    color: white;
+}
+
+.btn-add-child:hover {
+    background: #1557b0;
+}
+
+.btn-add-sibling {
+    background: #34a853;
+    color: white;
+}
+
+.btn-add-sibling:hover {
+    background: #2d8e47;
+}
+
+.btn-remove-tab {
+    background: #d93025;
+    color: white;
+}
+
+.btn-remove-tab:hover {
+    background: #b31412;
+}
+
+.bulk-tab-children {
+    margin-left: 20px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: 0;
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+.bulk-modal-actions {
+    padding: 16px 20px;
+    border-top: 1px solid #dadce0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.bulk-tab-item[data-depth="1"] {
+    background: #f0f7ff;
+    border-left: 3px solid #1a73e8;
+}
+
+.bulk-tab-item[data-depth="2"] {
+    background: #e8f0ff;
+    border-left: 3px solid #4285f4;
+}
+
+.bulk-tab-item[data-depth="3"] {
+    background: #e0e9f8;
+    border-left: 3px solid #8ab4f8;
 }

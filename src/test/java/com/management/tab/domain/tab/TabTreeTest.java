@@ -741,4 +741,95 @@ class TabTreeTest {
                 .isInstanceOf(TabNodeNotFoundException.class)
                 .hasMessage("지정한 탭 노드를 찾을 수 없습니다.");
     }
+
+    @Test
+    void 루트_노드의_깊이를_조회할_수_있다() {
+        // given
+        Tab rootTab = new Tab(
+                TabId.create(1L),
+                null,
+                UserId.create(2L),
+                TabGroupId.create(1L),
+                TabTitle.create("루트 탭"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        TabNode rootNode = TabNode.createRoot(rootTab);
+        TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
+
+        // when
+        int actual = tabTree.findDepth(TabId.create(1L));
+
+        // then
+        assertThat(actual).isZero();
+    }
+
+    @Test
+    void 자식_노드의_깊이를_조회할_수_있다() {
+        // given
+        Tab rootTab = new Tab(
+                TabId.create(1L),
+                null,
+                UserId.create(2L),
+                TabGroupId.create(1L),
+                TabTitle.create("루트 탭"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        TabNode rootNode = TabNode.createRoot(rootTab);
+
+        Tab childTab = new Tab(
+                TabId.create(2L),
+                TabId.create(1L),
+                UserId.create(2L),
+                TabGroupId.create(1L),
+                TabTitle.create("자식 탭"),
+                TabUrl.create("http://test.com"),
+                TabPosition.create(0),
+                AuditTimestamps.now()
+        );
+        TabNode childNode = TabNode.create(childTab, 1);
+        rootNode.addChild(childNode);
+
+        TabTree tabTree = TabTree.create(1L, new ArrayList<>(List.of(rootNode)));
+
+        // when
+        int actual = tabTree.findDepth(TabId.create(2L));
+
+        // then
+        assertThat(actual).isEqualTo(1);
+    }
+
+    @Test
+    void 존재하지_않는_노드의_깊이를_조회하면_예외가_발생한다() {
+        // given
+        TabTree tabTree = TabTree.create(1L);
+
+        // when & then
+        assertThatThrownBy(() -> tabTree.findDepth(TabId.create(999L)))
+                .isInstanceOf(TabTree.TabNodeNotFoundException.class)
+                .hasMessage("지정한 탭 노드를 찾을 수 없습니다.");
+    }
+
+    @Test
+    void 깊이_합이_최대_깊이_미만이면_탭_생성이_가능하다() {
+        // given
+        TabTree tabTree = TabTree.create(1L);
+
+        // when & then
+        assertDoesNotThrow(() -> tabTree.validateCreateDepth(5, 3));
+    }
+
+    @Test
+    void 깊이_합이_최대_깊이를_초과하면_예외가_발생한다() {
+        // given
+        TabTree tabTree = TabTree.create(1L);
+
+        // when & then
+        assertThatThrownBy(() -> tabTree.validateCreateDepth(7, 4))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("요청의 최대 깊이(7)와 현재 깊이(4)를 합하면 최대 허용 깊이(10)를 초과합니다.");
+    }
 }
