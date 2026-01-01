@@ -684,8 +684,21 @@ class TabManager {
     async loadTabContents(tabId) {
         try {
             const response = await fetch(`${this.CONTENT_API_BASE_URL}/tabs/${tabId}/contents`, {
+                headers: this.getAuthHeaders(),
                 credentials: 'include'
             });
+
+            if (response.status === 401) {
+                const refreshed = await refreshAccessToken();
+                if (refreshed) {
+                    await this.loadTabContents(tabId);
+                    return;
+                } else {
+                    handleLogout();
+                    return;
+                }
+            }
+
             if (!response.ok) {
                 console.error('Response status:', response.status);
                 throw new Error('Failed to load contents');
@@ -806,7 +819,22 @@ class TabManager {
 
     async loadContentForEdit(contentId) {
         try {
-            const response = await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`);
+            const response = await fetch(`${this.CONTENT_API_BASE_URL}/contents/${contentId}`, {
+                headers: this.getAuthHeaders(),
+                credentials: 'include'
+            });
+
+            if (response.status === 401) {
+                const refreshed = await refreshAccessToken();
+                if (refreshed) {
+                    await this.loadContentForEdit(contentId);
+                    return;
+                } else {
+                    handleLogout();
+                    return;
+                }
+            }
+
             if (!response.ok) throw new Error('Failed to load content');
 
             const data = await response.json();
